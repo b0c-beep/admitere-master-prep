@@ -1,0 +1,752 @@
+=== ADMITERE MASTER CSIE3 - TEST GRILĂ 2022 ===
+Sursă: subiecte_ani_anteriori/CSIE_3_2022.pdf
+Format sursă original: text digital nativ
+Număr total întrebări: 30
+Punctaj: conform barem oficial
+
+##### ÎNTREBAREA 1 #####
+CATEGORIE: SQL
+ENUNT:
+Care dintre urmatoarele optiuni poate fi utilizata la stergerea unei tabele?
+
+VARIANTE:
+a) PRIOR
+b) CASCADE CONSTRAINTS
+c) CONNECT BY
+d) DELETE
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Stergerea unei tabele (structura + date) se face cu comanda DDL "DROP TABLE nume_tabela". Clauza optionala CASCADE CONSTRAINTS se ataseaza acestei comenzi (DROP TABLE ... CASCADE CONSTRAINTS) pentru a elimina automat si constrangerile de integritate referentiala (cheile straine) din alte tabele care refera tabela stearsa. Prin urmare CASCADE CONSTRAINTS este singura optiune legata de stergerea unei tabele. De ce sunt gresite celelalte: (a) PRIOR este un operator folosit in interogari ierarhice (CONNECT BY PRIOR), nu are legatura cu stergerea tabelelor; (c) CONNECT BY este clauza de parcurgere ierarhica a randurilor, nimic de-a face cu DROP; (d) DELETE este o comanda DML care sterge RANDURI dintr-o tabela, dar pastreaza structura (definitia) tabelei - deci nu "sterge tabela".
+
+##### ÎNTREBAREA 2 #####
+CATEGORIE: Baze de date (teorie)
+ENUNT:
+Fie doua relatii R1 si R2. Operatia definita pe cele doua relatii, R1 si R2, care consta din construirea unei noi relatii R3, prin concatenarea unor tupluri din R1 cu tupluri din R2, pe baza unei conditii specificate explicit in cadrul operatiei, poarta denumirea de:
+
+VARIANTE:
+a) reuniune
+b) intersectie
+c) jonctiune
+d) produs cartezian
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Jonctiunea (join) este operatorul din algebra relationala care combina tupluri din R1 cu tupluri din R2 pe baza unei CONDITII de jonctiune specificate explicit (theta-join), rezultand tupluri concatenate care satisfac conditia. Elementul cheie din enunt este "pe baza unei conditii specificate explicit" - acesta distinge jonctiunea de produsul cartezian. De ce sunt gresite celelalte: (a) reuniunea combina multimile de tupluri (R1 UNION R2), presupune relatii compatibile, nu concateneaza atribute; (b) intersectia returneaza tuplurile comune ambelor relatii, nu concateneaza; (d) produsul cartezian concateneaza FIECARE tuplu din R1 cu FIECARE tuplu din R2 fara nicio conditie - lipsa conditiei il deosebeste de jonctiune.
+
+##### ÎNTREBAREA 3 #####
+CATEGORIE: C/C++
+ENUNT:
+Fie secventa de cod C urmatoare:
+#include <stdio.h>
+int f1(int *a)
+{
+   int n=sizeof (a)/sizeof (*a),s=0;
+   for(int i=0;i<n;i++){s+=a[i];}
+   return s;
+}
+int f2(int a[])
+{
+   int n=sizeof (a)/sizeof (*a),s=0;
+   for(int i=0;i<n;i++){s+=a[i];}
+   return s;
+}
+int f3(int a[],int n)
+{
+   int s=0;
+   for(int i=0;i<n;i++){s+=a[i];}
+   return s;
+}
+
+int main()
+{
+   int a[3] = { 8, 4, 5 };
+   int n = sizeof (a)/sizeof (*a);
+   ...
+   return 0;
+}
+Care dintre urmatoarele apeluri ale functiilor f1, f2 si f3 vor intoarce corect suma elementelor vectorului a?
+
+VARIANTE:
+a) f1(a) si f2(a)
+b) f3(a,n)
+c) f1(a), f2(a) si f3(a,n)
+d) f1(a)
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: In C, cand un vector este transmis ca argument unei functii, el "decade" (array decay) intr-un pointer catre primul element. In interiorul functiilor f1 (parametru "int *a") si f2 (parametru "int a[]", identic cu int *a), operatorul sizeof(a) NU da dimensiunea vectorului original, ci dimensiunea unui pointer (tipic 8 octeti pe sisteme pe 64 de biti), iar sizeof(*a) = sizeof(int) = 4. Astfel n = 8/4 = 2, deci f1 si f2 vor aduna gresit doar primele 2 elemente (8+4=12), nu toate cele 3. Doar f3 primeste explicit dimensiunea n ca parametru separat (n=3 calculat corect in main, unde "a" este inca vectorul real) si aduna toate elementele (8+4+5=17). De aceea singurul apel corect este f3(a,n). Celelalte variante includ f1/f2 care sunt afectate de problema sizeof pe pointer.
+
+##### ÎNTREBAREA 4 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), data_angajare DATE, salariul NUMBER(10,2)) cu cel putin 100 de randuri (inregistrari) si blocul PL/SQL:
+SET SERVEROUTPUT ON
+DECLARE
+CURSOR cursor1 IS SELECT nume, salariul FROM angajati;
+vnume angajati.nume%TYPE;
+vsalariul angajati.salariul%TYPE;
+BEGIN
+OPEN cursor1;
+WHILE cursor1%NOTFOUND LOOP
+FETCH cursor1 INTO vnume, vsalariul;
+DBMS_OUTPUT.PUT_LINE('Angajatul '||vnume|| 'are salariul '||vsalariul);
+END LOOP;
+END;
+/
+Care afirmatie este corecta?
+
+VARIANTE:
+a) blocul va afisa numele tuturor angajatilor din tabela ANGAJATI
+b) blocul se executa, dar nu afiseaza nimic
+c) blocul va afisa numele primului angajat din tabela
+d) blocul contine o eroare deoarece nu este corect utilizata conditia cursor1%NOTFOUND
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Problema este in conditia buclei WHILE. Imediat dupa OPEN cursor1, inainte de primul FETCH, atributul cursor1%NOTFOUND are valoarea NULL (nu TRUE si nu FALSE). O bucla "WHILE conditie LOOP" executa corpul doar cand conditia este TRUE; NULL este tratat ca non-TRUE, deci corpul buclei nu se executa niciodata, nu se face nici macar un FETCH, si nu se afiseaza nimic. Blocul este sintactic valid si ruleaza fara eroare - doar ca nu produce output. De ce sunt gresite celelalte: (a) si (c) presupun ca s-ar afisa ceva, dar bucla nici nu intra; corect ar fi fost "WHILE cursor1%FOUND" combinat cu FETCH inaintea testului, sau folosirea lui %NOTFOUND ca conditie de EXIT dupa FETCH; (d) nu este o "eroare" - blocul se compileaza si ruleaza; este o eroare de LOGICA, nu una care sa opreasca executia, deci afirmatia "contine o eroare" este falsa.
+
+##### ÎNTREBAREA 5 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), comision NUMBER(4,2)).
+Se considera blocul PL/SQL:
+SET SERVEROUTPUT ON
+DECLARE
+v_venit NUMBER;
+BEGIN
+SELECT SUM(salariul*(1+NVL(comision,0))) INTO v_venit FROM ANGAJATI WHERE
+id_departament=50;
+DBMS_OUTPUT.PUT_LINE(v_venit);
+END;
+/
+Care afirmatie este corecta?
+
+VARIANTE:
+a) blocul este eronat deoarece lipseste clauza GROUP BY
+b) blocul se va rula cu succes si se va afisa venitul total din departamentul 50 in cazul in care acesta exista si zero in cazul in care departamentul 50 nu exista
+c) in cazul in care departamentul 50 nu exista va apare un mesaj de eroare
+d) blocul se va rula cu succes si se va afisa venitul total din departamentul 50 in cazul in care acesta exista si nu se va afisa nimic in cazul in care departamentul 50 nu exista
+
+RASPUNS_BAREM: d
+RASPUNS_CORECT: d
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Nota: definitia tabelei din enunt nu include coloana id_departament, dar intentia clara a subiectului (si cea in raport cu care se evalueaza baremul) este ca aceasta coloana sa existe; sub aceasta ipoteza raspunsul d este corect. Motivul tehnic: SUM este o functie de grup (agregat). Un SELECT ... INTO cu o functie de agregare returneaza INTOTDEAUNA exact un rand, chiar daca nicio inregistrare nu indeplineste conditia WHERE - in acest caz SUM returneaza NULL (nu 0). Deci nu se declanseaza exceptia NO_DATA_FOUND. Daca departamentul 50 exista, v_venit primeste venitul total; daca nu exista, v_venit devine NULL, iar DBMS_OUTPUT.PUT_LINE(NULL) afiseaza un rand gol, adica practic "nu se afiseaza nimic". De ce sunt gresite celelalte: (a) GROUP BY nu este necesar cand se agrega intreaga selectie intr-o singura valoare; (b) valoarea pentru un departament inexistent este NULL, NU zero - de aceea b este gresit desi este foarte apropiat de d; (c) nu apare eroare, functiile de agregat nu declanseaza NO_DATA_FOUND.
+
+##### ÎNTREBAREA 6 #####
+CATEGORIE: C/C++
+ENUNT:
+Fie functia C definita in felul urmator:
+int f(int a,int b)
+{
+   if (a<b)
+   {
+      return f(a+3,b-1);
+   }
+   else
+   {
+      return a + b;
+   }
+}
+Ce rezultat va intoarce apelul f(1000,2000)?
+
+VARIANTE:
+a) 1500
+b) 3000
+c) 3500
+d) Va genera eroare de executie si va afisa un mesaj de depasire stiva
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: La fiecare apel recursiv, cand a<b, a creste cu 3 si b scade cu 1. Dupa k pasi: a = 1000+3k, b = 2000-k. Recursia continua cat timp a<b, adica 1000+3k < 2000-k => 4k < 1000 => k < 250. La k=250: a = 1000+750 = 1750, b = 2000-250 = 1750, deci a<b este fals (1750 nu este < 1750), se intra pe ramura else si se returneaza a+b = 1750+1750 = 3500. Recursia are exact 250 de nivele, mult sub limita stivei, deci nu apare depasire de stiva. De ce sunt gresite celelalte: (a) 1500 si (b) 3000 sunt valori nefondate; (d) numarul de apeluri (250) este mic, nu provoaca stack overflow.
+
+##### ÎNTREBAREA 7 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), data_angajare DATE, salariul NUMBER(10,2)) cu cel putin 100 de randuri (inregistrari) si urmatoarea secventa de comenzi:
+CREATE OR REPLACE FUNCTION f_emp_vechime
+(p_data_angajare IN angajati.data_angajare%type)
+return NUMBER
+IS
+BEGIN
+RETURN to_number(round((sysdate-p_data_angajare)/365,0));
+END f_emp_vechime;
+/
+SELECT id_angajat, nume, prenume, f_emp_vechime(data_angajare)
+FROM angajati
+WHERE f_emp_vechime(data_angajare)>10;
+Care afirmatie este corecta?
+
+VARIANTE:
+a) instructiunea SELECT afiseaza angajatii cu vechimea mai mare de 10 ani
+b) instructiunea SELECT afiseaza angajatii cu vechimea mai mare de 10 zile
+c) functia f_emp_vechime returneaza numarul de zile dintre data curenta si data primita ca parametru
+d) se va genera o eroare deoarece functia f_emp_vechime nu poate fi utilizata in comanda SELECT
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: In Oracle, diferenta a doua date (sysdate - p_data_angajare) da numarul de ZILE. Impartind la 365 se obtine numarul de ANI, iar ROUND(...,0) il rotunjeste la un intreg. Deci functia returneaza vechimea aproximativa in ANI. Conditia WHERE f_emp_vechime(data_angajare)>10 selecteaza angajatii cu vechimea mai mare de 10 ani. De ce sunt gresite celelalte: (b) "10 zile" este gresit pentru ca s-a impartit la 365 (ani), nu zile; (c) functia returneaza ani (dupa impartirea la 365), nu zile; (d) functiile PL/SQL definite de utilizator care returneaza tipuri scalare pot fi apelate perfect in clauza SELECT si WHERE, nu genereaza eroare.
+
+##### ÎNTREBAREA 8 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce se va intampla la rularea urmatorului program C?
+#include <stdio.h>
+void f(int i);
+int main()
+{
+   f(1);
+}
+void f(int i)
+{
+   if (i > 10)
+      return ;
+   printf("%d ", i);
+   return f((i+=3, --i));
+}
+
+VARIANTE:
+a) Se va afisa: 1 4 7 10
+b) Programul va rula fara sa afiseze nimic
+c) Va fi generata o eroare de depasire stiva
+d) Se va afisa: 1 3 5 7 9
+
+RASPUNS_BAREM: d
+RASPUNS_CORECT: d
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Cheia este operatorul virgula din apel: (i+=3, --i). Se evalueaza intai i+=3 (efect lateral), apoi --i, iar valoarea expresiei virgula este ultima subexpresie (--i). Deci per apel, i creste net cu 2 (+3 apoi -1). Trace: f(1) -> i=1 nu >10, afiseaza "1", apoi i+=3 => 4, --i => 3, apel f(3); f(3) afiseaza "3", devine 6 apoi 5, apel f(5); afiseaza "5" -> 7; afiseaza "7" -> 9; afiseaza "9" -> 11; f(11): 11>10 => return. Se afiseaza: 1 3 5 7 9. De ce sunt gresite celelalte: (a) "1 4 7 10" ar rezulta daca s-ar aduna cate 3 fara --i; (b) programul chiar afiseaza; (c) recursia are doar 6 nivele, fara depasire de stiva.
+
+##### ÎNTREBAREA 9 #####
+CATEGORIE: SQL
+ENUNT:
+Sa se precizeze care dintre interogarile SQL-Oracle de mai jos afiseaza urmatoarea zi de duminica fata de data curenta?
+
+VARIANTE:
+a) SELECT sysdate('SUNDAY') from dual;
+b) SELECT next_day('SUNDAY') from sysdate;
+c) SELECT last_day(sysdate, 'SUNDAY') from dual;
+d) SELECT next_day(sysdate, 'SUNDAY') from dual;
+
+RASPUNS_BAREM: d
+RASPUNS_CORECT: d
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia Oracle NEXT_DAY(data, 'zi') returneaza data primei aparitii a zilei specificate (de ex. 'SUNDAY') dupa data data. Sintaxa corecta necesita doua argumente: data de referinta (sysdate) si numele zilei, iar sursa este tabela DUAL. Deci NEXT_DAY(sysdate, 'SUNDAY') FROM dual este corect. De ce sunt gresite celelalte: (a) SYSDATE nu accepta argumente si nu are aceasta semantica; (b) sintaxa inversa - "from sysdate" nu este valida (sysdate nu e tabela) si NEXT_DAY primeste doar un argument; (c) LAST_DAY returneaza ultima zi a LUNII pentru o data si accepta un singur argument, nu are legatura cu numele zilei si sintaxa cu al doilea argument este invalida.
+
+##### ÎNTREBAREA 10 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa urmatorul program C?
+#include "stdio.h"
+int main()
+{
+   int i = 3;
+   goto LOOP;
+   i++;
+   for (i = 0; i < 10; i+=2)
+   {
+      printf("%d", i);
+   LOOP:
+      continue;
+      printf("%d", i++);
+   }
+   return 0;
+}
+
+VARIANTE:
+a) Nu va afisa nimic
+b) 356789
+c) 579
+d) 3579
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Instructiunea "goto LOOP" sare direct la eticheta LOOP aflata IN interiorul buclei for, ocolind atat "i++" cat si initializarea "i=0" din for (partea de init a for-ului nu se mai executa). In momentul saltului i=3. La eticheta LOOP se executa "continue", care trece la pasul de incrementare al for-ului: i+=2 => i=5, apoi se verifica i<10 (adevarat) si se intra in corp de la inceput: printf("%d", i) afiseaza 5. Se ajunge din nou la LOOP: continue => i+=2 => 7, afiseaza 7; => 9, afiseaza 9; => 11, i<10 fals, iese. Se afiseaza "579". Observatie: al doilea printf (dupa continue) este cod mort, nu se executa niciodata. De ce sunt gresite celelalte: (a) chiar afiseaza; (b) valori inexistente; (d) "3579" ar include un 3 initial, dar valoarea 3 nu se afiseaza vreodata pentru ca primul continue muta direct la i=5 inainte de orice printf.
+
+##### ÎNTREBAREA 11 #####
+CATEGORIE: C/C++
+ENUNT:
+Care va fi valoarea afisata de urmatorul program C?
+#include <stdio.h>
+int main()
+{
+   static int s=1;
+   for(int i=0;i<5;i++)
+   {
+      static int s=0;
+      s+=i;
+   }
+   printf(" %d", s);
+   return 0;
+}
+
+VARIANTE:
+a) O valoare intreaga nedefinita
+b) 10
+c) 11
+d) 1
+
+RASPUNS_BAREM: d
+RASPUNS_CORECT: d
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Exista DOUA variabile distincte numite s. Cea exterioara (static int s=1) este declarata la nivelul functiei main. Cea interioara (static int s=0) este declarata in blocul buclei for si o "umbreste" (shadowing) pe cea exterioara doar in interiorul acelui bloc. Instructiunea s+=i din bucla modifica DOAR s-ul interior (ajunge la 0+0+1+2+3+4=10), fara sa atinga s-ul exterior. Instructiunea printf este in afara buclei, unde s-ul interior nu mai este vizibil, deci afiseaza s-ul exterior, care a ramas 1. Rezultat: 1. De ce sunt gresite celelalte: (a) variabilele static sunt initializate determinist, nu nedefinit; (b) 10 este valoarea s-ului interior, nu a celui afisat; (c) 11 nu corespunde niciunui calcul.
+
+##### ÎNTREBAREA 12 #####
+CATEGORIE: C/C++
+ENUNT:
+Fie a, un masiv bidimensional de tip double cu n linii si n coloane, n intreg par.
+Care instructiune dintre cele specificate in raspunsurile de mai jos poate inlocui punctele de suspensie (...) din secventa de program C urmatoare, astfel incat executarea acesteia sa permita memorarea in variabila s a valorii sumei elementelor aflate pe diagonalele matricei?
+int s=0;
+for(int i=0;i<n;i++){
+          ...
+}
+
+VARIANTE:
+a) s+=a[n-i-1][i]+a[i][n-i-1];
+b) s+=a[i][i]+a[i][n-i-1];
+c) s+=a[i][i]+a[n-i-1][n-i-1];
+d) s+=a[i][n-i-1]+a[n-i-1][i];
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Pentru o matrice patratica, diagonala PRINCIPALA are elementele a[i][i] (linie = coloana), iar diagonala SECUNDARA are elementele a[i][n-i-1] (linie + coloana = n-1). Suma ambelor diagonale se obtine adunand, pentru fiecare i, a[i][i] (principala) + a[i][n-i-1] (secundara), exact ca in varianta b. Deoarece n este par, cele doua diagonale nu au niciun element comun, deci nu apare dubla numarare. De ce sunt gresite celelalte: (a) a[n-i-1][i] si a[i][n-i-1] sunt AMANDOUA elemente ale diagonalei secundare (ambele au suma indicilor = n-1), deci se aduna diagonala secundara de doua ori si se ignora complet principala; (d) la fel, a[i][n-i-1] si a[n-i-1][i] sunt tot pe diagonala secundara - diagonala secundara numarata de doua ori; (c) a[i][i] si a[n-i-1][n-i-1] sunt ambele pe diagonala PRINCIPALA (indici egali), deci principala numarata de doua ori si secundara ignorata.
+
+##### ÎNTREBAREA 13 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Care dintre urmatoarele afirmatii despre cursorii expliciti in PL/SQL este adevarata?
+
+VARIANTE:
+a) la deschidere se utilizeaza intotdeauna clauza NOTOPEN
+b) stocheaza informatii cu privire la procesarea instructiunilor LCT (limbajul de control al tranzactiilor)
+c) pot fi declarati ca variabile si constante
+d) pot avea parametri
+
+RASPUNS_BAREM: d
+RASPUNS_CORECT: d
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Cursorii expliciti in PL/SQL pot fi definiti cu parametri, de exemplu: CURSOR c (p_dept NUMBER) IS SELECT ... WHERE id_departament = p_dept; iar la deschidere se transmit valorile: OPEN c(50). Aceasta permite reutilizarea aceluiasi cursor cu valori diferite. De ce sunt gresite celelalte: (a) nu exista o clauza "NOTOPEN" la deschidere; deschiderea se face cu OPEN, iar %ISOPEN este un atribut de stare (nu o clauza obligatorie); (b) cursorii stocheaza informatii despre procesarea instructiunilor SELECT/DML (numar de randuri, stare), NU despre instructiunile LCT (COMMIT/ROLLBACK/SAVEPOINT); (c) cursorii sunt structuri de control care pointeaza spre o zona de context a unei interogari, nu se declara ca "variabile si constante" (desi exista variabile de tip cursor/REF CURSOR, afirmatia generala pentru cursorii expliciti clasici este falsa, iar parametrizarea de la d este trasatura clar corecta).
+
+##### ÎNTREBAREA 14 #####
+CATEGORIE: C/C++
+ENUNT:
+Care va fi outputul generat la executia urmatorului program C?
+#include<stdio.h>
+int main()
+{
+   int a[5] = { 5 };
+   for (int i = 0; i < 5; i++){
+      if ((char)a[i] != '5'){
+         printf("FAIL ");
+      } else {
+         printf("%d ",a[i]);
+      }
+   }
+   return 0;
+}
+
+VARIANTE:
+a) FAIL FAIL FAIL FAIL 5
+b) 5 FAIL FAIL FAIL FAIL
+c) 5 5 5 5 5
+d) FAIL FAIL FAIL FAIL FAIL
+
+RASPUNS_BAREM: d
+RASPUNS_CORECT: d
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: La initializarea "int a[5] = {5}", doar a[0] primeste valoarea 5, iar restul (a[1]..a[4]) sunt initializate automat cu 0. Capcana este comparatia (char)a[i] != '5'. Constanta caracter '5' NU are valoarea numerica 5, ci codul ASCII al cifrei '5', adica 53. Astfel: pentru a[0]=5, (char)5 = 5, iar 5 != 53 este ADEVARAT => se afiseaza "FAIL"; pentru a[1..4]=0, (char)0 = 0, 0 != 53 adevarat => "FAIL". Deci toate cele 5 iteratii afiseaza "FAIL", rezultand "FAIL FAIL FAIL FAIL FAIL". De ce sunt gresite celelalte: (a), (b), (c) presupun ca 5 s-ar potrivi cu '5', dar confuzia intre valoarea numerica 5 si codul ASCII 53 face ca ramura else sa nu fie atinsa niciodata.
+
+##### ÎNTREBAREA 15 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce se va afisa in urma executarii urmatorului program C?
+#include <stdio.h>
+#include <string.h>
+void f(char str1[], char str2[])
+{
+   if (*str1++ = *str2++) { f(str1, str2); }
+}
+int main()
+{
+   int k='a'-'A';
+   char a[100];
+   f(a,"Examen Master 2022");
+   for(int i=0;i<(int)strlen(a);i++)
+      a[i]=a[i]>='a'&&a[i]<='z'?a[i]-k:a[i];
+   printf("%s",a);
+   return 0;
+}
+
+VARIANTE:
+a) EXAMEN MASTER 2022
+b) EXAMENMASTER
+c) XAMEN ASTER 2022
+d) Va genera o eroare deoarece functia f utilizeaza incorect doua masive de caractere care nu sunt lvalues
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia f copiaza recursiv sirul str2 in str1, caracter cu caracter. Expresia "*str1++ = *str2++" este o ATRIBUIRE (nu comparatie), care copiaza caracterul curent si returneaza valoarea copiata; cat timp aceasta este diferita de 0 (caracter nenul) se continua recursiv. Cand se ajunge la terminatorul '\0', acesta este mai intai COPIAT in str1 (deci sirul devine corect terminat), iar valoarea 0 face conditia falsa si opreste recursia. Astfel a = "Examen Master 2022". Apoi k = 'a'-'A' = 32. Bucla for transforma fiecare litera mica in litera mare (a[i]-32), lasand neschimbate literele mari, spatiile si cifrele. Rezultatul: "EXAMEN MASTER 2022". De ce sunt gresite celelalte: (b) elimina spatiile si cifrele - fals, spatiile si cifrele raman; (c) pierde prima litera din fiecare cuvant - nu se intampla, copierea incepe corect de la primul caracter; (d) parametrii str1++/str2++ sunt pointeri locali (copii ale argumentelor), sunt lvalues valide, deci nu apare nicio eroare.
+
+##### ÎNTREBAREA 16 #####
+CATEGORIE: SQL
+ENUNT:
+Se considera tabela PRODUSE (id_produs NUMBER(6), denumire_produs VARCHAR2(150), descriere VARCHAR2(150), categorie VARCHAR2(50), pret_lista NUMBER(4)) si interogarea:
+SELECT denumire_produs, descriere
+FROM produse WHERE categorie IN
+(SELECT categorie FROM produse
+WHERE LOWER(denumire_produs) LIKE '%laptop%')
+AND pret_lista >100;
+Alegeti varianta corecta:
+
+VARIANTE:
+a) afiseaza produsele care au pret_lista mai mare de 100 si se afla in aceleasi categorii cu produsele care contin in denumire cuvantul „laptop”
+b) afiseaza doar produsele care contin in denumire cuvantul „laptop”
+c) afiseaza o eroare deoarce subcererea returneaza mai multe valori
+d) afiseaza o eroare deoarece operatorul LIKE nu este corect utilizat
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Subcererea returneaza multimea de CATEGORII in care exista cel putin un produs a carui denumire (adusa la litere mici cu LOWER) contine "laptop". Interogarea exterioara selecteaza produsele a caror categorie se afla in acea multime (operatorul IN) SI care au pret_lista > 100. Rezultatul: produse din aceleasi categorii cu produsele "laptop", filtrate suplimentar de pret > 100. De ce sunt gresite celelalte: (b) nu se afiseaza doar laptopurile, ci toate produsele din categoriile respective; (c) operatorul IN accepta explicit mai multe valori returnate de subcerere - nu apare eroare (eroarea ORA-01427 apare doar cand o subcerere care ar trebui sa dea o singura valoare, ex. cu "=", da mai multe); (d) LIKE '%laptop%' cu LOWER este perfect corect sintactic.
+
+##### ÎNTREBAREA 17 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa urmatorul program C?
+
+#include<stdio.h>
+int main()
+{
+  printf("%d", 3<<2 );
+  return 0;
+}
+
+VARIANTE:
+a) 9
+b) 2
+c) 12
+d) 6
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Operatorul << este deplasarea (shift) la stanga pe biti. Deplasarea cu k pozitii la stanga echivaleaza cu inmultirea cu 2^k. Astfel 3 << 2 = 3 * 2^2 = 3 * 4 = 12. In binar: 3 = 0011, deplasat cu 2 pozitii => 1100 = 12. De ce sunt gresite celelalte: (a) 9 ar fi 3*3 sau 3^2, nu shift; (b) 2 ar corespunde unei deplasari la dreapta; (d) 6 ar fi 3<<1 (o singura deplasare).
+
+##### ÎNTREBAREA 18 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), id_departament NUMBER(3)) cu cel putin 200 angajati care lucreaza in peste 10 departamente si blocul PL/SQL:
+SET SERVEROUTPUT ON
+DECLARE
+CURSOR cursor2 IS SELECT id_departament, COUNT(salariul) nr_angajati, AVG (salariul) sal_mediu FROM Angajati GROUP BY id_departament ORDER BY 2 DESC;
+r2 cursor2%rowtype;
+BEGIN
+FOR r2 IN cursor2 LOOP
+DBMS_OUTPUT.PUT_LINE('In departamentul '||r2.id_departament|| ' lucreaza '||r2.nr_angajati|| ' cu salariul mediu '||r2.sal_mediu);
+EXIT WHEN cursor2%ROWCOUNT>3;
+END LOOP;
+END;
+/
+Care afirmatie este corecta?
+
+VARIANTE:
+a) blocul contine o eroare deoarece nu este corect utilizata conditia cursor2%ROWCOUNT
+b) blocul va afisa primele trei departamente cu cei mai multi angajati
+c) blocul va afisa toate departamentele
+d) blocul va afisa primele patru departamente cu cei mai multi angajati
+
+RASPUNS_BAREM: d
+RASPUNS_CORECT: d
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Cursorul sorteaza departamentele descrescator dupa numarul de angajati (ORDER BY 2 DESC, coloana 2 fiind nr_angajati). In bucla FOR se AFISEAZA mai intai randul (PUT_LINE) si abia APOI se testeaza EXIT WHEN cursor2%ROWCOUNT>3. Trace: rand 1 afisat (%ROWCOUNT=1, 1>3 fals, continua); rand 2 (2>3 fals); rand 3 (3>3 fals); rand 4 afisat (%ROWCOUNT=4, 4>3 adevarat => EXIT). Deoarece afisarea precede testul, se afiseaza exact 4 departamente inainte de iesire. Deci primele PATRU departamente cu cei mai multi angajati. De ce sunt gresite celelalte: (a) %ROWCOUNT este folosit corect, nu produce eroare; (b) "trei" ar fi corect daca EXIT-ul s-ar face inainte de afisare sau conditia ar fi >=3, dar aici afisarea este inaintea testului deci se ajunge la 4; (c) nu se afiseaza toate, se iese devreme prin EXIT.
+
+##### ÎNTREBAREA 19 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela RAND_COMENZI (id_comanda NUMBER(6), id_produs NUMBER(8), cantitate NUMBER(7), pret NUMBER(7,2)) avand 100 de randuri precum si interogarea SQL Oracle:
+SELECT id_comanda, ROUND(AVG(cantitate*pret)) VAL_MEDIE
+FROM rand_comenzi
+GROUP BY id_comanda
+HAVING COUNT(id_produs) >=3;
+Care din urmatoarele afirmatii este adevarata?
+
+VARIANTE:
+a) interogarea contine o eroare deoarece clauza HAVING este incorect utilizata
+b) se afiseaza valoarea medie a produselor daca acestea apar pe cel putin trei comenzi
+c) se afiseaza valoarea medie a comenzilor daca acestea contin cel putin trei produse
+d) interogarea contine o eroare deoarece functia ROUND este incorect utilizata
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Interogarea grupeaza randurile pe id_comanda (deci per comanda). AVG(cantitate*pret) calculeaza valoarea medie a liniilor comenzii, rotunjita cu ROUND. Clauza HAVING COUNT(id_produs) >= 3 pastreaza doar grupurile (comenzile) care au cel putin 3 linii de produs. Astfel se afiseaza valoarea medie a fiecarei comenzi care contine cel putin trei produse. De ce sunt gresite celelalte: (a) HAVING este folosit corect - filtreaza grupurile dupa o functie de agregare, exact scopul sau; (b) gruparea este pe comanda, nu pe produs; enuntul din b inverseaza rolurile (produse care apar pe comenzi) - gresit; (d) ROUND aplicata pe AVG(...) este corecta sintactic.
+
+##### ÎNTREBAREA 20 #####
+CATEGORIE: C/C++
+ENUNT:
+Care va fi outputul generat de urmatorul program C?
+#include <stdio.h>
+int f()
+{
+  static int v = 10;
+  return v--;
+}
+
+int main()
+{
+  for(f(); f(); f())
+   printf("%d ", f());
+  return 0;
+}
+
+VARIANTE:
+a) Va rula la infinit si va genera o eroare de executie pentru depasire stiva
+b) 8 5 2
+c) Va genera eroare de compilare deoarece bucla for este incorecta sintactic
+d) 8 6 4 2
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: v este static, deci pastreaza valoarea intre apeluri, pornind de la 10. f() returneaza v-- (valoarea curenta, apoi decrementeaza). Ordinea de executie a for-ului este: init o data, apoi (conditie -> corp -> incrementare) repetat. Trace: init f() -> returneaza 10 (v devine 9). Conditie f() -> 9 (adevarat, v=8). Corp printf f() -> afiseaza 8 (v=7). Increment f() -> 7 (v=6). Conditie f() -> 6 (adevarat, v=5). Corp printf f() -> afiseaza 5 (v=4). Increment f() -> 4 (v=3). Conditie f() -> 3 (adevarat, v=2). Corp printf f() -> afiseaza 2 (v=1). Increment f() -> 1 (v=0). Conditie f() -> 0 (fals) => iesire. Se afiseaza: "8 5 2". De ce sunt gresite celelalte: (a) v scade catre 0 si bucla se opreste, nu e infinita; (c) sintaxa for(f(); f(); f()) este perfect valida; (d) "8 6 4 2" ignora consumul suplimentar de apeluri f() din conditie si increment - fiecare iteratie consuma 3 apeluri, nu 2.
+
+##### ÎNTREBAREA 21 #####
+CATEGORIE: Baze de date (teorie)
+ENUNT:
+In modelul relational pentru baze de date:
+
+VARIANTE:
+a) cheia primara nu trebuie sa fie unica
+b) proiectia, negatia si produsul cartezian sunt operatori din algebra relationala
+c) sunt utilizati operatori din algebra relationala
+d) selectia, conjunctia si jonctiunea sunt operatori din calculul relational
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Modelul relational se bazeaza pe doua formalisme echivalente de interogare: algebra relationala (operatori: selectie, proiectie, reuniune, diferenta, produs cartezian, jonctiune etc.) si calculul relational. Afirmatia c ("sunt utilizati operatori din algebra relationala") este general adevarata si corecta. De ce sunt gresite celelalte: (a) cheia primara TREBUIE sa fie unica (si nenula) - identifica in mod unic fiecare tuplu; (b) "negatia" nu este un operator standard al algebrei relationale (operatorii clasici sunt selectia, proiectia, reuniunea, diferenta, produsul cartezian, jonctiunea, redenumirea) - includerea negatiei face afirmatia falsa; (d) "selectia, conjunctia si jonctiunea" nu sunt operatori din calculul relational - selectia si jonctiunea apartin ALGEBREI relationale, iar "conjunctia" nu este un operator relational de sine statator - deci afirmatia amesteca gresit conceptele.
+
+##### ÎNTREBAREA 22 #####
+CATEGORIE: C/C++
+ENUNT:
+Care va fi numarul de afisari ale cuvantului Examen la rularea programului C de mai jos?
+#include <stdio.h>
+int main()
+{
+   unsigned int i = 10;
+   for (; i; i >>= 1)
+      printf("Examen\n");
+   return 0;
+}
+
+VARIANTE:
+a) 0
+b) 4
+c) 10
+d) 3
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Bucla se executa cat timp i este nenul, iar la fiecare pas i se deplaseaza la dreapta cu o pozitie (i >>= 1, echivalent cu impartirea intreaga la 2). Pornind de la i=10: iteratia 1: i=10 (afiseaza), apoi i=5; iteratia 2: i=5 (afiseaza), apoi i=2; iteratia 3: i=2 (afiseaza), apoi i=1; iteratia 4: i=1 (afiseaza), apoi i=0; conditia i devine falsa => iesire. Numarul de afisari = 4. In binar 10 = 1010 are 4 biti pana la anularea completa prin deplasari. De ce sunt gresite celelalte: (a) i pornind nenul face bucla sa se execute cel putin o data; (c) 10 ar fi cazul unei decrementari i--, nu al unei deplasari; (d) 3 subestimeaza cu o iteratie.
+
+##### ÎNTREBAREA 23 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), id_departament NUMBER) avand 200 randuri (inregistrari).
+Precizati ce rezultat va furniza interogarea urmatoare:
+SELECT * FROM angajati a WHERE salariul > (SELECT MAX(salariul) FROM angajati WHERE id_departament=a.id_departament)
+ORDER BY salariul;
+
+VARIANTE:
+a) afiseaza angajatii care au salariul cel mai mare in departamentul in care lucreaza
+b) se executa, dar nu afiseaza nimic
+c) afiseaza toti angajatii indiferent de salariu deoarece conditia din subcerere este adevarata intotdeauna
+d) va apare o eroare deoarece lipseste clauza GROUP BY in subcerere
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Este o subcerere CORELATA: pentru fiecare angajat "a", subcererea calculeaza salariul MAXIM din PROPRIUL sau departament (id_departament = a.id_departament). Conditia cere ca salariul angajatului sa fie STRICT MAI MARE decat maximul salariilor din departamentul sau. Insa niciun angajat nu poate avea salariul strict mai mare decat maximul din departamentul din care el insusi face parte (el este inclus in acel MAX). Prin urmare conditia este imposibil de satisfacut si nu se returneaza niciun rand. De ce sunt gresite celelalte: (a) pentru "cel mai mare" ar trebui ">=" sau "= MAX", nu ">" strict - cu ">" nu apare nimeni; (c) conditia nu este mereu adevarata, ci mereu falsa; (d) subcererea foloseste o functie de agregat MAX fara alte coloane in SELECT, deci nu necesita GROUP BY - nu apare eroare de sintaxa.
+
+##### ÎNTREBAREA 24 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa urmatorul program C?
+#include<stdio.h>
+int main()
+{
+   char p[] = "ropot";
+   char t;
+   int l = sizeof (p)/sizeof (p[0])-1;
+   for (int i= 0, j = l-1; i < j; i++)
+   {
+       t = p[i];
+       p[i] = p[j];
+       p[j] = t;
+     }
+     printf("%s", p);
+     return 0;
+}
+
+VARIANTE:
+a) ropot
+b) Nu va afisa nimic
+c) tropo
+d) topor
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: sizeof(p) = 6 (5 litere + '\0'), deci l = 6/1 - 1 = 5. In for, j este initializat cu l-1 = 4 SI NU SE MODIFICA in bucla (se incrementeaza doar i). Astfel se schimba mereu p[i] cu p[4] (ultima pozitie), pentru i = 0,1,2,3 (cat timp i < 4). Trace pornind de la p = [r,o,p,o,t]: i=0 swap(0,4) -> [t,o,p,o,r]; i=1 swap(1,4) -> [t,r,p,o,o]; i=2 swap(2,4) -> [t,r,o,o,p]; i=3 swap(3,4) -> [t,r,o,p,o]; i=4: 4<4 fals, stop. Sirul rezultat este "tropo". De ce sunt gresite celelalte: (a) "ropot" ar fi sirul neschimbat; (b) chiar afiseaza; (d) "topor" ar fi rezultatul inversarii CORECTE a sirului (daca si j ar scadea, j--), dar aici j ramane fix la 4, deci nu se obtine oglinditul complet.
+
+##### ÎNTREBAREA 25 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Care din urmatoarele functii SQL nu poate fi folosita in instructiuni de atribuire specifice PL/SQL?
+
+VARIANTE:
+a) AVG
+b) TO_DATE
+c) INSTR
+d) NVL
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: AVG este o functie de GRUP (de agregare), care opereaza pe multimi de randuri si are sens doar in contextul unei instructiuni SQL (SELECT cu grupare). Ea NU poate fi apelata direct intr-o instructiune de atribuire procedurala PL/SQL de forma "variabila := AVG(...)" - functiile de grup nu sunt permise in expresiile procedurale, ci doar in instructiuni SQL. Pentru a folosi AVG trebuie inclusa intr-un SELECT ... INTO. De ce sunt gresite celelalte: (b) TO_DATE, (c) INSTR si (d) NVL sunt functii cu un singur rand (single-row), care pot fi apelate direct in atribuiri PL/SQL, ex. v := NVL(x, 0); v := INSTR('abc','b'); v := TO_DATE('01-01-2022','DD-MM-YYYY').
+
+##### ÎNTREBAREA 26 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa urmatorul program C?
+
+#include <stdio.h>
+int g(int n,int v) {
+   if (n) {
+      return g(n / 10,v) * 10 + n % 10;
+   }
+   else {
+      return v==n;
+   }
+}
+int main()
+{
+   int n = 6779;
+   printf("%d",g(n,n));
+}
+
+VARIANTE:
+a) 9776
+b) 6779
+c) 1
+d) 0
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia g reconstruieste numarul n din cifrele sale. Recurenta "return g(n/10, v) * 10 + n % 10" construieste numarul cifra cu cifra in ORDINEA ORIGINALA (nu inversata), deoarece cifrele mai semnificative sunt procesate primele in adancimea recursiei si inmultite corespunzator cu puteri ale lui 10. Cazul de baza (n==0) returneaza v==n, adica v==0; cum v=6779 (nenul), rezulta 0, care devine "cifra" de start si nu afecteaza rezultatul (0*10 + prima cifra). Trace: g(0,...)=0; g(6,...)=0*10+6=6; g(67,...)=6*10+7=67; g(677,...)=67*10+7=677; g(6779,...)=677*10+9=6779. Rezultat: 6779. De ce sunt gresite celelalte: (a) 9776 ar fi valoarea INVERSATA - dar recurenta aceasta pastreaza ordinea, nu o inverseaza; (c) 1 ar rezulta daca v==n ar fi adevarat in baza, dar v=6779 != 0; (d) 0 este doar valoarea din cazul de baza, nu rezultatul final.
+
+##### ÎNTREBAREA 27 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce valoare contine variabila C de tip double a, in urma atribuirii: a = 9 * 3 / 2 * 2 / 3?
+
+VARIANTE:
+a) 9
+b) 8
+c) 0
+d) Atribuirea va genera o eroare deoarece nu este permisa o expresie aritmetica formata doar din constante
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Toti operanzii (9, 3, 2, 2, 3) sunt constante INTREGI, deci expresia se evalueaza in aritmetica INTREAGA (cu trunchiere la impartire), indiferent ca rezultatul se atribuie unei variabile double. Operatorii * si / au aceeasi prioritate si se evalueaza de la stanga la dreapta: 9*3 = 27; 27/2 = 13 (impartire intreaga, se pierde 0.5); 13*2 = 26; 26/3 = 8 (impartire intreaga, se pierde restul). Rezultatul intreg 8 este apoi convertit la double, deci a = 8.0. De ce sunt gresite celelalte: (a) 9 ar rezulta doar daca toate impartirile ar fi exacte (aritmetica reala), dar aici sunt intregi; (c) 0 nu corespunde calculului; (d) o expresie formata doar din constante este perfect legala in C (se poate calcula chiar la compilare), nu genereaza eroare.
+
+##### ÎNTREBAREA 28 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3)) avand 200 randuri (inregistrari).
+Alegeti varianta corecta referitoare la urmatoarea comanda SQL:
+UPDATE angajati SET salariul=salariul *1.1
+WHERE EXTRACT(month from data_angajare) = EXTRACT(month from sysdate)
+AND id_departament IN (SELECT id_departament FROM angajati WHERE salariul > (SELECT AVG(salariul) FROM angajati));
+
+VARIANTE:
+a) se majoreaza doar salariile angajatilor care au in prezent salariul mai mare decat salariul mediu
+b) se majoreaza doar salariile persoanelor angajate in luna curenta, indiferent de zi sau an, daca acestea lucreaza in prezent intr-un departament in care toti angajatii au salariul mai mai mare decat salariul mediu
+c) instructiunea este eronata deoarece in tabela nu exista coloana sysdate
+d) se majoreaza salariile persoanelor angajate in luna curenta, indiferent de zi sau an, daca acestea lucreaza in prezent intr-un departament in care exista angajati care au salariul mai mai mare decat salariul mediu
+
+RASPUNS_BAREM: d
+RASPUNS_CORECT: d
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Comanda majoreaza cu 10% salariile angajatilor care indeplinesc DOUA conditii combinate cu AND: (1) EXTRACT(month from data_angajare) = EXTRACT(month from sysdate) - au fost angajati in aceeasi LUNA calendaristica cu luna curenta (se compara doar luna, indiferent de zi sau an); (2) id_departament IN (SELECT id_departament FROM angajati WHERE salariul > (SELECT AVG(salariul) FROM angajati)) - lucreaza intr-un departament care CONTINE cel putin un angajat cu salariul peste media generala. Subcererea returneaza departamentele in care EXISTA (macar un) angajat peste medie. Deci d este corect. De ce sunt gresite celelalte: (a) ignora complet conditia de luna si conditia de departament - descrie doar subcererea interioara, gresit; (b) spune "TOTI angajatii au salariul mai mare decat media", dar subcererea garanteaza doar ca EXISTA cel putin unul (IN + o simpla conditie), nu ca toti - de aceea b este gresit iar d corect; (c) sysdate este o pseudo-coloana/functie Oracle valida, EXTRACT(month from sysdate) este corect, nu apare eroare.
+
+##### ÎNTREBAREA 29 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(20), prenume VARCHAR2(30), salariul NUMBER(10,2), id_departament NUMBER) avand 200 randuri (inregistrari).
+Se considera urmatorul bloc PL/SQL:
+SET SERVEROUTPUT ON
+DECLARE
+CURSOR cursor1 IS SELECT id_angajat, nume FROM angajati ORDER BY salariul DESC;
+vid angajati.id_angajat%TYPE;
+vnume CHAR (20);
+BEGIN
+OPEN cursor1;
+FETCH cursor1 INTO vid,vnume;
+DBMS_OUTPUT.PUT_LINE('Angajatul '||vnume);
+CLOSE cursor1;
+END;
+/
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) afiseaza numele tuturor angajatilor ordonati descrescator in functie de salariu
+b) lucreaza cu un cursor implicit
+c) blocul PL/SQL genereaza o eroare deoarece lipseste structura repetitiva
+d) se afiseaza numele angajatului cu cel mai mare salariu
+
+RASPUNS_BAREM: d
+RASPUNS_CORECT: d
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Cursorul selecteaza angajatii ordonati descrescator dupa salariu (ORDER BY salariul DESC), deci primul rand al cursorului corespunde angajatului cu cel mai mare salariu. Se face un SINGUR FETCH, care aduce exact acest prim rand, iar PUT_LINE afiseaza numele lui. Cursorul este apoi inchis. Rezultatul: se afiseaza numele angajatului cu cel mai mare salariu. De ce sunt gresite celelalte: (a) un singur FETCH aduce doar primul angajat, nu pe toti (nu exista bucla); (b) cursorul este declarat explicit (CURSOR cursor1 IS ...), gestionat manual cu OPEN/FETCH/CLOSE - deci este EXPLICIT, nu implicit; (c) un cursor explicit poate fi folosit cu un singur FETCH fara bucla - nu este obligatorie o structura repetitiva, deci nu apare nicio eroare.
+
+##### ÎNTREBAREA 30 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce se va intampla la executia urmatorului program C?
+#include<stdio.h>
+struct st
+{
+   int x;
+   struct st *next;
+};
+int main()
+{
+   struct st temp;
+   temp.x = 100;
+   temp.next = &temp;
+   printf("%d", temp.next->next->x);
+   return 0;
+}
+
+VARIANTE:
+a) Va fi generata o eroare de compilare deoarece recursivitatea in descrierea unei structuri nu este permisa
+b) Va fi afisata valoarea 100
+c) Va fi afisata valoarea 0
+d) Va fi afisata o valoare intreaga nedefinita
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Structura contine un POINTER catre propriul tip (struct st *next) - aceasta este o structura auto-referentiala, perfect legala in C (baza listelor inlantuite). Nu este recursivitate interzisa, deoarece campul este un pointer, nu o instanta completa a structurii. In cod temp.next = &temp face ca pointerul sa indice spre insasi variabila temp. Astfel: temp.next este &temp, iar temp.next->next este tot &temp (pentru ca (&temp)->next = &temp), deci temp.next->next->x = temp.x = 100. Se afiseaza 100. De ce sunt gresite celelalte: (a) auto-referirea prin pointer este permisa; (c) x a fost initializat la 100, nu 0; (d) valoarea nu este nedefinita - lantul de pointeri revine mereu la temp, al carui x este 100.

@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CSIE3 Test de simulare 3 — Test grilă admitere master</title>
+<meta name="description" content="Test grilă interactiv admitere master CSIE Test de simulare 3 — C/C++, SQL, PL/SQL, baze de date">
+<style>
+:root{
+  --bg:#f5f6fa; --surface:#ffffff; --surface-2:#eef0f6; --border:#dde1ea;
+  --text:#1a2030; --text-dim:#5c6579; --accent:#4a55d6; --accent-ink:#ffffff;
+  --good:#177a4c; --good-bg:#e2f6ec; --good-bd:#a9e3c3;
+  --bad:#a8271f; --bad-bg:#fbeae8; --bad-bd:#f0b8b2;
+  --warn:#8a6100; --warn-bg:#fff3d6; --warn-bd:#f0d998;
+  --code-bg:#eef0f7; --code-text:#2a3040;
+  --radius:14px; --shadow:0 2px 14px rgba(20,25,45,.07);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#10131c; --surface:#171b28; --surface-2:#1e2332; --border:#2a3042;
+    --text:#e8eaf2; --text-dim:#9aa2b8; --accent:#8b93ff; --accent-ink:#0d0f18;
+    --good:#3ddb92; --good-bg:#123326; --good-bd:#1f5c3f;
+    --bad:#ff8a80; --bad-bg:#3a1614; --bad-bd:#6e2a25;
+    --warn:#ffce6b; --warn-bg:#382b0a; --warn-bd:#6b4f14;
+    --code-bg:#12151f; --code-text:#d7dbe8;
+    --shadow:0 2px 18px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="light"]{
+  --bg:#f5f6fa; --surface:#ffffff; --surface-2:#eef0f6; --border:#dde1ea;
+  --text:#1a2030; --text-dim:#5c6579; --accent:#4a55d6; --accent-ink:#ffffff;
+  --good:#177a4c; --good-bg:#e2f6ec; --good-bd:#a9e3c3;
+  --bad:#a8271f; --bad-bg:#fbeae8; --bad-bd:#f0b8b2;
+  --warn:#8a6100; --warn-bg:#fff3d6; --warn-bd:#f0d998;
+  --code-bg:#eef0f7; --code-text:#2a3040;
+}
+:root[data-theme="dark"]{
+  --bg:#10131c; --surface:#171b28; --surface-2:#1e2332; --border:#2a3042;
+  --text:#e8eaf2; --text-dim:#9aa2b8; --accent:#8b93ff; --accent-ink:#0d0f18;
+  --good:#3ddb92; --good-bg:#123326; --good-bd:#1f5c3f;
+  --bad:#ff8a80; --bad-bg:#3a1614; --bad-bd:#6e2a25;
+  --warn:#ffce6b; --warn-bg:#382b0a; --warn-bd:#6b4f14;
+  --code-bg:#12151f; --code-text:#d7dbe8;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.55; min-height:100vh;
+}
+.wrap{max-width:840px;margin:0 auto;padding:20px 16px 64px}
+header.top{
+  display:flex;align-items:center;gap:12px;justify-content:space-between;
+  padding:14px 0;margin-bottom:18px;border-bottom:1px solid var(--border);
+}
+.brand{display:flex;flex-direction:column;gap:2px;min-width:0}
+.brand a{color:var(--text-dim);text-decoration:none;font-size:13px}
+.brand a:hover{color:var(--accent)}
+.brand h1{font-size:19px;margin:0;font-weight:700;letter-spacing:.2px}
+.brand .sub{font-size:12.5px;color:var(--text-dim)}
+.iconbtn{
+  border:1px solid var(--border);background:var(--surface);color:var(--text);
+  width:38px;height:38px;border-radius:10px;cursor:pointer;font-size:16px;
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+}
+.iconbtn:hover{border-color:var(--accent)}
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:22px;margin-bottom:16px;
+}
+h2.section-title{font-size:16px;margin:0 0 12px;color:var(--text)}
+.muted{color:var(--text-dim)}
+.small{font-size:12.5px}
+
+/* setup screen */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 18px}
+.chip{
+  border:1px solid var(--border);background:var(--surface-2);color:var(--text);
+  padding:8px 14px;border-radius:999px;cursor:pointer;font-size:13.5px;user-select:none;
+  display:flex;align-items:center;gap:7px;transition:border-color .15s,background .15s;
+}
+.chip .count{color:var(--text-dim);font-size:12px}
+.chip.active{border-color:var(--accent);background:color-mix(in srgb, var(--accent) 14%, var(--surface-2));}
+.chip.active .count{color:var(--accent)}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border)}
+.toggle-row:last-of-type{border-bottom:none}
+.toggle-row .label{font-size:14px}
+.toggle-row .desc{font-size:12.5px;color:var(--text-dim);margin-top:2px}
+.switch{
+  position:relative;width:44px;height:26px;border-radius:999px;background:var(--surface-2);
+  border:1px solid var(--border);cursor:pointer;flex:0 0 auto;
+}
+.switch::after{
+  content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;
+  background:var(--text-dim);transition:transform .18s ease, background .18s ease;
+}
+.switch.on{background:color-mix(in srgb, var(--accent) 30%, var(--surface-2));border-color:var(--accent)}
+.switch.on::after{transform:translateX(18px);background:var(--accent)}
+.btn{
+  appearance:none;border:none;border-radius:11px;padding:13px 22px;font-size:15px;font-weight:600;
+  cursor:pointer;display:inline-flex;align-items:center;gap:8px;justify-content:center;
+}
+.btn-primary{background:var(--accent);color:var(--accent-ink);width:100%;margin-top:6px}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.btn-secondary{background:var(--surface-2);color:var(--text);border:1px solid var(--border)}
+.best-score{font-size:13px;color:var(--text-dim);margin-top:10px}
+
+/* quiz screen */
+.progress-outer{height:7px;border-radius:999px;background:var(--surface-2);overflow:hidden;margin-bottom:16px}
+.progress-inner{height:100%;background:var(--accent);transition:width .25s ease}
+.quiz-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:13px;color:var(--text-dim)}
+.badge{
+  display:inline-block;padding:3px 10px;border-radius:999px;background:var(--surface-2);
+  border:1px solid var(--border);font-size:12px;color:var(--text-dim);
+}
+.enunt p{margin:0 0 10px;font-size:15.5px}
+.enunt pre.code{
+  background:var(--code-bg);color:var(--code-text);border:1px solid var(--border);
+  border-radius:10px;padding:12px 14px;overflow-x:auto;font-size:13.5px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;margin:0 0 12px;
+  white-space:pre;line-height:1.5;
+}
+.options{display:flex;flex-direction:column;gap:9px;margin-top:14px}
+.opt{
+  text-align:left;border:1px solid var(--border);background:var(--surface-2);color:var(--text);
+  border-radius:11px;padding:12px 14px;cursor:pointer;font-size:14.5px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  display:flex;gap:10px;align-items:flex-start;transition:border-color .12s, background .12s;
+}
+.opt:hover:not(.locked){border-color:var(--accent)}
+.opt .letter{font-weight:700;flex:0 0 auto;color:var(--text-dim)}
+.opt .txt{white-space:pre-wrap;word-break:break-word}
+.opt .tag{margin-left:auto;font-size:11px;color:var(--text-dim);font-family:inherit;flex:0 0 auto;padding-left:8px}
+.opt.correct{background:var(--good-bg);border-color:var(--good-bd);color:var(--good)}
+.opt.correct .letter,.opt.correct .tag{color:var(--good)}
+.opt.incorrect{background:var(--bad-bg);border-color:var(--bad-bd);color:var(--bad)}
+.opt.incorrect .letter,.opt.incorrect .tag{color:var(--bad)}
+.opt.locked{cursor:default}
+.opt.dim{opacity:.55}
+
+.feedback{margin-top:16px;border-radius:12px;padding:14px 16px;font-size:14.5px;display:none}
+.feedback.show{display:block}
+.feedback.ok{background:var(--good-bg);border:1px solid var(--good-bd);color:var(--text)}
+.feedback.ko{background:var(--bad-bg);border:1px solid var(--bad-bd);color:var(--text)}
+.feedback .fb-title{font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.feedback .fb-title.ok-txt{color:var(--good)}
+.feedback .fb-title.ko-txt{color:var(--bad)}
+.barem-warn{
+  background:var(--warn-bg);border:1px solid var(--warn-bd);color:var(--warn);
+  border-radius:10px;padding:10px 12px;margin:10px 0;font-size:13.5px;font-weight:600;
+}
+.explic{margin-top:10px;white-space:pre-wrap;font-size:14px;color:var(--text)}
+.quiz-actions{display:flex;justify-content:flex-end;margin-top:18px;gap:10px}
+
+/* results screen */
+.score-hero{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.score-circle{
+  width:104px;height:104px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  flex-direction:column;border:6px solid var(--accent);flex:0 0 auto;
+}
+.score-circle .n{font-size:26px;font-weight:800}
+.score-circle .d{font-size:11px;color:var(--text-dim)}
+.cat-bar-row{margin:8px 0}
+.cat-bar-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}
+.cat-bar-outer{height:8px;border-radius:999px;background:var(--surface-2);overflow:hidden}
+.cat-bar-inner{height:100%;background:var(--accent)}
+table.review{width:100%;border-collapse:collapse;margin-top:8px;font-size:13.5px}
+table.review th, table.review td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--border)}
+table.review tr.miss td:first-child{color:var(--bad);font-weight:700}
+table.review tr.hit td:first-child{color:var(--good);font-weight:700}
+table.review tr{cursor:pointer}
+table.review tr:hover td{background:var(--surface-2)}
+.review-detail{display:none;padding:10px 6px 16px;font-size:13.5px;white-space:pre-wrap;border-bottom:1px solid var(--border)}
+.review-detail.show{display:table-row}
+.footer-note{font-size:12px;color:var(--text-dim);text-align:center;margin-top:26px}
+.view{display:none}
+.view.active{display:block}
+.hint{font-size:12.5px;color:var(--text-dim);margin-top:4px}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <a href="../index.html">&larr; Toate anii</a>
+      <h1>CSIE3 &middot; Admitere master &middot; Test de simulare 3</h1>
+      <div class="sub">generat original, pe baza tiparelor din subiectele 2024-2025 &nbsp;&bull;&nbsp; 3 puncte/întrebare corectă, punctaj maxim 90 puncte</div>
+    </div>
+    <button class="iconbtn" id="themeToggle" title="Comută tema">&#9788;</button>
+  </header>
+
+  <div id="view-setup" class="view active">
+    <div class="card">
+      <h2 class="section-title">Categorii incluse</h2>
+      <div class="chips" id="categoryChips"></div>
+
+      <h2 class="section-title">Opțiuni</h2>
+      <div class="toggle-row">
+        <div>
+          <div class="label">Amestecă ordinea întrebărilor</div>
+          <div class="desc">Întrebările apar într-o ordine aleatorie la fiecare start</div>
+        </div>
+        <div class="switch on" id="toggleShuffleQ"></div>
+      </div>
+      <div class="toggle-row">
+        <div>
+          <div class="label">Amestecă ordinea variantelor</div>
+          <div class="desc">Variantele a/b/c/d sunt reordonate aleator</div>
+        </div>
+        <div class="switch on" id="toggleShuffleA"></div>
+      </div>
+
+      <button class="btn btn-primary" id="startBtn">Începe testul (30 întrebări)</button>
+      <div class="best-score" id="bestScoreNote"></div>
+    </div>
+  </div>
+
+  <div id="view-quiz" class="view">
+    <div class="progress-outer"><div class="progress-inner" id="progressBar" style="width:0%"></div></div>
+    <div class="quiz-meta">
+      <span id="quizPos">Întrebarea 1 din 30</span>
+      <span class="badge" id="quizCat">—</span>
+      <span id="quizScore">Scor: 0</span>
+    </div>
+    <div class="card">
+      <div class="enunt" id="quizEnunt"></div>
+      <div class="options" id="quizOptions"></div>
+      <div class="feedback" id="quizFeedback">
+        <div class="fb-title" id="fbTitle"></div>
+        <div class="barem-warn" id="fbBaremWarn" style="display:none"></div>
+        <div class="explic" id="fbExplic"></div>
+      </div>
+      <div class="quiz-actions">
+        <button class="btn btn-secondary" id="quitBtn">Renunță</button>
+        <button class="btn btn-primary" id="nextBtn" style="display:none;width:auto">Următoarea &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="view-results" class="view">
+    <div class="card">
+      <h2 class="section-title">Rezultat final</h2>
+      <div class="score-hero">
+        <div class="score-circle"><div class="n" id="resScoreN">0/0</div><div class="d">corecte</div></div>
+        <div>
+          <div style="font-size:20px;font-weight:700" id="resPercent">0%</div>
+          <div class="muted small" id="resPunctaj">Punctaj estimat: 0 puncte</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Pe categorii</h2>
+      <div id="resCatBars"></div>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Recapitulare (click pe un rând pentru detalii)</h2>
+      <table class="review" id="resTable">
+        <thead><tr><th>#</th><th>Categorie</th><th>Răspunsul tău</th><th>Corect</th></tr></thead>
+        <tbody id="resTableBody"></tbody>
+      </table>
+    </div>
+    <button class="btn btn-primary" id="restartBtn">Înapoi la opțiuni</button>
+  </div>
+
+  <div class="footer-note">Grile extrase din subiectele oficiale de anii anteriori și verificate independent. Explicațiile marcate „barem oficial eronat” indică o discrepanță identificată față de baremul original — verifică și tu raționamentul.</div>
+</div>
+
+<script>
+const DATA = {"year": "test3", "sursa": "generat original, pe baza tiparelor din subiectele 2024-2025", "punctaj": "3 puncte/întrebare corectă, punctaj maxim 90 puncte", "questions": [{"nr": 1, "categorie": "C/C++", "enunt": "Fiind dat programul:\n#include <stdio.h>\n#include <string.h>\nint main() {\n    char s[] = \"Ma1nStrinG\";\n    int c = 0;\n    for (int i = 0; i < (int)strlen(s); i++) {\n        if (s[i] >= 'a' && s[i] <= 'z') c++;\n    }\n    printf(\"%d\", c);\n    return 0;\n}\nCe se afiseaza la executie?", "variante": {"a": "4", "b": "5", "c": "6", "d": "10"}, "raspuns_barem": "c", "raspuns_corect": "c", "status_verificare": "CONFIRMAT", "explicatie": "Programul parcurge sirul \"Ma1nStrinG\" caracter cu caracter si numara doar literele mici (cuprinse intre 'a' si 'z' in codul ASCII). Caracterele sirului sunt: 'M' (majuscula, nu), 'a' (da), '1' (cifra, nu), 'n' (da), 'S' (majuscula, nu), 't' (da), 'r' (da), 'i' (da), 'n' (da), 'G' (majuscula, nu). Literele mici sunt: a, n, t, r, i, n = 6. Deci se afiseaza 6, varianta c. Variantele a (4) si b (5) rezulta dintr-o numarare incompleta. Varianta d (10) ar fi lungimea totala a sirului (strlen), nu numarul de litere mici. Programul a fost compilat cu gcc si rulat, output real: 6."}, {"nr": 2, "categorie": "OOP (C++)", "enunt": "Fiind dat programul C++:\n#include <iostream>\nusing namespace std;\nclass Vector2 {\n    int x, y;\npublic:\n    Vector2(int a, int b) : x(a), y(b) {}\n    Vector2 operator+(const Vector2& v) {\n        return Vector2(x + v.x, y + v.y);\n    }\n    void afis() { cout << x << \" \" << y; }\n};\nint main() {\n    Vector2 a(1, 2), b(3, 4);\n    Vector2 c = a + b;\n    c.afis();\n    return 0;\n}\nCe se afiseaza la executie?", "variante": {"a": "1 2", "b": "3 4", "c": "4 6", "d": "4 5"}, "raspuns_barem": "c", "raspuns_corect": "c", "status_verificare": "CONFIRMAT", "explicatie": "operator+ este supraincarcat ca metoda membru: la evaluarea \"a + b\", obiectul a este receptorul (this), iar b este argumentul v. Metoda returneaza un nou Vector2 cu componentele x+v.x = 1+3 = 4 si y+v.y = 2+4 = 6. Obiectul c primeste aceste valori, iar afis() tipareste \"4 6\", deci varianta c. Variantele a si b reproduc doar componentele obiectelor initiale a, respectiv b, ignorand adunarea. Varianta d contine un rezultat gresit pentru a doua componenta. Programul a fost compilat cu g++ -std=c++11 si rulat, output real: 4 6."}, {"nr": 3, "categorie": "SQL", "enunt": "Fie tabela:\nANGAJATI(id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), salariul NUMBER(10,2),\ncomision NUMBER(10,2), id_departament NUMBER(3)) avand 200 de randuri (inregistrari),\nin care coloana salariul este completata pentru toti angajatii, iar coloana comision\nare valoarea NULL pentru 60 dintre angajati.\nSe considera comanda SQL-Oracle:\nSELECT COUNT(*), COUNT(salariul), COUNT(comision) FROM angajati;\nCe valori returneaza, in aceasta ordine, comanda?", "variante": {"a": "200, 200, 200", "b": "200, 200, 140", "c": "200, 140, 140", "d": "140, 140, 140"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "COUNT(*) numara toate randurile tabelei, indiferent de valorile NULL, deci returneaza 200. COUNT(nume_coloana) numara doar valorile care NU sunt NULL din coloana respectiva. Deoarece salariul este completat pentru toti cei 200 de angajati, COUNT(salariul) = 200. Deoarece comision este NULL pentru 60 de angajati, COUNT(comision) numara doar cele 200-60 = 140 valori nenule. Rezultatul este 200, 200, 140, varianta b. Aceasta este capcana clasica a diferentei dintre COUNT(*) si COUNT(coloana): doar COUNT(coloana) exclude valorile NULL, in timp ce COUNT(*) le include. Variantele a, c, d rezulta din aplicarea gresita a acestei reguli."}, {"nr": 4, "categorie": "PL/SQL", "enunt": "Se considera urmatoarea procedura PL/SQL:\nCREATE OR REPLACE PROCEDURE p_maresc (x IN NUMBER)\nIS\nBEGIN\n  x := x + 1;\n  DBMS_OUTPUT.PUT_LINE(x);\nEND;\n/\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "procedura se compileaza cu succes si, la apel cu p_maresc(10), afiseaza 11", "b": "procedura genereaza eroare la compilare, deoarece unui parametru de tip IN nu i se poate atribui o valoare in corpul procedurii", "c": "procedura se compileaza cu succes, dar la apel arunca exceptia VALUE_ERROR", "d": "procedura se compileaza cu succes si afiseaza 10, deoarece parametrul IN nu poate fi modificat"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "In PL/SQL, un parametru declarat IN (modul implicit, folosit pentru transmiterea de valori catre subprogram) este tratat ca o constanta in interiorul subprogramului: are valoare doar in citire (read-only) si nu i se poate atribui nimic. Instructiunea \"x := x + 1;\" incearca sa modifice parametrul IN, ceea ce produce o eroare la compilare (PLS-00363: expression 'X' cannot be used as an assignment target). Prin urmare procedura nici nu se compileaza, varianta b este corecta. a este falsa: atribuirea catre x impiedica compilarea, deci nu se ajunge la afisare. c este falsa: nu este o eroare de executie (VALUE_ERROR), ci o eroare de compilare. d este falsa: procedura nu se compileaza deloc, deci nu afiseaza nimic. Pentru a permite modificarea, parametrul ar trebui declarat IN OUT sau OUT."}, {"nr": 5, "categorie": "OOP (C++)", "enunt": "Fiind dat programul C++:\n#include <iostream>\nusing namespace std;\nclass Punct {\n    int x, y;\npublic:\n    Punct(int a, int b) : x(a), y(b) {}\n    bool operator==(const Punct& p) const {\n        return x == p.x && y == p.y;\n    }\n};\nint main() {\n    Punct a(2, 3), b(2, 3), c(2, 4);\n    cout << (a == b) << (a == c);\n    return 0;\n}\nCe se afiseaza la executie?", "variante": {"a": "11", "b": "10", "c": "01", "d": "00"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "operator== este supraincarcat pentru a compara doua obiecte Punct pe baza ambelor componente. Expresia (a == b) compara a(2,3) cu b(2,3): ambele componente sunt egale, deci returneaza true, care se afiseaza ca 1. Expresia (a == c) compara a(2,3) cu c(2,4): componenta y difera (3 vs 4), deci returneaza false, care se afiseaza ca 0. In C++, valorile bool sunt convertite implicit la 1 (true) si 0 (false) la afisarea cu cout. Rezultatul concatenat este \"10\", varianta b. Variantele a, c, d corespund unor rezultate gresite ale comparatiilor. Programul a fost compilat cu g++ -std=c++11 si rulat, output real: 10."}, {"nr": 6, "categorie": "C/C++", "enunt": "Fiind dat programul:\n#include <stdio.h>\nint main() {\n    int x = 5, y = 3;\n    printf(\"%d\", (x << 1) | y);\n    return 0;\n}\nCe se afiseaza la executie?", "variante": {"a": "11", "b": "13", "c": "8", "d": "10"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Se evalueaza intai (x << 1): deplasarea la stanga cu o pozitie inmulteste cu 2, deci 5 << 1 = 10 (binar 0101 devine 1010). Apoi se aplica SAU pe biti (|) intre 10 si y = 3: 1010 | 0011 = 1011, care in zecimal este 11. Operatorul de deplasare << are prioritate mai mare decat |, deci parantezele doar confirma ordinea fireasca. Rezultatul este 11, varianta a. Varianta d (10) ignora aplicarea lui | cu y. Varianta c (8) ar rezulta dintr-un SI pe biti (1010 & ... ) gresit. Varianta b (13) nu corespunde niciunui calcul corect. Programul a fost compilat cu gcc si rulat, output real: 11."}, {"nr": 7, "categorie": "SQL", "enunt": "Fie tabela:\nPRODUSE(id_produs NUMBER(5), denumire_produs VARCHAR2(32), pret_lista NUMBER(8,2))\navand 10 randuri (inregistrari), dintre care doar 6 au coloana pret_lista completata\n(la celelalte 4, pret_lista este NULL). Suma preturilor celor 6 produse cu pret\ncompletat este 1200.\nSe considera comanda SQL-Oracle:\nSELECT AVG(pret_lista) FROM produse;\nCe valoare returneaza comanda?", "variante": {"a": "120", "b": "200", "c": "0", "d": "NULL"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Functia de grup AVG ignora complet valorile NULL: ea calculeaza SUM(pret_lista) / COUNT(pret_lista), adica suma valorilor nenule impartita la numarul de valori nenule, NU la numarul total de randuri. Astfel, AVG(pret_lista) = 1200 / 6 = 200 (imparte la 6, nu la 10), varianta b. Varianta a (120) rezulta din impartirea gresita la numarul total de randuri (1200 / 10), tratand implicit NULL ca 0, ceea ce Oracle NU face pentru AVG. Varianta c (0) este gresita: NULL nu este echivalent cu 0. Varianta d (NULL) ar fi rezultatul doar daca TOATE valorile ar fi NULL (multime vida de valori). Aceasta este capcana clasica: pentru a media considerand NULL ca 0, ar fi fost nevoie de AVG(NVL(pret_lista, 0))."}, {"nr": 8, "categorie": "PL/SQL", "enunt": "Se considera procedura PL/SQL:\nCREATE OR REPLACE PROCEDURE p_dublu (n IN NUMBER, rez OUT NUMBER)\nIS\nBEGIN\n  rez := n * 2;\nEND;\n/\nsi blocul anonim:\nSET SERVEROUTPUT ON\nDECLARE\n  v NUMBER;\nBEGIN\n  p_dublu(10, v);\n  DBMS_OUTPUT.PUT_LINE(v);\nEND;\n/\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "blocul afiseaza 20", "b": "blocul afiseaza 10", "c": "blocul genereaza eroare, deoarece parametrul OUT nu poate fi transmis unei variabile locale", "d": "blocul afiseaza NULL (linie goala), deoarece parametrul OUT nu returneaza valoarea in blocul apelant"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Un parametru OUT este folosit pentru a returna o valoare din subprogram catre programul apelant. In procedura, \"rez := n * 2\" calculeaza 10 * 2 = 20 si atribuie rezultatul parametrului OUT rez. La revenirea din procedura, valoarea 20 este copiata inapoi in variabila reala v din blocul apelant. Prin urmare DBMS_OUTPUT.PUT_LINE(v) afiseaza 20, varianta a. b este falsa: v nu ramane necompletat, primeste valoarea calculata. c este falsa: transmiterea unei variabile locale ca argument pentru un parametru OUT este corecta (chiar necesara - argumentul pentru OUT trebuie sa fie o variabila care sa poata primi valoarea). d este falsa: exact rolul lui OUT este sa returneze valoarea in blocul apelant."}, {"nr": 9, "categorie": "OOP (C++)", "enunt": "Fiind dat programul C++:\n#include <iostream>\nusing namespace std;\nclass Fractie {\n    int num, den;\npublic:\n    Fractie(int n, int d) : num(n), den(d) {}\n    friend ostream& operator<<(ostream& os, const Fractie& f) {\n        os << f.num << \"/\" << f.den;\n        return os;\n    }\n};\nint main() {\n    Fractie f(3, 4);\n    cout << f;\n    return 0;\n}\nCe se afiseaza la executie?", "variante": {"a": "3/4", "b": "4/3", "c": "34", "d": "eroare de compilare, deoarece operatorul << nu poate accesa membrii privati num si den"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "operator<< este supraincarcat ca functie friend (prietena), forma standard pentru afisarea obiectelor cu cout. Trebuie sa fie functie friend (nu metoda membru) deoarece operandul din stanga este obiectul ostream (cout), nu obiectul Fractie. Fiind declarata friend, functia are acces la membrii privati num si den. La \"cout << f\", functia primeste os = cout si f = fractia, si afiseaza f.num, apoi \"/\", apoi f.den, adica \"3/4\", varianta a. Functia returneaza referinta la ostream pentru a permite inlantuirea (chaining). b (4/3) inverseaza ordinea. c (34) omite separatorul. d este falsa: tocmai pentru ca functia este declarata friend, ea are acces legal la membrii privati - fara friend ar fi fost eroare, dar aici este corect. Programul a fost compilat cu g++ -std=c++11 si rulat, output real: 3/4."}, {"nr": 10, "categorie": "Baze de date (teorie)", "enunt": "Precizati care dintre urmatoarele afirmatii despre proprietatile ACID ale tranzactiilor\nintr-un sistem de gestiune a bazelor de date este corecta:", "variante": {"a": "Atomicitatea (Atomicity) garanteaza ca datele raman valide fata de constrangerile de integritate dupa incheierea tranzactiei", "b": "Izolarea (Isolation) garanteaza ca o tranzactie se executa complet sau deloc, ca o unitate indivizibila", "c": "Durabilitatea (Durability) garanteaza ca efectele unei tranzactii confirmate prin COMMIT persista permanent, chiar si in cazul unei caderi ulterioare a sistemului", "d": "Consistenta (Consistency) garanteaza ca tranzactiile concurente nu se influenteaza reciproc, ca si cum s-ar executa secvential"}, "raspuns_barem": "c", "raspuns_corect": "c", "status_verificare": "CONFIRMAT", "explicatie": "Proprietatile ACID sunt: Atomicity (Atomicitate), Consistency (Consistenta), Isolation (Izolare), Durability (Durabilitate). Varianta c descrie corect Durabilitatea: dupa COMMIT, modificarile devin permanente si supravietuiesc unei eventuale caderi a sistemului (fiind persistate pe suport nevolatil). Celelalte trei variante descriu corect cate o proprietate, dar ii atribuie o denumire GRESITA (capcana clasica de asociere denumire-definitie): a) descrie de fapt Consistenta (nu Atomicitatea) - pastrarea validitatii fata de constrangeri; b) descrie de fapt Atomicitatea (nu Izolarea) - executia \"tot sau nimic\", indivizibila; d) descrie de fapt Izolarea (nu Consistenta) - independenta tranzactiilor concurente. Deci singura afirmatie in care denumirea corespunde definitiei este c."}, {"nr": 11, "categorie": "SQL", "enunt": "Fie tabela:\nANGAJATI(id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), salariul NUMBER(10,2),\nid_departament NUMBER(3)) avand 200 de randuri (inregistrari). Se stie ca nu exista\nniciun angajat cu id_departament = 999.\nSe considera comanda SQL-Oracle:\nSELECT SUM(salariul) FROM angajati WHERE id_departament = 999;\nCe returneaza comanda?", "variante": {"a": "un rand continand valoarea 0", "b": "un rand continand valoarea NULL", "c": "niciun rand (multime de rezultate vida, 0 randuri)", "d": "genereaza eroare, deoarece nu exista randuri care sa respecte conditia"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "O functie de grup (SUM, AVG, MIN, MAX) aplicata fara clauza GROUP BY returneaza intotdeauna exact un rand, chiar daca multimea de randuri filtrate de WHERE este vida. Cand nu exista niciun rand care sa satisfaca conditia (niciun angajat in departamentul 999), SUM nu are nicio valoare de adunat, iar rezultatul pe multimea vida este NULL (nu 0). Deci comanda returneaza un singur rand continand NULL, varianta b. a este falsa: SUM pe multime vida da NULL, nu 0 (spre deosebire de COUNT, care ar da 0). c este falsa: fara GROUP BY, functia de grup produce mereu un rand rezultat. d este falsa: nu se genereaza nicio eroare. Pentru a obtine 0 in loc de NULL, s-ar folosi NVL(SUM(salariul), 0)."}, {"nr": 12, "categorie": "C/C++", "enunt": "Fiind dat programul:\n#include <stdio.h>\n#include <string.h>\nint main() {\n    char a[] = \"master\";\n    char b[] = \"mastel\";\n    int r = strcmp(a, b);\n    printf(\"%d\", r < 0 ? -1 : (r > 0 ? 1 : 0));\n    return 0;\n}\nCe se afiseaza la executie?", "variante": {"a": "-1", "b": "0", "c": "1", "d": "6"}, "raspuns_barem": "c", "raspuns_corect": "c", "status_verificare": "CONFIRMAT", "explicatie": "Functia strcmp compara lexicografic (in ordine ASCII) cele doua siruri caracter cu caracter. Sirurile \"master\" si \"mastel\" coincid pe primele 5 caractere (m, a, s, t, e), iar la pozitia 5 difera: 'r' (cod ASCII 114) in primul sir fata de 'l' (cod ASCII 108) in al doilea. Deoarece 'r' > 'l', strcmp returneaza o valoare pozitiva (diferenta caracterelor sau, in general, un numar > 0). Expresia ternara transforma orice valoare pozitiva in 1. Deci se afiseaza 1, varianta c. Varianta a (-1) ar corespunde cazului in care a < b lexicografic. Varianta b (0) ar corespunde sirurilor identice. Varianta d (6) confunda rezultatul strcmp cu lungimea sirului. Programul a fost compilat cu gcc si rulat, output real: 1."}, {"nr": 13, "categorie": "OOP (C++)", "enunt": "Fiind dat programul C++:\n#include <iostream>\nusing namespace std;\nclass Cont {\n    double sold;\npublic:\n    Cont(double s) : sold(s) {}\n    friend double dublu(const Cont& c);\n};\ndouble dublu(const Cont& c) {\n    return c.sold * 2;\n}\nint main() {\n    Cont c(50.0);\n    cout << dublu(c);\n    return 0;\n}\nCe se afiseaza la executie?", "variante": {"a": "50", "b": "100", "c": "0", "d": "eroare de compilare, deoarece functia dublu nu poate accesa membrul privat sold"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Functia libera (globala) dublu este declarata prietena (friend) a clasei Cont prin linia \"friend double dublu(const Cont& c);\" din interiorul clasei. Aceasta declaratie friend ii acorda functiei dublu dreptul de a accesa membrii privati ai clasei, inclusiv sold, chiar daca functia nu este metoda membru. Astfel, dublu(c) returneaza c.sold * 2 = 50.0 * 2 = 100, care se afiseaza, varianta b. d este falsa tocmai pentru ca functia este declarata friend - fara aceasta declaratie ar fi fost eroare, dar aici accesul la sold este legal. a (50) ar ignora inmultirea. c (0) este incorect. Aceasta ilustreaza mecanismul functiilor friend: acorda acces la membrii privati/protejati unei functii externe, fara ca aceasta sa devina membru al clasei. Programul a fost compilat cu g++ -std=c++11 si rulat, output real: 100."}, {"nr": 14, "categorie": "PL/SQL", "enunt": "Se considera procedura PL/SQL:\nCREATE OR REPLACE PROCEDURE p_incr (n IN OUT NUMBER)\nIS\nBEGIN\n  n := n + 5;\nEND;\n/\nsi blocul anonim:\nSET SERVEROUTPUT ON\nDECLARE\n  v NUMBER := 10;\nBEGIN\n  p_incr(v);\n  DBMS_OUTPUT.PUT_LINE(v);\nEND;\n/\nCe se afiseaza la executie?", "variante": {"a": "10", "b": "5", "c": "15", "d": "NULL (linie goala)"}, "raspuns_barem": "c", "raspuns_corect": "c", "status_verificare": "CONFIRMAT", "explicatie": "Un parametru IN OUT combina cele doua moduri: la intrarea in procedura, valoarea variabilei reale este transmisa (citita) in parametru, iar la iesire valoarea (eventual modificata) este copiata inapoi in variabila reala. Aici v are valoarea initiala 10. La apelul p_incr(v), parametrul n primeste 10, apoi \"n := n + 5\" il face 15, iar la revenire valoarea 15 este scrisa inapoi in v. Prin urmare se afiseaza 15, varianta c. a (10) ar corespunde unui parametru IN pur, care nu propaga modificarile inapoi (dar cu IN atribuirea ar fi eroare). d (NULL) ar corespunde unui parametru OUT pur, care ignora valoarea de intrare (v ar deveni NULL la intrare, apoi NULL + 5 = NULL). b (5) este incorect. IN OUT este necesar cand vrem sa citim SI sa modificam valoarea transmisa."}, {"nr": 15, "categorie": "SQL", "enunt": "Se considera comanda SQL-Oracle:\nSELECT ADD_MONTHS(TO_DATE('31-01-2025', 'DD-MM-YYYY'), 1) FROM dual;\nCe valoare returneaza comanda?", "variante": {"a": "31-02-2025", "b": "28-02-2025", "c": "03-03-2025", "d": "genereaza eroare, deoarece luna februarie nu are ziua 31"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Functia ADD_MONTHS(data, n) adauga n luni la data specificata. Adaugand 1 luna la 31 ianuarie 2025 s-ar obtine teoretic 31 februarie, dar aceasta data nu exista. Regula speciala a functiei ADD_MONTHS in Oracle: daca data de intrare este ultima zi a lunii, sau daca ziua rezultata ar depasi numarul de zile al lunii destinatie, rezultatul este ajustat automat la ULTIMA zi a lunii destinatie. Cum 31 ianuarie este ultima zi a lunii ianuarie, iar februarie 2025 are 28 de zile (2025 nu este an bisect), rezultatul este 28 februarie 2025, varianta b. a (31-02-2025) este o data inexistenta si nu poate fi returnata. c (03-03-2025) ar rezulta dintr-o \"revarsare\" a zilelor, dar ADD_MONTHS nu functioneaza asa - ajusteaza la ultima zi. d este falsa: ADD_MONTHS nu genereaza eroare, ci ajusteaza automat."}, {"nr": 16, "categorie": "OOP (C++)", "enunt": "Fiind dat programul C++:\n#include <iostream>\nusing namespace std;\nclass A {\npublic:\n    A() { cout << \"A\"; }\n};\nclass B {\npublic:\n    B() { cout << \"B\"; }\n};\nclass C : public A, public B {\npublic:\n    C() { cout << \"C\"; }\n};\nint main() {\n    C obj;\n    return 0;\n}\nCe se afiseaza la executie?", "variante": {"a": "ABC", "b": "CBA", "c": "BAC", "d": "CAB"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Clasa C mosteneste multiplu doua clase de baza: A si B (in aceasta ordine in lista de mostenire \"public A, public B\"). La construirea unui obiect de tip C, constructorii claselor de baza se apeleaza INAINTEA constructorului clasei derivate, in ORDINEA in care bazele apar in lista de mostenire (NU in ordinea din lista de initializare a constructorului). Deci se apeleaza intai A() (afiseaza \"A\"), apoi B() (afiseaza \"B\"), apoi corpul constructorului C() (afiseaza \"C\"). Rezultatul este \"ABC\", varianta a. b (CBA) inverseaza complet ordinea. c si d dau ordini gresite ale constructorilor bazelor sau ale derivatei. Regula: la mostenire multipla, bazele se construiesc in ordinea declararii lor in lista de mostenire, iar derivata ultima. Programul a fost compilat cu g++ -std=c++11 si rulat, output real: ABC."}, {"nr": 17, "categorie": "C/C++", "enunt": "Fiind dat programul:\n#include <stdio.h>\nint main() {\n    int n = 29;\n    int count = 0;\n    while (n) {\n        count += n & 1;\n        n >>= 1;\n    }\n    printf(\"%d\", count);\n    return 0;\n}\nCe se afiseaza la executie?", "variante": {"a": "3", "b": "4", "c": "5", "d": "29"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Programul numara bitii de 1 din reprezentarea binara a lui n. La fiecare iteratie, \"n & 1\" extrage bitul cel mai putin semnificativ (0 sau 1) si il adauga la count, apoi \"n >>= 1\" deplaseaza n la dreapta cu o pozitie (echivalent cu impartirea intreaga la 2), eliminand bitul examinat. Bucla continua pana cand n devine 0. Numarul 29 in binar este 11101 (16 + 8 + 4 + 0 + 1 = 29). Bitii de 1 sunt: pozitiile 0, 2, 3, 4, adica 4 biti setati. Deci se afiseaza 4, varianta b. a (3) si c (5) rezulta dintr-o numarare gresita a bitilor. d (29) ar fi valoarea initiala, nu numarul de biti. Programul a fost compilat cu gcc si rulat, output real: 4."}, {"nr": 18, "categorie": "PL/SQL", "enunt": "Fie tabela JURNAL(mesaj VARCHAR2(100)) si tabela ANGAJATI(id_angajat NUMBER(5)\nPRIMARY KEY, nume VARCHAR2(30), salariul NUMBER(10,2)) cu 200 de randuri.\nSe considera functia PL/SQL:\nCREATE OR REPLACE FUNCTION f_log (p_nume VARCHAR2)\nRETURN NUMBER\nIS\nBEGIN\n  INSERT INTO jurnal VALUES (p_nume);\n  RETURN 1;\nEND;\n/\nFie apoi comanda SQL-Oracle:\nSELECT nume, f_log(nume) FROM angajati;\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "comanda SELECT se executa corect si insereaza cate un rand in JURNAL pentru fiecare angajat", "b": "comanda SELECT genereaza eroare (ORA-14551), deoarece functia executa o comanda DML (INSERT) si nu poate fi apelata dintr-o interogare", "c": "functia f_log nu se compileaza, deoarece o functie nu poate contine comenzi INSERT", "d": "comanda SELECT afiseaza doar coloana nume, ignorand apelul functiei"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Functia f_log contine o comanda DML (INSERT INTO jurnal). O functie care executa comenzi DML (INSERT/UPDATE/DELETE) asupra tabelelor NU poate fi apelata din interiorul unei comenzi SELECT (a unei interogari): Oracle arunca eroarea ORA-14551 \"cannot perform a DML operation inside a query\". Aceasta este o regula fundamentala: interogarile trebuie sa fie lipsite de efecte secundare de tip DML. Deci comanda SELECT nume, f_log(nume) FROM angajati genereaza eroare, varianta b. a este falsa: interogarea nu ruleaza, este blocata de restrictia mentionata. c este falsa: functia in sine se compileaza fara probleme (INSERT este permis in corpul unei functii); restrictia apare doar la APELUL functiei dintr-un SELECT. d este falsa: Oracle nu ignora apelul, ci arunca eroare. (O astfel de functie ar putea fi totusi apelata dintr-un bloc PL/SQL sau dintr-un INSERT/UPDATE, dar nu dintr-un SELECT.)"}, {"nr": 19, "categorie": "OOP (C++)", "enunt": "Fiind dat programul C++:\n#include <iostream>\nusing namespace std;\nclass Bani {\n    int suma;\npublic:\n    Bani(int s) : suma(s) {}\n    friend Bani operator+(int x, const Bani& b) {\n        return Bani(x + b.suma);\n    }\n    void afis() { cout << suma; }\n};\nint main() {\n    Bani b(100);\n    Bani r = 50 + b;\n    r.afis();\n    return 0;\n}\nCe se afiseaza la executie?", "variante": {"a": "100", "b": "50", "c": "150", "d": "eroare de compilare, deoarece 50 este de tip int, nu Bani"}, "raspuns_barem": "c", "raspuns_corect": "c", "status_verificare": "CONFIRMAT", "explicatie": "Aici operator+ este supraincarcat ca functie friend cu semnatura (int x, const Bani& b), avand operandul din STANGA de tip int si cel din dreapta de tip Bani. Acesta este motivul principal pentru care se foloseste o functie friend in loc de o metoda membru: o metoda membru operator+ ar avea intotdeauna obiectul clasei ca operand stang (this), deci nu ar putea trata expresia \"50 + b\" unde stanga este un int. Fiind functie friend, ea are acces la membrul privat suma. La \"50 + b\", se apeleaza operator+(50, b), care returneaza Bani(50 + 100) = Bani(150). Obiectul r afiseaza 150, varianta c. d este falsa: tocmai functia friend cu primul parametru int permite aceasta expresie (fara ea, ar fi fost eroare). a si b afiseaza doar cate un operand, ignorand adunarea. Programul a fost compilat cu g++ -std=c++11 si rulat, output real: 150."}, {"nr": 20, "categorie": "SQL", "enunt": "Se considera comanda SQL-Oracle:\nSELECT MONTHS_BETWEEN(TO_DATE('01-01-2025', 'DD-MM-YYYY'),\n                      TO_DATE('01-04-2025', 'DD-MM-YYYY')) FROM dual;\nCe valoare returneaza comanda?", "variante": {"a": "3", "b": "-3", "c": "90", "d": "-90"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Functia MONTHS_BETWEEN(data1, data2) returneaza numarul de luni dintre cele doua date, calculat ca data1 - data2 (primul argument minus al doilea). Daca data1 este ANTERIOARA lui data2, rezultatul este NEGATIV. Aici data1 = 01-01-2025 este anterioara lui data2 = 01-04-2025, iar diferenta este de 3 luni, deci rezultatul este -3, varianta b. Cand ambele date au aceeasi zi din luna (aici ziua 1), rezultatul este un numar intreg de luni. a (3) ar fi rezultatul daca argumentele erau in ordine inversa (data mai recenta prima). c si d (90, -90) confunda rezultatul cu un numar de zile - MONTHS_BETWEEN returneaza luni, nu zile. Capcana consta in ordinea argumentelor si semnul rezultatului."}, {"nr": 21, "categorie": "C/C++", "enunt": "Fiind dat programul:\n#include <stdio.h>\n#include <string.h>\nint main() {\n    char s[30] = \"inform\";\n    strcat(s, \"atica\");\n    printf(\"%c%d\", s[6], (int)strlen(s));\n    return 0;\n}\nCe se afiseaza la executie?", "variante": {"a": "a11", "b": "t10", "c": "a6", "d": "m11"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Initial s contine \"inform\" (6 caractere). Functia strcat(s, \"atica\") concateneaza \"atica\" la finalul sirului s, obtinandu-se \"informatica\". Tabloul s are dimensiune 30, suficienta pentru cele 11 caractere plus terminatorul '\\0'. Sirul \"informatica\" are caracterele pe indici: i(0) n(1) f(2) o(3) r(4) m(5) a(6) t(7) i(8) c(9) a(10). Deci s[6] = 'a' (prima litera adusa de concatenare), iar strlen(s) = 11. Se afiseaza \"a11\", varianta a. b (t10) da un indice si o lungime gresite. c (a6) foloseste lungimea sirului initial, inainte de concatenare. d (m11) confunda caracterul de pe pozitia 6. Programul a fost compilat cu gcc si rulat, output real: a11."}, {"nr": 22, "categorie": "PL/SQL", "enunt": "Fie tabela ANGAJATI(id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30),\nsalariul NUMBER(10,2)) cu 200 de randuri.\nSe considera functia PL/SQL:\nCREATE OR REPLACE FUNCTION f_bonus (p_salariu NUMBER)\nRETURN NUMBER\nIS\nBEGIN\n  RETURN p_salariu * 0.1;\nEND;\n/\nFie apoi comanda SQL-Oracle:\nSELECT nume, f_bonus(salariul) bonus FROM angajati WHERE f_bonus(salariul) > 500;\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "comanda genereaza eroare, deoarece o functie definita de utilizator nu poate fi folosita in clauza WHERE", "b": "comanda genereaza eroare (ORA-14551), deoarece orice functie PL/SQL este interzisa in comenzi SELECT", "c": "comanda se executa corect si afiseaza numele si bonusul (10% din salariu) pentru angajatii al caror bonus depaseste 500", "d": "comanda se executa, dar clauza WHERE este ignorata, afisandu-se toti angajatii"}, "raspuns_barem": "c", "raspuns_corect": "c", "status_verificare": "CONFIRMAT", "explicatie": "Functia f_bonus NU contine nicio comanda DML (doar calculeaza si returneaza o valoare: p_salariu * 0.1). O astfel de functie \"pura\" poate fi apelata liber intr-o comanda SELECT, atat in lista de selectie (SELECT), cat si in clauza WHERE. Comanda calculeaza bonusul (10% din salariu) pentru fiecare angajat, il afiseaza in lista de selectie si il foloseste in WHERE pentru a filtra angajatii al caror bonus depaseste 500 (echivalent cu salariul > 5000). Deci varianta c este corecta. a este falsa: functiile definite de utilizator POT fi folosite in WHERE, cat timp nu executa DML. b este falsa: eroarea ORA-14551 apare doar pentru functiile care executa DML, nu pentru orice functie. d este falsa: clauza WHERE se aplica normal. Contrastul fata de intrebarea despre functia cu INSERT este esential: doar functiile fara DML pot fi folosite in interogari."}, {"nr": 23, "categorie": "OOP (C++)", "enunt": "Fiind dat programul C++:\n#include <iostream>\nusing namespace std;\nclass Contor {\n    int val;\npublic:\n    Contor(int v) : val(v) {}\n    Contor& operator++() { ++val; return *this; }\n    int get() { return val; }\n};\nint main() {\n    Contor c(5);\n    ++c;\n    ++c;\n    cout << c.get();\n    return 0;\n}\nCe se afiseaza la executie?", "variante": {"a": "5", "b": "6", "c": "7", "d": "10"}, "raspuns_barem": "c", "raspuns_corect": "c", "status_verificare": "CONFIRMAT", "explicatie": "operator++ este supraincarcat in forma PREFIXATA (fara parametru), care incrementeaza membrul val si returneaza o referinta la obiectul curent (*this). Obiectul c porneste cu val = 5. Prima aplicare \"++c\" face val = 6; a doua aplicare \"++c\" face val = 7. Apoi c.get() returneaza 7, care se afiseaza, varianta c. a (5) ignora ambele incrementari. b (6) contorizeaza doar o incrementare. d (10) nu corespunde niciunui calcul. Observatie: forma prefixata \"operator++()\" nu are parametru, spre deosebire de forma postfixata \"operator++(int)\" care primeste un parametru int fictiv pentru a le distinge. Programul a fost compilat cu g++ -std=c++11 si rulat, output real: 7."}, {"nr": 24, "categorie": "SQL", "enunt": "Fie tabela ANGAJATI(id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30),\nsalariul NUMBER(10,2), data_angajare DATE) cu 200 de randuri.\nSe considera comanda SQL-Oracle:\nSELECT COUNT(*) FROM angajati WHERE EXTRACT(YEAR FROM data_angajare) = 2020;\nCe realizeaza aceasta comanda?", "variante": {"a": "numara angajatii angajati in anul 2020", "b": "numara angajatii angajati in luna a 2020-a de la o data de referinta", "c": "genereaza eroare, deoarece EXTRACT nu poate fi aplicat unei coloane de tip DATE", "d": "numara toti angajatii, deoarece EXTRACT returneaza intotdeauna anul curent"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Functia EXTRACT(YEAR FROM data) extrage componenta an (ca numar intreg) dintr-o valoare de tip DATE sau TIMESTAMP. Conditia \"EXTRACT(YEAR FROM data_angajare) = 2020\" este adevarata pentru angajatii a caror data de angajare cade in anul 2020. COUNT(*) numara randurile care satisfac aceasta conditie. Deci comanda numara angajatii angajati in cursul anului 2020, varianta a. b este falsa: EXTRACT YEAR extrage anul, nu are legatura cu vreo \"luna a 2020-a\". c este falsa: EXTRACT se aplica perfect coloanelor DATE (poate extrage YEAR, MONTH, DAY etc.). d este falsa: EXTRACT extrage componenta reala din data stocata, nu anul curent. EXTRACT este o alternativa la TO_CHAR(data, 'YYYY') pentru obtinerea unor componente ale datei ca valori numerice."}, {"nr": 25, "categorie": "C/C++", "enunt": "Fiind dat programul:\n#include <stdio.h>\nint main() {\n    int a = 12, b = 10;\n    printf(\"%d\", a ^ b);\n    return 0;\n}\nCe se afiseaza la executie?", "variante": {"a": "6", "b": "8", "c": "14", "d": "2"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Operatorul ^ este SAU-EXCLUSIV (XOR) pe biti: pentru fiecare pozitie, rezultatul este 1 daca cei doi biti difera si 0 daca sunt egali. Reprezentarile binare sunt: 12 = 1100, 10 = 1010. Aplicand XOR bit cu bit: pozitia 3: 1 xor 1 = 0; pozitia 2: 1 xor 0 = 1; pozitia 1: 0 xor 1 = 1; pozitia 0: 0 xor 0 = 0. Rezultatul este 0110 in binar, adica 6 in zecimal, varianta a. b (8) ar fi 12 & 10 (SI pe biti: 1000). c (14) ar fi 12 | 10 (SAU pe biti: 1110). d (2) nu corespunde niciunei operatii uzuale intre 12 si 10. Programul a fost compilat cu gcc si rulat, output real: 6."}, {"nr": 26, "categorie": "OOP (C++)", "enunt": "Fiind dat programul C++:\n#include <iostream>\nusing namespace std;\nclass Motor {\npublic:\n    void info() { cout << \"M\"; }\n};\nclass Radio {\npublic:\n    void info() { cout << \"R\"; }\n};\nclass Masina : public Motor, public Radio {\n};\nint main() {\n    Masina m;\n    m.info();\n    return 0;\n}\nCe se intampla la compilarea/executia acestui program?", "variante": {"a": "se afiseaza M", "b": "se afiseaza R", "c": "se afiseaza MR", "d": "programul nu se compileaza: apelul m.info() este ambiguu"}, "raspuns_barem": "d", "raspuns_corect": "d", "status_verificare": "CONFIRMAT", "explicatie": "Clasa Masina mosteneste multiplu clasele Motor si Radio, iar AMBELE clase de baza contin o metoda cu aceeasi semnatura, info(). Cand se scrie \"m.info()\", compilatorul nu poate decide care dintre cele doua metode mostenite sa fie apelata (Motor::info sau Radio::info), deci apelul este AMBIGUU. Aceasta produce o eroare de compilare (in g++: \"request for member 'info' is ambiguous\"), deci varianta d. a, b, c presupun ca programul se compileaza si ruleaza, ceea ce nu este cazul. Pentru a rezolva ambiguitatea, ar trebui folosit operatorul de rezolvare a domeniului: m.Motor::info() sau m.Radio::info(). Aceasta este o capcana clasica a mostenirii multiple: coliziunea de nume intre bazele multiple. Programul a fost compilat cu g++ -std=c++11 si a generat, conform asteptarilor, eroarea de ambiguitate (nu s-a produs niciun executabil)."}, {"nr": 27, "categorie": "PL/SQL", "enunt": "Se considera procedura PL/SQL:\nCREATE OR REPLACE PROCEDURE p_test (rez OUT NUMBER)\nIS\nBEGIN\n  NULL; -- corpul nu atribuie nimic lui rez\nEND;\n/\nsi blocul anonim:\nSET SERVEROUTPUT ON\nDECLARE\n  v NUMBER := 99;\nBEGIN\n  p_test(v);\n  DBMS_OUTPUT.PUT_LINE(NVL(TO_CHAR(v), 'necunoscut'));\nEND;\n/\nCe se afiseaza la executie?", "variante": {"a": "99", "b": "0", "c": "necunoscut", "d": "blocul genereaza eroare, deoarece parametrul OUT nu a fost atribuit in procedura"}, "raspuns_barem": "c", "raspuns_corect": "c", "status_verificare": "CONFIRMAT", "explicatie": "Un parametru de tip OUT este INITIALIZAT AUTOMAT cu NULL la intrarea in procedura, INDIFERENT de valoarea variabilei reale transmise ca argument. Astfel, chiar daca v avea valoarea 99 inainte de apel, la intrarea in p_test parametrul rez devine NULL, iar valoarea 99 se pierde. Deoarece corpul procedurii nu atribuie nimic lui rez (doar instructiunea NULL, care nu face nimic), rez ramane NULL. La revenire, aceasta valoare NULL este copiata inapoi in v, deci v devine NULL. In bloc, TO_CHAR(v) da NULL, iar NVL(..., 'necunoscut') afiseaza 'necunoscut', varianta c. a (99) este gresit: valoarea initiala se pierde deoarece OUT reseteaza parametrul la NULL. b (0) este gresit: NULL nu inseamna 0. d este falsa: nu se genereaza eroare daca un parametru OUT ramane neatribuit - el pastreaza pur si simplu valoarea NULL. Aceasta ilustreaza diferenta cheie fata de IN OUT (care ar fi pastrat valoarea de intrare)."}, {"nr": 28, "categorie": "SQL", "enunt": "Se considera comanda SQL-Oracle:\nSELECT TRUNC(TO_DATE('18-07-2026', 'DD-MM-YYYY'), 'MM') FROM dual;\nCe valoare returneaza comanda?", "variante": {"a": "18-07-2026", "b": "01-07-2026", "c": "01-01-2026", "d": "31-07-2026"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Functia TRUNC(data, format) trunchiaza o data la unitatea specificata de al doilea argument. Modelul de format 'MM' (sau 'MONTH') trunchiaza data la INCEPUTUL lunii, adica returneaza prima zi a lunii din care face parte data. Pentru 18-07-2026, TRUNC cu 'MM' returneaza 01-07-2026 (prima zi a lunii iulie 2026), varianta b. a (18-07-2026) ar fi data nemodificata (ce s-ar obtine cu TRUNC fara al doilea argument sau cu format zi). c (01-01-2026) ar fi rezultatul trunchierii la inceputul anului, folosind formatul 'YYYY' sau 'YEAR', nu 'MM'. d (31-07-2026) ar fi ultima zi a lunii (obtinuta cu LAST_DAY), nu prima. Capcana consta in distinctia dintre formatele de trunchiere: 'MM' -> prima zi a lunii, 'YYYY' -> prima zi a anului."}, {"nr": 29, "categorie": "OOP (C++)", "enunt": "In C++, care dintre urmatorii operatori NU poate fi supraincarcat (redefinit) pentru\ntipuri definite de utilizator?", "variante": {"a": "operatorul + (adunare)", "b": "operatorul [] (indexare)", "c": "operatorul :: (rezolvarea domeniului / scope resolution)", "d": "operatorul == (egalitate)"}, "raspuns_barem": "c", "raspuns_corect": "c", "status_verificare": "CONFIRMAT", "explicatie": "In C++, majoritatea operatorilor pot fi supraincarcati pentru tipuri definite de utilizator (clase), inclusiv +, [], ==, <<, (), -> etc. Exista insa un set restrans de operatori care NU pot fi supraincarcati niciodata: :: (rezolvarea domeniului / scope resolution), . (accesul la membru), .* (accesul la membru prin pointer), ?: (operatorul conditional ternar) si sizeof. Operatorul :: face parte din aceasta lista, deci varianta c este raspunsul corect. a (+): poate fi supraincarcat (foarte frecvent). b ([]): poate fi supraincarcat, tipic ca metoda membru (ex. pentru clase container). d (==): poate fi supraincarcat (comparatii intre obiecte). Motivul pentru care :: , . si :: nu pot fi redefiniti este ca semnificatia lor este fixata la nivelul limbajului (rezolvarea numelor si accesul la membri), iar redefinirea ar face codul imposibil de interpretat consecvent."}, {"nr": 30, "categorie": "PL/SQL", "enunt": "Se considera procedura PL/SQL:\nCREATE OR REPLACE PROCEDURE p_incr (n IN OUT NUMBER)\nIS\nBEGIN\n  n := n + 1;\nEND;\n/\nsi blocul anonim:\nBEGIN\n  p_incr(10);\nEND;\n/\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "blocul se executa corect si valoarea 11 este returnata apelantului", "b": "blocul genereaza eroare, deoarece un argument transmis unui parametru IN OUT trebuie sa fie o variabila, nu o valoare literala (constanta)", "c": "blocul se executa corect, dar valoarea 11 se pierde deoarece nu exista o variabila care sa o primeasca", "d": "blocul afiseaza automat 11 pe ecran"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Un parametru de tip IN OUT (sau OUT) trebuie sa primeasca la apel un argument care sa poata fi si SCRIS (o tinta de atribuire), deoarece la revenirea din procedura valoarea (posibil modificata) este copiata inapoi in argument. O valoare literala/constanta precum 10 nu este o variabila - nu i se poate atribui nimic - deci nu poate fi folosita ca argument pentru un parametru IN OUT. La compilarea/apelul blocului, Oracle genereaza eroarea PLS-00363: expression '10' cannot be used as an assignment target. Prin urmare varianta b este corecta. a si c presupun ca apelul reuseste, ceea ce nu este cazul - eroarea apare inainte de executie. d este falsa: procedura oricum nu afiseaza nimic (nu contine DBMS_OUTPUT). Pentru un apel corect ar trebui declarata o variabila (ex. v NUMBER := 10;) si transmisa aceasta: p_incr(v). Un parametru IN pur, in schimb, ar fi acceptat o valoare literala."}]};
+
+/* ---------- theme ---------- */
+(function(){
+  const saved = localStorage.getItem('csie3-theme');
+  if(saved) document.documentElement.setAttribute('data-theme', saved);
+  document.getElementById('themeToggle').addEventListener('click', function(){
+    const cur = document.documentElement.getAttribute('data-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light');
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('csie3-theme', next);
+  });
+})();
+
+/* ---------- helpers ---------- */
+function escapeHtml(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+const CODE_RE = /[;{}]|^(SELECT|FROM|WHERE|GROUP BY|ORDER BY|HAVING|UPDATE|INSERT|DELETE|CREATE|DROP|ALTER|BEGIN|END|DECLARE|EXCEPTION|LOOP|EXIT|IF |IF\(|ELSIF|ELSE|RETURN|SET SERVEROUTPUT|DBMS_OUTPUT|#include|int |void |char |float |double |struct |class |public:|private:|protected:|printf|scanf|namespace |using |for\s*\(|while\s*\(|switch\s*\()/i;
+function isCodeLine(line){
+  if(line === '/') return true;
+  return CODE_RE.test(line);
+}
+function formatEnunt(text){
+  const rawLines = text.split('\n');
+  const groups = [];
+  let cur = null;
+  for(const raw of rawLines){
+    const line = raw.trim();
+    if(line === ''){ cur = null; continue; }
+    const type = isCodeLine(line) ? 'code' : 'text';
+    if(cur && cur.type === type){ cur.lines.push(line); }
+    else { cur = {type, lines:[line]}; groups.push(cur); }
+  }
+  return groups.map(g => g.type === 'code'
+    ? '<pre class="code">'+escapeHtml(g.lines.join('\n'))+'</pre>'
+    : '<p>'+escapeHtml(g.lines.join(' '))+'</p>'
+  ).join('');
+}
+function letters(str){
+  return str.split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);
+}
+
+/* ---------- state ---------- */
+const state = {
+  pool: [],
+  shuffleQ: true,
+  shuffleA: true,
+  selectedCats: new Set(DATA.questions.map(q=>q.categorie)),
+  index: 0,
+  score: 0,
+  order: [],
+  results: []
+};
+
+const categories = Array.from(new Set(DATA.questions.map(q=>q.categorie)));
+
+function catCount(cat){ return DATA.questions.filter(q=>q.categorie===cat).length; }
+
+function renderChips(){
+  const el = document.getElementById('categoryChips');
+  el.innerHTML = '';
+  categories.forEach(cat=>{
+    const chip = document.createElement('div');
+    chip.className = 'chip active';
+    chip.innerHTML = escapeHtml(cat)+' <span class="count">'+catCount(cat)+'</span>';
+    chip.addEventListener('click', ()=>{
+      if(state.selectedCats.has(cat)){
+        if(state.selectedCats.size>1){ state.selectedCats.delete(cat); chip.classList.remove('active'); }
+      } else {
+        state.selectedCats.add(cat); chip.classList.add('active');
+      }
+      updateStartBtn();
+    });
+    el.appendChild(chip);
+  });
+}
+
+function updateStartBtn(){
+  const n = DATA.questions.filter(q=>state.selectedCats.has(q.categorie)).length;
+  document.getElementById('startBtn').textContent = 'Începe testul ('+n+' întrebări)';
+  document.getElementById('startBtn').disabled = n===0;
+}
+
+document.getElementById('toggleShuffleQ').addEventListener('click', function(){
+  state.shuffleQ = !state.shuffleQ; this.classList.toggle('on', state.shuffleQ);
+});
+document.getElementById('toggleShuffleA').addEventListener('click', function(){
+  state.shuffleA = !state.shuffleA; this.classList.toggle('on', state.shuffleA);
+});
+
+function showView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+}
+
+function bestScoreKey(){ return 'csie3-best-'+DATA.year; }
+function loadBest(){
+  const raw = localStorage.getItem(bestScoreKey());
+  return raw ? JSON.parse(raw) : null;
+}
+function renderBestNote(){
+  const b = loadBest();
+  const el = document.getElementById('bestScoreNote');
+  el.textContent = b ? ('Cel mai bun scor anterior: '+b.score+'/'+b.total+' ('+b.pct+'%)') : '';
+}
+
+document.getElementById('startBtn').addEventListener('click', startQuiz);
+document.getElementById('quitBtn').addEventListener('click', ()=>{ showView('setup'); renderBestNote(); });
+document.getElementById('restartBtn').addEventListener('click', ()=>{ showView('setup'); renderBestNote(); });
+document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+
+function startQuiz(){
+  let pool = DATA.questions.filter(q=>state.selectedCats.has(q.categorie));
+  if(state.shuffleQ) pool = shuffle(pool);
+  state.pool = pool;
+  state.index = 0;
+  state.score = 0;
+  state.results = [];
+  state.order = pool.map(q=>{
+    const opts = ['a','b','c','d'];
+    return state.shuffleA ? shuffle(opts) : opts;
+  });
+  showView('quiz');
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const q = state.pool[state.index];
+  const dispOrder = state.order[state.index];
+  document.getElementById('progressBar').style.width = Math.round(100*state.index/state.pool.length)+'%';
+  document.getElementById('quizPos').textContent = 'Întrebarea '+(state.index+1)+' din '+state.pool.length;
+  document.getElementById('quizCat').textContent = q.categorie;
+  document.getElementById('quizScore').textContent = 'Scor: '+state.score;
+  document.getElementById('quizEnunt').innerHTML = formatEnunt(q.enunt);
+  document.getElementById('nextBtn').style.display = 'none';
+  const fb = document.getElementById('quizFeedback');
+  fb.classList.remove('show','ok','ko');
+  document.getElementById('fbBaremWarn').style.display = 'none';
+
+  const optsEl = document.getElementById('quizOptions');
+  optsEl.innerHTML = '';
+  optsEl.dataset.locked = '0';
+  const displayLetters = ['A','B','C','D'];
+  dispOrder.forEach((origLetter, i)=>{
+    const btn = document.createElement('div');
+    btn.className = 'opt';
+    btn.dataset.orig = origLetter;
+    btn.innerHTML = '<span class="letter">'+displayLetters[i]+')</span><span class="txt">'+escapeHtml(q.variante[origLetter])+'</span>';
+    btn.addEventListener('click', ()=>selectOption(origLetter));
+    optsEl.appendChild(btn);
+  });
+}
+
+function selectOption(chosenLetter){
+  const q = state.pool[state.index];
+  const optsEl = document.getElementById('quizOptions');
+  if(optsEl.dataset.locked === '1') return;
+  optsEl.dataset.locked = '1';
+
+  const correctSet = letters(q.raspuns_corect);
+  const baremSet = letters(q.raspuns_barem);
+  const isCorrect = correctSet.includes(chosenLetter);
+  if(isCorrect) state.score++;
+
+  Array.from(optsEl.children).forEach(btn=>{
+    btn.classList.add('locked');
+    const l = btn.dataset.orig;
+    if(correctSet.includes(l)) btn.classList.add('correct');
+    else if(l === chosenLetter) btn.classList.add('incorrect');
+    else btn.classList.add('dim');
+    let tag = 'sursă: '+l.toUpperCase();
+    if(q.status_verificare === 'EROARE_BAREM' && baremSet.includes(l) && !correctSet.includes(l)){
+      tag += ' · alegerea baremului oficial';
+    }
+    const span = document.createElement('span');
+    span.className = 'tag';
+    span.textContent = tag;
+    btn.appendChild(span);
+  });
+
+  const fb = document.getElementById('quizFeedback');
+  fb.classList.add('show', isCorrect ? 'ok':'ko');
+  const title = document.getElementById('fbTitle');
+  title.className = 'fb-title '+(isCorrect?'ok-txt':'ko-txt');
+  title.textContent = isCorrect ? '✓ Corect' : ('✗ Greșit — răspunsul corect: '+correctSet.join(', ').toUpperCase());
+
+  const warnEl = document.getElementById('fbBaremWarn');
+  if(q.status_verificare === 'EROARE_BAREM'){
+    warnEl.style.display = 'block';
+    warnEl.textContent = '⚠ Barem oficial eronat: documentul original indică "'+baremSet.join(', ').toUpperCase()+'", dar răspunsul corect verificat este "'+correctSet.join(', ').toUpperCase()+'". Detalii mai jos.';
+  } else {
+    warnEl.style.display = 'none';
+  }
+  document.getElementById('fbExplic').textContent = q.explicatie;
+  document.getElementById('nextBtn').style.display = 'inline-flex';
+  document.getElementById('quizScore').textContent = 'Scor: '+state.score;
+
+  state.results.push({
+    nr: q.nr, categorie: q.categorie, chosen: chosenLetter, correctSet, isCorrect,
+    variante: q.variante, explicatie: q.explicatie, status_verificare: q.status_verificare,
+    baremSet
+  });
+}
+
+function nextQuestion(){
+  state.index++;
+  if(state.index >= state.pool.length){ renderResults(); showView('results'); }
+  else renderQuestion();
+}
+
+function renderResults(){
+  const total = state.results.length;
+  const score = state.results.filter(r=>r.isCorrect).length;
+  const pct = total ? Math.round(100*score/total) : 0;
+  document.getElementById('resScoreN').textContent = score+'/'+total;
+  document.getElementById('resPercent').textContent = pct+'%';
+  document.getElementById('resPunctaj').textContent = 'Punctaj estimat: '+(score*3)+' puncte (din '+(total*3)+')';
+
+  const best = loadBest();
+  if(!best || score/total > best.score/best.total){
+    localStorage.setItem(bestScoreKey(), JSON.stringify({score, total, pct}));
+  }
+
+  const catStats = {};
+  state.results.forEach(r=>{
+    catStats[r.categorie] = catStats[r.categorie] || {ok:0,total:0};
+    catStats[r.categorie].total++;
+    if(r.isCorrect) catStats[r.categorie].ok++;
+  });
+  const catBarsEl = document.getElementById('resCatBars');
+  catBarsEl.innerHTML = '';
+  Object.keys(catStats).forEach(cat=>{
+    const s = catStats[cat];
+    const p = Math.round(100*s.ok/s.total);
+    const row = document.createElement('div');
+    row.className = 'cat-bar-row';
+    row.innerHTML = '<div class="cat-bar-label"><span>'+escapeHtml(cat)+'</span><span>'+s.ok+'/'+s.total+'</span></div>'+
+      '<div class="cat-bar-outer"><div class="cat-bar-inner" style="width:'+p+'%"></div></div>';
+    catBarsEl.appendChild(row);
+  });
+
+  const tbody = document.getElementById('resTableBody');
+  tbody.innerHTML = '';
+  state.results.forEach((r, idx)=>{
+    const tr = document.createElement('tr');
+    tr.className = r.isCorrect ? 'hit':'miss';
+    tr.innerHTML = '<td>'+(r.isCorrect?'✓':'✗')+' '+r.nr+'</td><td>'+escapeHtml(r.categorie)+'</td><td>'+r.chosen.toUpperCase()+'</td><td>'+r.correctSet.join(',').toUpperCase()+'</td>';
+    const detail = document.createElement('tr');
+    detail.className = 'review-detail';
+    const td = document.createElement('td');
+    td.colSpan = 4;
+    let warnHtml = '';
+    if(r.status_verificare === 'EROARE_BAREM'){
+      warnHtml = '<div class="barem-warn" style="display:block;margin-bottom:8px">⚠ Barem oficial eronat (indica '+r.baremSet.join(',').toUpperCase()+')</div>';
+    }
+    td.innerHTML = warnHtml + escapeHtml(r.explicatie).replace(/\n/g,'<br>');
+    detail.appendChild(td);
+    tr.addEventListener('click', ()=>{ detail.classList.toggle('show'); });
+    tbody.appendChild(tr);
+    tbody.appendChild(detail);
+  });
+}
+
+renderChips();
+updateStartBtn();
+renderBestNote();
+</script>
+</body>
+</html>

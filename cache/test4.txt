@@ -1,0 +1,768 @@
+=== ADMITERE MASTER CSIE3 - TEST SIMULARE 4 ===
+Sursă: generat original, pe baza tiparelor din subiectele 2024-2025
+Format sursă original: intrebari noi, verificate prin compilare (C/C++, OOP) si
+  rationament riguros (SQL, PL/SQL)
+Număr total întrebări: 30
+Punctaj: 3 puncte/întrebare corectă, punctaj maxim 90 puncte
+
+##### ÎNTREBAREA 1 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Se considera urmatorul program C++:
+#include <iostream>
+using namespace std;
+class Contor {
+    static int nr;
+public:
+    Contor() { nr++; }
+    static int getNr() { return nr; }
+};
+int Contor::nr = 0;
+int main() {
+    Contor a, b;
+    { Contor c; }
+    Contor d;
+    cout << Contor::getNr();
+    return 0;
+}
+Ce se afiseaza la executie?
+
+VARIANTE:
+a) 3
+b) 4
+c) 1
+d) programul nu compileaza deoarece nr este privat si nu poate fi initializat in afara clasei
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Membrul static nr este partajat de toate instantele clasei Contor (exista o singura copie la nivel de clasa, nu una per obiect). Constructorul incrementeaza nr la fiecare obiect creat. Se construiesc: a, b (2 obiecte), apoi c in blocul interior (al 3-lea), apoi d (al 4-lea). Clasa nu are destructor care sa decrementeze nr, deci distrugerea lui c la iesirea din bloc nu scade valoarea. La afisare nr = 4, deci b este corect. a (3) ar ignora unul dintre obiecte. c (1) ar fi valoarea daca nr nu ar fi static (dar atunci getNr nici nu ar putea fi apelat static in acest fel). d este falsa: initializarea unui membru static privat in afara clasei prin "int Contor::nr = 0;" este forma standard obligatorie si perfect legala (definitia membrului static are acces la numele calificat chiar daca este privat).
+
+##### ÎNTREBAREA 2 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela:
+ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume
+VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3))
+avand cel putin 200 de randuri (inregistrari).
+Se considera urmatoarea comanda SQL-Oracle:
+SELECT nume FROM angajati WHERE id_departament = 10
+UNION
+SELECT nume FROM angajati WHERE id_departament = 20;
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) afiseaza numele distincte ale angajatilor din departamentul 10 sau 20, eliminand duplicatele si sortand implicit rezultatul
+b) afiseaza toate numele angajatilor din departamentele 10 si 20, pastrand eventualele duplicate
+c) genereaza eroare deoarece cele doua interogari extrag din aceeasi tabela
+d) afiseaza numai numele care apar simultan in ambele departamente
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Operatorul UNION reuneste rezultatele celor doua interogari, ELIMINA duplicatele si sorteaza implicit crescator rezultatul final (comportament standard Oracle pentru UNION). Astfel se obtin numele distincte ale angajatilor din departamentul 10 sau 20. a este corecta. b descrie comportamentul lui UNION ALL (care pastreaza duplicatele si nu sorteaza), nu al lui UNION. c este falsa: UNION nu impune ca interogarile sa provina din tabele diferite; pot avea aceeasi sursa. d descrie comportamentul lui INTERSECT (numele comune ambelor multimi), nu al lui UNION.
+
+##### ÎNTREBAREA 3 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera urmatorul declansator (trigger) PL/SQL definit pe tabela ANGAJATI:
+CREATE OR REPLACE TRIGGER trg_salariu
+BEFORE INSERT ON angajati
+FOR EACH ROW
+BEGIN
+  IF :NEW.salariul IS NULL THEN
+    :NEW.salariul := 2500;
+  END IF;
+END;
+/
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) la inserarea unui angajat fara salariu (NULL), trigger-ul seteaza automat salariul la 2500 inainte de scrierea randului in tabela
+b) trigger-ul genereaza eroare deoarece :NEW nu poate fi modificat intr-un declansator la inserare
+c) trigger-ul se declanseaza o singura data pentru intreaga comanda INSERT, indiferent de numarul de randuri inserate
+d) atribuirea :NEW.salariul := 2500 nu are efect deoarece randul este deja scris in tabela in momentul declansarii
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Intr-un trigger BEFORE INSERT la nivel de rand (FOR EACH ROW), pseudo-inregistrarea :NEW reprezinta randul care urmeaza sa fie inserat, iar campurile sale POT fi modificate. Modificarea se reflecta in valoarea efectiv scrisa in tabela, deoarece momentul BEFORE precede scrierea. Astfel, daca salariul introdus este NULL, i se atribuie 2500. a este corecta. b este falsa: modificarea lui :NEW este permisa exact in triggerele BEFORE la nivel de rand (este utilizarea tipica). c este falsa: prezenta clauzei FOR EACH ROW face triggerul sa se declanseze o data pentru FIECARE rand inserat, nu o singura data. d este falsa: tocmai pentru ca este BEFORE, randul inca NU este scris, deci modificarea are efect (in AFTER ar fi tardiva).
+
+##### ÎNTREBAREA 4 #####
+CATEGORIE: C/C++
+ENUNT:
+Fiind dat programul:
+#include <stdio.h>
+int f(int n, int acc) {
+    if (n == 0) return acc;
+    return f(n / 10, acc + n % 10);
+}
+int main() {
+    printf("%d", f(1234, 0));
+    return 0;
+}
+Ce valoare se afiseaza?
+
+VARIANTE:
+a) 1234
+b) 10
+c) 4
+d) 24
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia f este recursiva cu acumulator: la fiecare apel adauga cifra din unitati (n % 10) la acumulatorul acc si continua cu n / 10 (numarul fara ultima cifra). Trasare pentru f(1234, 0): f(123, 0+4=4) -> f(12, 4+3=7) -> f(1, 7+2=9) -> f(0, 9+1=10) -> returneaza acc=10. Rezultatul este suma cifrelor lui 1234 = 1+2+3+4 = 10, deci b este corect. a (1234) ar fi numarul insusi. c (4) este doar ultima cifra. d (24) este produsul cifrelor 1*2*3*4, nu suma. Verificat prin compilare cu gcc si executie: afiseaza 10.
+
+##### ÎNTREBAREA 5 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+In C++, la mostenirea de tip protected (clasa derivata deriva cu specificatorul
+protected din clasa de baza), membrii declarati public in clasa de baza devin in
+clasa derivata:
+
+VARIANTE:
+a) private
+b) protected
+c) raman public
+d) inaccesibili
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: La mostenirea protected, specificatorul de mostenire "coboara" nivelul de acces al membrilor mosteniti pana la cel mult protected. Astfel: membrii public din baza devin protected in derivata, membrii protected raman protected, iar membrii private ai bazei raman oricum inaccesibili direct in derivata. Prin urmare membrii public devin protected, deci b este corect. a (private) ar fi cazul mostenirii private, nu protected. c (raman public) este cazul mostenirii public. d (inaccesibili) se aplica doar membrilor private ai clasei de baza, nu celor public.
+
+##### ÎNTREBAREA 6 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabelele:
+PRODUSE (id_produs NUMBER(5), denumire_produs VARCHAR2(32), pret_lista NUMBER(8,2))
+cu cel putin 100 de randuri (inregistrari).
+RAND_COMENZI (nr_comanda NUMBER(6), id_produs NUMBER(8), cantitate NUMBER(7),
+pret NUMBER(7,2)) cu cel putin 200 de randuri (inregistrari).
+Se considera urmatoarea comanda SQL-Oracle:
+SELECT id_produs FROM produse WHERE pret_lista > 100
+INTERSECT
+SELECT id_produs FROM rand_comenzi WHERE cantitate > 5;
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) afiseaza id-urile produselor cu pret_lista peste 100 SAU comandate in cantitate mai mare de 5
+b) afiseaza id-urile produselor care au pret_lista peste 100 SI care apar in comenzi cu cantitate mai mare de 5, distincte
+c) afiseaza toate id-urile din PRODUSE la care se adauga cele din RAND_COMENZI
+d) genereaza eroare deoarece cele doua interogari extrag din tabele diferite
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Operatorul INTERSECT returneaza numai valorile care apar in AMBELE multimi de rezultate, eliminand duplicatele si sortand implicit. Aici se obtin id_produs care indeplinesc simultan: pret_lista > 100 (in PRODUSE) SI cantitate > 5 (in RAND_COMENZI). b este corecta. a descrie UNION (SAU logic), nu INTERSECT. c descrie o reuniune (UNION ALL) a tuturor id-urilor, nu intersectia. d este falsa: operatorii pe multimi (INTERSECT, UNION, MINUS) impun doar ca cele doua interogari sa aiba acelasi numar de coloane cu tipuri compatibile - sursele pot fi tabele diferite, nu este eroare.
+
+##### ÎNTREBAREA 7 #####
+CATEGORIE: C/C++
+ENUNT:
+Fiind dat programul:
+#include <stdio.h>
+int f(int a, int b) {
+    if (a > b) return 0;
+    return a + f(a + 1, b);
+}
+int main() {
+    printf("%d", f(3, 6));
+    return 0;
+}
+Ce valoare se afiseaza?
+
+VARIANTE:
+a) 18
+b) 9
+c) 21
+d) 0
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia recursiva calculeaza suma numerelor intregi din intervalul [a, b]. Conditia de oprire este a > b (returneaza 0), altfel aduna a la rezultatul apelului cu a+1. Trasare pentru f(3, 6): 3 + f(4,6) = 3 + (4 + f(5,6)) = 3 + 4 + (5 + f(6,6)) = 3 + 4 + 5 + (6 + f(7,6)) = 3 + 4 + 5 + 6 + 0 = 18. Deci a este corect. b (9) ar fi 3+6 (doar capetele). c (21) ar fi suma 1..6 sau 3+4+5+6+ceva in plus, gresit. d (0) ar fi cazul in care conditia initiala a>b ar fi adevarata (nu este, 3<=6). Verificat prin compilare cu gcc si executie: afiseaza 18.
+
+##### ÎNTREBAREA 8 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera urmatorul declansator (trigger) PL/SQL definit pe tabela ANGAJATI:
+CREATE OR REPLACE TRIGGER trg_marire
+AFTER INSERT ON angajati
+FOR EACH ROW
+BEGIN
+  :NEW.salariul := :NEW.salariul * 1.1;
+END;
+/
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) triggerul functioneaza corect si mareste salariul cu 10% dupa inserare
+b) triggerul genereaza eroare deoarece intr-un trigger AFTER pseudo-inregistrarea :NEW nu poate fi modificata (este read-only)
+c) triggerul mareste salariul, dar numai daca acesta este NULL
+d) triggerul se declanseaza o singura data pentru intreaga comanda INSERT
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Intr-un trigger AFTER (INSERT/UPDATE), randul a fost deja scris in tabela, iar campurile :NEW sunt read-only (nu pot fi modificate). Orice atribuire de forma :NEW.salariul := ... intr-un trigger AFTER produce eroare (ORA-04084: cannot change NEW values for this trigger type). Modificarea lui :NEW este permisa DOAR in triggerele BEFORE la nivel de rand. Deci b este corect. a este falsa: atribuirea nu este permisa in AFTER. c este falsa: nu exista nicio conditie IN NULL in cod, iar oricum atribuirea ar esua. d este falsa: FOR EACH ROW inseamna declansare per rand, dar acest aspect este irelevant pentru ca triggerul nici nu se compileaza/executa corect din cauza modificarii lui :NEW in AFTER.
+
+##### ÎNTREBAREA 9 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Se considera urmatorul program C++:
+#include <iostream>
+using namespace std;
+class A {
+public:
+    static int x;
+};
+int A::x = 10;
+int main() {
+    A a, b;
+    a.x = 20;
+    b.x += 5;
+    cout << A::x;
+    return 0;
+}
+Ce se afiseaza la executie?
+
+VARIANTE:
+a) 10
+b) 15
+c) 25
+d) 35
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Membrul x este static, deci exista o SINGURA copie partajata de toate obiectele clasei A (a.x, b.x si A::x refera acelasi loc de memorie). Initial x = 10. Instructiunea a.x = 20 seteaza variabila comuna la 20. Apoi b.x += 5 opereaza pe aceeasi variabila: 20 + 5 = 25. La afisare A::x = 25, deci c este corect. a (10) ignora modificarile. b (15) ar fi 10+5, ignorand ca a.x=20 a modificat aceeasi variabila. d (35) ar presupune 20+5+10, tratand gresit x ca membri separati. Verificat prin compilare cu g++ -std=c++11 si executie: afiseaza 25.
+
+##### ÎNTREBAREA 10 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabelele:
+PRODUSE (id_produs NUMBER(5), denumire_produs VARCHAR2(32), pret_lista NUMBER(8,2))
+cu cel putin 100 de randuri (inregistrari).
+RAND_COMENZI (nr_comanda NUMBER(6), id_produs NUMBER(8), cantitate NUMBER(7),
+pret NUMBER(7,2)) cu cel putin 200 de randuri (inregistrari).
+Se considera urmatoarea comanda SQL-Oracle:
+SELECT id_produs FROM produse
+MINUS
+SELECT id_produs FROM rand_comenzi;
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) afiseaza id-urile produselor care nu au fost niciodata comandate (exista in PRODUSE, dar nu apar in RAND_COMENZI)
+b) afiseaza id-urile produselor care au fost comandate cel putin o data
+c) afiseaza id-urile comune celor doua tabele
+d) afiseaza toate id-urile din ambele tabele, fara duplicate
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Operatorul MINUS returneaza randurile din prima interogare care NU se regasesc in a doua, eliminand duplicatele si sortand implicit. Aici: id_produs care exista in PRODUSE, dar nu apar in RAND_COMENZI, adica produsele care nu au fost niciodata comandate. a este corecta. b este exact opusul (produsele comandate ar fi INTERSECT sau lista din RAND_COMENZI). c descrie INTERSECT. d descrie UNION. Ordinea operanzilor conteaza la MINUS (A MINUS B difera de B MINUS A), spre deosebire de INTERSECT si UNION care sunt comutative.
+
+##### ÎNTREBAREA 11 #####
+CATEGORIE: Baze de date (teorie)
+ENUNT:
+Precizati care dintre urmatoarele afirmatii referitoare la modelul entitate-relatie
+(entitate-asociere) este corecta:
+
+VARIANTE:
+a) o relatie de tip 1:1 impune obligatoriu crearea unei tabele de legatura separate in modelul relational
+b) o relatie de tip M:N (many-to-many) intre doua entitati se transpune in modelul relational printr-o tabela asociativa suplimentara, care contine drept chei externe cheile primare ale celor doua entitati
+c) cardinalitatea maxima N a unei asocieri inseamna exact doua aparitii ale entitatii
+d) un atribut al unei entitati poate fi el insusi o alta entitate, cu propria cheie primara
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: O asociere de tip M:N (multi-la-multi) nu se poate reprezenta direct prin chei externe intr-una dintre cele doua tabele; ea necesita o tabela asociativa (de legatura) suplimentara, ale carei coloane sunt cheile primare ale celor doua entitati participante, folosite drept chei externe (si formand impreuna, de regula, cheia primara compusa a tabelei de legatura). b este corecta. a este falsa: o relatie 1:1 se poate implementa fuzionand cele doua entitati sau adaugand o cheie externa cu UNIQUE intr-una din tabele, fara tabela de legatura. c este falsa: cardinalitatea maxima N/M inseamna "mai multe" (nedeterminat, oricat de multe), nu exact doua. d este falsa: un atribut este o proprietate simpla sau compusa a unei entitati, nu o entitate de sine statatoare cu cheie primara (daca ar avea propria identitate, ar fi modelat ca entitate separata legata printr-o asociere).
+
+##### ÎNTREBAREA 12 #####
+CATEGORIE: C/C++
+ENUNT:
+Fiind dat programul:
+#include <stdio.h>
+int main() {
+    int a = 2, b = 5;
+    a += b -= a;
+    printf("%d %d", a, b);
+    return 0;
+}
+Ce se afiseaza?
+
+VARIANTE:
+a) 7 3
+b) 5 3
+c) 7 5
+d) 5 5
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Operatorii de atribuire compusa (+=, -=) sunt asociativi la DREAPTA, deci expresia se evalueaza ca a += (b -= a). Se evalueaza intai b -= a: b devine 5 - 2 = 3, iar valoarea acestei expresii este noul b, adica 3. Apoi a += 3: a devine 2 + 3 = 5. Rezultat final: a = 5, b = 3, deci se afiseaza "5 3", varianta b. a (7 3) ar presupune ca a += foloseste vechea valoare a lui b (5): 2+5=7, gresit, deoarece b a fost deja modificat la 3. c si d confunda valoarea finala a lui b. Nu exista comportament nedefinit aici: cele doua atribuiri sunt secventiate clar prin asociativitatea la dreapta. Verificat prin compilare cu gcc si executie: afiseaza "5 3".
+
+##### ÎNTREBAREA 13 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera un declansator (trigger) definit astfel pe tabela ANGAJATI:
+CREATE OR REPLACE TRIGGER trg_log
+BEFORE INSERT ON angajati
+FOR EACH ROW
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('Vechea valoare: ' || :OLD.salariul);
+END;
+/
+Ce se poate afirma despre valoarea :OLD.salariul la inserarea unui angajat?
+
+VARIANTE:
+a) :OLD.salariul contine salariul mediu al tabelei
+b) :OLD.salariul este NULL, deoarece la o operatie INSERT nu exista o valoare veche a randului (randul nu exista inainte de inserare)
+c) triggerul genereaza eroare deoarece :OLD nu poate fi mentionat intr-un trigger de inserare
+d) :OLD.salariul contine aceeasi valoare ca :NEW.salariul
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: La o operatie INSERT, randul nu exista inainte, deci nu are o "valoare veche": toate campurile pseudo-inregistrarii :OLD sunt NULL. Referirea la :OLD intr-un trigger de INSERT este permisa sintactic (nu produce eroare), dar valorile sunt NULL. Prin urmare se afiseaza "Vechea valoare: " (fara nimic dupa, NULL concatenat da sir vid). b este corecta. a este inventata, fara legatura cu :OLD. c este falsa: mentionarea lui :OLD nu genereaza eroare, doar valorile sunt NULL. d este falsa: :OLD este NULL la INSERT, in timp ce :NEW contine valorile inserate; ele nu coincid. Reamintim: la INSERT doar :NEW are valori, la DELETE doar :OLD are valori, iar la UPDATE ambele au valori.
+
+##### ÎNTREBAREA 14 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Se considera urmatorul program C++:
+#include <iostream>
+using namespace std;
+class Baza {
+public:
+    int x;
+    Baza() { x = 5; }
+};
+class Derivata : private Baza {
+};
+int main() {
+    Derivata d;
+    cout << d.x;
+    return 0;
+}
+Ce se intampla la compilarea/executia programului?
+
+VARIANTE:
+a) se afiseaza 5
+b) se afiseaza 0
+c) eroare de compilare: x devine membru privat in Derivata prin mostenirea private, deci nu este accesibil din main (d.x este inaccesibil)
+d) eroare de compilare: o clasa nu poate mosteni cu specificatorul private
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Prin mostenirea private (class Derivata : private Baza), toti membrii mosteniti din Baza (inclusiv x, care era public) devin PRIVATI in Derivata. Un membru privat nu este accesibil din exteriorul clasei, deci expresia d.x din main() incalca accesul si genereaza eroare de compilare ("x is inaccessible within this context"). Deci c este corect. a si b sunt gresite: programul nu ajunge sa se execute, deci nu afiseaza nimic. d este falsa: mostenirea private este perfect legala in C++ (este chiar mostenirea implicita pentru class); eroarea nu tine de derivare, ci de incercarea de acces la un membru devenit privat. Verificat prin compilare cu g++ -std=c++11: rezulta eroare "'int Baza::x' is inaccessible within this context".
+
+##### ÎNTREBAREA 15 #####
+CATEGORIE: SQL
+ENUNT:
+Se considera tabela creata astfel:
+CREATE TABLE clienti (
+  id_client NUMBER(5) PRIMARY KEY,
+  email VARCHAR2(50) UNIQUE
+);
+Se executa, in aceeasi sesiune, urmatoarele comenzi:
+INSERT INTO clienti VALUES (1, NULL);
+INSERT INTO clienti VALUES (2, NULL);
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) a doua inserare esueaza deoarece email are constrangere UNIQUE si valoarea NULL este deja folosita
+b) ambele inserari reusesc, deoarece constrangerea UNIQUE permite valori NULL multiple (NULL nu se considera egal cu NULL)
+c) prima inserare esueaza deoarece o coloana UNIQUE nu poate primi valoarea NULL
+d) ambele inserari esueaza deoarece email ar trebui sa fie NOT NULL implicit fiind UNIQUE
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: In Oracle, o constrangere UNIQUE garanteaza unicitatea valorilor NON-NULL, dar PERMITE mai multe valori NULL, deoarece doua valori NULL nu se considera egale (NULL = NULL da NULL/necunoscut, nu TRUE). Prin urmare, ambele inserari cu email NULL reusesc. b este corecta. a este falsa: UNIQUE nu blocheaza NULL-urile multiple. c este falsa: o coloana UNIQUE accepta NULL (spre deosebire de PRIMARY KEY, care implica automat NOT NULL). d este falsa: UNIQUE nu implica NOT NULL; doar PRIMARY KEY combina UNIQUE cu NOT NULL.
+
+##### ÎNTREBAREA 16 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera urmatorul declansator (trigger):
+CREATE OR REPLACE TRIGGER trg_control
+BEFORE INSERT ON angajati
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('Nou angajat: ' || :NEW.nume);
+END;
+/
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) triggerul se compileaza si afiseaza numele fiecarui angajat inserat
+b) triggerul genereaza eroare la compilare deoarece :NEW nu poate fi folosit intr-un trigger la nivel de instructiune (lipseste clauza FOR EACH ROW)
+c) triggerul se declanseaza o data pentru fiecare rand inserat
+d) triggerul afiseaza numele numai daca se insereaza un singur rand
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Fara clauza FOR EACH ROW, triggerul este la nivel de INSTRUCTIUNE (statement-level): se declanseaza o singura data pentru intreaga comanda, indiferent de numarul de randuri afectate, si NU are acces la pseudo-inregistrarile :NEW / :OLD (acestea exista doar in triggerele la nivel de rand). Referirea la :NEW.nume intr-un trigger la nivel de instructiune produce eroare la compilare. b este corecta. a este falsa: nu se compileaza din cauza folosirii lui :NEW. c descrie un trigger la nivel de rand (care ar necesita FOR EACH ROW). d este falsa: problema nu tine de numarul de randuri, ci de imposibilitatea folosirii lui :NEW la nivel de instructiune.
+
+##### ÎNTREBAREA 17 #####
+CATEGORIE: C/C++
+ENUNT:
+Fiind dat programul:
+#include <stdio.h>
+int f(int n, int p) {
+    if (n == 1) return p;
+    return f(n - 1, p * n);
+}
+int main() {
+    printf("%d", f(5, 1));
+    return 0;
+}
+Ce valoare se afiseaza?
+
+VARIANTE:
+a) 120
+b) 24
+c) 15
+d) 5
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia recursiva cu acumulator p calculeaza factorialul lui n. La fiecare pas inmulteste acumulatorul cu n si scade n, oprindu-se cand n == 1 (returnand p). Trasare pentru f(5, 1): f(4, 1*5=5) -> f(3, 5*4=20) -> f(2, 20*3=60) -> f(1, 60*2=120) -> returneaza p=120. Rezultatul este 5! = 120, deci a este corect. b (24) este 4!, ar rezulta daca s-ar opri prematur. c (15) este suma 1+2+3+4+5, nu produsul. d (5) este doar n initial. Verificat prin compilare cu gcc si executie: afiseaza 120.
+
+##### ÎNTREBAREA 18 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Se considera urmatorul program C++:
+#include <iostream>
+using namespace std;
+template<typename T>
+T maxim(T a, T b) {
+    return a > b ? a : b;
+}
+int main() {
+    cout << maxim(3, 8) << " " << maxim('a', 'z');
+    return 0;
+}
+Ce se afiseaza la executie?
+
+VARIANTE:
+a) 8 z
+b) 8 a
+c) 3 z
+d) programul nu compileaza deoarece maxim este apelat cu tipuri diferite
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: maxim este un sablon de functie (function template) parametrizat cu tipul T. La primul apel maxim(3, 8), T este dedus ca int; se returneaza max(3, 8) = 8. La al doilea apel maxim('a', 'z'), T este dedus ca char; se compara codurile ASCII ('a'=97 < 'z'=122), deci se returneaza 'z', afisat ca litera z. Rezultat: "8 z", deci a este corect. b si c inverseaza maximul (returneaza minimul). d este falsa: fiecare apel deduce independent tipul T din argumentele sale (ambele argumente ale unui apel au acelasi tip), deci compilarea reuseste - se instantiaza doua specializari, una pentru int si una pentru char. Verificat prin compilare cu g++ -std=c++11 si executie: afiseaza "8 z".
+
+##### ÎNTREBAREA 19 #####
+CATEGORIE: SQL
+ENUNT:
+Se considera tabelele create astfel:
+CREATE TABLE departamente (
+  id_departament NUMBER(3) PRIMARY KEY,
+  denumire VARCHAR2(30)
+);
+CREATE TABLE angajati (
+  id_angajat NUMBER(5) PRIMARY KEY,
+  nume VARCHAR2(30),
+  id_departament NUMBER(3) REFERENCES departamente(id_departament)
+);
+In tabela DEPARTAMENTE exista departamentele cu id 10, 20 si 30. Se executa:
+INSERT INTO angajati VALUES (101, 'Popescu', 99);
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) inserarea reuseste si se creeaza automat departamentul 99
+b) inserarea esueaza cu eroare de integritate referentiala, deoarece nu exista un departament cu id 99 in tabela parinte
+c) inserarea reuseste deoarece id_departament accepta orice valoare numerica
+d) inserarea esueaza deoarece id_departament trebuie sa fie NOT NULL
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Coloana id_departament din ANGAJATI are o constrangere de cheie externa (FOREIGN KEY) catre DEPARTAMENTE(id_departament). O cheie externa impune ca orice valoare non-NULL introdusa sa existe deja in tabela parinte (integritate referentiala). Cum in DEPARTAMENTE nu exista id 99, inserarea esueaza cu eroare (ORA-02291: integrity constraint violated - parent key not found). b este corecta. a este falsa: cheia externa nu creeaza automat randuri parinte. c este falsa: tocmai constrangerea FK restrictioneaza valorile la cele existente in parinte. d este falsa: o cheie externa PERMITE valoarea NULL (angajat fara departament); problema aici este valoarea 99 inexistenta in parinte, nu o violare NOT NULL.
+
+##### ÎNTREBAREA 20 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Pe tabela ANGAJATI este definit urmatorul declansator la nivel de rand:
+CREATE OR REPLACE TRIGGER trg_numara
+AFTER UPDATE ON angajati
+FOR EACH ROW
+BEGIN
+  INSERT INTO jurnal(mesaj) VALUES ('modificare salariu');
+END;
+/
+Se executa o singura comanda:
+UPDATE angajati SET salariul = salariul * 1.05 WHERE id_departament = 50;
+Presupunand ca in departamentul 50 exista exact 8 angajati, cate randuri se
+insereaza in tabela JURNAL?
+
+VARIANTE:
+a) 1 rand
+b) 8 randuri
+c) 0 randuri
+d) 200 de randuri
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Triggerul are clauza FOR EACH ROW, deci este la nivel de RAND: se declanseaza o data pentru FIECARE rand afectat de comanda UPDATE. Comanda actualizeaza cei 8 angajati din departamentul 50, deci triggerul se executa de 8 ori, inserand 8 randuri in JURNAL. b este corecta. a (1 rand) ar fi cazul unui trigger la nivel de instructiune (fara FOR EACH ROW), care se declanseaza o singura data per comanda. c (0) ar fi corect doar daca UPDATE nu ar afecta niciun rand. d (200) ar corespunde numarului total de angajati, dar WHERE limiteaza la departamentul 50 (8 angajati). Diferenta cheie: trigger de RAND = o executie per rand afectat; trigger de INSTRUCTIUNE = o executie per comanda.
+
+##### ÎNTREBAREA 21 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+In C++, la mostenirea de tip public, membrii declarati protected in clasa de baza
+sunt accesibili in clasa derivata si raman, pentru clasele ce ar deriva mai departe
+din clasa derivata:
+
+VARIANTE:
+a) public
+b) protected
+c) private
+d) inaccesibili
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: La mostenirea public, nivelul de acces al membrilor mosteniti se pastreaza: membrii public raman public, iar membrii protected raman protected in clasa derivata. Un membru protected este accesibil in interiorul clasei derivate si continua sa fie protected pentru eventuale clase derivate ulterior (deci accesibil si acestora). b este corect. a (public) ar insemna ca protected devine public, ceea ce nu se intampla la mostenirea public (protected ramane protected). c (private) ar fi cazul mostenirii private. d (inaccesibili) se aplica doar membrilor private ai clasei de baza, care nu sunt niciodata accesibili direct in derivata, indiferent de tipul mostenirii.
+
+##### ÎNTREBAREA 22 #####
+CATEGORIE: C/C++
+ENUNT:
+Fiind dat programul:
+#include <stdio.h>
+int main() {
+    int a = 3, b = 4;
+    a *= b + 1;
+    b -= a % b;
+    printf("%d %d", a, b);
+    return 0;
+}
+Ce se afiseaza?
+
+VARIANTE:
+a) 15 1
+b) 12 0
+c) 15 4
+d) 16 3
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Se evalueaza pe rand cele doua atribuiri compuse. (1) a *= b + 1: operatorul += / *= are prioritate mai mica decat +, deci partea dreapta se evalueaza intai ca (b + 1) = 5, apoi a = a * 5 = 3 * 5 = 15. (2) b -= a % b: se calculeaza a % b = 15 % 4 = 3 (restul impartirii), apoi b = b - 3 = 4 - 3 = 1. Rezultat final: a = 15, b = 1, deci se afiseaza "15 1", varianta a. b (12 0) ar rezulta daca a *= b + 1 ar fi interpretat gresit ca (a*b)+1. c (15 4) ignora modificarea lui b. d (16 3) e complet gresit. Verificat prin compilare cu gcc si executie: afiseaza "15 1".
+
+##### ÎNTREBAREA 23 #####
+CATEGORIE: SQL
+ENUNT:
+Se considera tabela creata astfel:
+CREATE TABLE produse (
+  id_produs NUMBER(5) PRIMARY KEY,
+  denumire_produs VARCHAR2(32),
+  pret_lista NUMBER(8,2) CONSTRAINT ck_pret CHECK (pret_lista >= 1000)
+);
+Tabela contine deja randul (5, 'Laptop', 4000). Se executa:
+UPDATE produse SET pret_lista = 800 WHERE id_produs = 5;
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) actualizarea reuseste si pret_lista devine 800
+b) actualizarea esueaza deoarece incalca constrangerea CHECK (pret_lista >= 1000)
+c) actualizarea reuseste, dar pret_lista este setat automat la 1000
+d) constrangerea CHECK se verifica doar la INSERT, nu si la UPDATE, deci actualizarea reuseste
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Constrangerea CHECK (pret_lista >= 1000) este verificata la ORICE operatie care modifica valoarea coloanei, deci atat la INSERT cat si la UPDATE. Comanda UPDATE incearca sa seteze pret_lista = 800, valoare care incalca conditia (800 < 1000), deci comanda esueaza cu eroare (ORA-02290: check constraint violated) si randul ramane neschimbat (4000). b este corecta. a este falsa: valoarea 800 nu trece verificarea. c este falsa: o constrangere CHECK nu "corecteaza" automat valoarea la limita, ci respinge intreaga operatie. d este falsa: CHECK se aplica si la UPDATE, nu doar la INSERT.
+
+##### ÎNTREBAREA 24 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Pe tabela ANGAJATI este definit urmatorul declansator:
+CREATE OR REPLACE TRIGGER trg_protectie
+BEFORE UPDATE OF salariul ON angajati
+FOR EACH ROW
+BEGIN
+  IF :NEW.salariul < :OLD.salariul THEN
+    RAISE_APPLICATION_ERROR(-20001, 'Salariul nu poate fi micsorat');
+  END IF;
+END;
+/
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) triggerul impiedica orice modificare care ar micsora salariul unui angajat, comparand noua valoare (:NEW) cu cea veche (:OLD)
+b) triggerul genereaza eroare deoarece :OLD nu poate fi folosit intr-un trigger de UPDATE
+c) triggerul se declanseaza si la INSERT, blocand inserarea salariilor
+d) triggerul mareste automat salariul la valoarea veche
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Intr-un trigger BEFORE UPDATE la nivel de rand, ambele pseudo-inregistrari sunt disponibile: :OLD contine valorile dinaintea modificarii, iar :NEW valorile propuse dupa modificare. Conditia IF :NEW.salariul < :OLD.salariul detecteaza o scadere de salariu si, in acest caz, RAISE_APPLICATION_ERROR opreste operatia cu o eroare, anuland UPDATE-ul pentru randul respectiv. Astfel triggerul impiedica micsorarea salariului. a este corecta. b este falsa: la UPDATE, :OLD este perfect valid si contine valorile vechi. c este falsa: triggerul este definit doar pe UPDATE OF salariul, deci nu se declanseaza la INSERT. d este falsa: triggerul nu modifica :NEW, ci ridica o eroare (nu "corecteaza" valoarea).
+
+##### ÎNTREBAREA 25 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Se considera urmatorul program C++:
+#include <iostream>
+using namespace std;
+template<typename T>
+class Cutie {
+    T val;
+public:
+    Cutie(T v) : val(v) {}
+    T get() { return val; }
+};
+int main() {
+    Cutie<int> a(5);
+    Cutie<double> b(2.5);
+    cout << a.get() + b.get();
+    return 0;
+}
+Ce se afiseaza la executie?
+
+VARIANTE:
+a) 7
+b) 7.5
+c) eroare de compilare deoarece nu se pot aduna doua obiecte Cutie de tipuri diferite
+d) 75
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Cutie este un sablon de clasa (class template). Se instantiaza Cutie<int> pentru a (val = 5, int) si Cutie<double> pentru b (val = 2.5, double). Expresia a.get() + b.get() nu aduna obiecte Cutie, ci VALORILE returnate de metoda get(): 5 (int) + 2.5 (double). Prin conversie implicita (promovare aritmetica), 5 devine 5.0, iar suma este 7.5 (double), afisata ca 7.5. b este corect. a (7) ar fi trunchierea la int, dar rezultatul expresiei este double, deci se afiseaza 7.5. c este falsa: nu se aduna obiecte Cutie, ci rezultatele get() (int si double, compatibile la adunare). d (75) este o concatenare gresita. Verificat prin compilare cu g++ -std=c++11 si executie: afiseaza 7.5.
+
+##### ÎNTREBAREA 26 #####
+CATEGORIE: C/C++
+ENUNT:
+Fiind dat programul:
+#include <stdio.h>
+int f(int n, int a, int b) {
+    if (n == 0) return a;
+    return f(n - 1, b, a + b);
+}
+int main() {
+    printf("%d", f(6, 0, 1));
+    return 0;
+}
+Ce valoare se afiseaza?
+
+VARIANTE:
+a) 6
+b) 8
+c) 13
+d) 21
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia calculeaza al n-lea termen al sirului Fibonacci folosind doi acumulatori (a = termenul curent, b = urmatorul). La fiecare pas se "avanseaza" perechea: (a, b) devine (b, a+b), decrementand n. Trasare pentru f(6, 0, 1): f(5,1,1), f(4,1,2), f(3,2,3), f(2,3,5), f(1,5,8), f(0,8,13) -> returneaza a = 8. Deci al 6-lea termen Fibonacci (numarand 0,1,1,2,3,5,8) este 8, varianta b. a (6) este doar n. c (13) este valoarea lui b la ultimul pas (termenul urmator), nu a. d (21) este termenul Fibonacci urmator dupa 13. Verificat prin compilare cu gcc si executie: afiseaza 8.
+
+##### ÎNTREBAREA 27 #####
+CATEGORIE: SQL
+ENUNT:
+Se considera tabela creata astfel:
+CREATE TABLE produse (
+  id_produs NUMBER(5) PRIMARY KEY,
+  denumire_produs VARCHAR2(32),
+  pret_lista NUMBER(8,2)
+);
+Se executa, in aceeasi sesiune, urmatoarele comenzi:
+INSERT INTO produse VALUES (5, 'Mouse', 50);
+INSERT INTO produse VALUES (5, 'Tastatura', 120);
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) ambele inserari reusesc, iar tabela va contine doua randuri cu id_produs = 5
+b) a doua inserare esueaza deoarece incalca constrangerea de cheie primara (valoare duplicata pentru id_produs)
+c) a doua inserare reuseste si o suprascrie pe prima
+d) prima inserare esueaza deoarece nu se specifica explicit coloanele
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Coloana id_produs este PRIMARY KEY, ceea ce impune atat UNICITATE cat si NOT NULL. Prima inserare (id 5) reuseste. A doua inserare foloseste aceeasi valoare id_produs = 5, incalcand unicitatea cheii primare, deci esueaza cu eroare (ORA-00001: unique constraint violated). Tabela ramane cu un singur rand (Mouse, 50). b este corecta. a este falsa: cheia primara nu permite doua randuri cu aceeasi valoare. c este falsa: un INSERT care incalca PK esueaza cu eroare, nu suprascrie randul existent (pentru suprascriere s-ar folosi UPDATE sau MERGE). d este falsa: forma INSERT INTO tabela VALUES (...) fara lista de coloane este valida cand se dau valori pentru toate coloanele in ordine.
+
+##### ÎNTREBAREA 28 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Pe tabela ANGAJATI este definit urmatorul declansator:
+CREATE OR REPLACE TRIGGER trg_stergere
+BEFORE DELETE ON angajati
+FOR EACH ROW
+BEGIN
+  INSERT INTO arhiva(id_angajat, nume) VALUES (:OLD.id_angajat, :OLD.nume);
+END;
+/
+Ce se poate afirma despre pseudo-inregistrarile :OLD si :NEW in acest trigger?
+
+VARIANTE:
+a) :NEW contine valorile randului sters, iar :OLD este NULL
+b) :OLD contine valorile randului care se sterge, iar campurile :NEW sunt NULL (nu exista un rand nou la o operatie DELETE)
+c) atat :OLD cat si :NEW contin valorile randului sters
+d) triggerul genereaza eroare deoarece :OLD nu poate fi folosit intr-un trigger de stergere
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: La o operatie DELETE, randul exista inainte de operatie dar nu exista un "rand nou" dupa. Prin urmare :OLD contine valorile randului care urmeaza sa fie sters (folosite aici pentru arhivare), iar :NEW are toate campurile NULL. Triggerul copiaza corect id_angajat si nume din :OLD in tabela ARHIVA inainte de stergere. b este corecta. a inverseaza rolurile lui :OLD si :NEW. c este falsa: :NEW nu contine valori la DELETE. d este falsa: :OLD este exact pseudo-inregistrarea valida si necesara la DELETE. Regula generala: INSERT -> doar :NEW are valori; DELETE -> doar :OLD are valori; UPDATE -> ambele au valori.
+
+##### ÎNTREBAREA 29 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Se considera urmatorul program C++:
+#include <iostream>
+using namespace std;
+class Obiect {
+    static int total;
+public:
+    Obiect() { total++; }
+    ~Obiect() { total--; }
+    static int cate() { return total; }
+};
+int Obiect::total = 0;
+int main() {
+    Obiect *p = new Obiect[3];
+    Obiect x;
+    cout << Obiect::cate();
+    delete[] p;
+    cout << " " << Obiect::cate();
+    return 0;
+}
+Ce se afiseaza la executie?
+
+VARIANTE:
+a) 4 1
+b) 3 0
+c) 4 4
+d) 1 1
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Membrul static total numara obiectele vii (constructorul il incrementeaza, destructorul il decrementeaza). new Obiect[3] construieste 3 obiecte (total devine 3), apoi Obiect x construieste inca unul (total devine 4). Prima afisare: 4. delete[] p apeleaza destructorul pentru cele 3 obiecte din vector (total scade de la 4 la 1); x este inca in viata. A doua afisare: 1 (precedat de spatiu). Rezultat: "4 1", deci a este corect. b (3 0) ignora obiectul x. c (4 4) ar presupune ca delete[] nu apeleaza destructorii (fals). d (1 1) numara doar x. Verificat prin compilare cu g++ -std=c++11 si executie: afiseaza "4 1".
+
+##### ÎNTREBAREA 30 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+In C++, daca o clasa derivata este declarata cu cuvantul cheie class si, la derivare,
+nu se precizeaza niciun specificator de acces (ex: class Derivata : Baza { ... }),
+mostenirea este implicit de tip:
+
+VARIANTE:
+a) public
+b) protected
+c) private
+d) virtual
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: In C++, cand la derivare nu se scrie explicit un specificator de acces, tipul mostenirii implicite depinde de cuvantul cheie folosit pentru clasa derivata: pentru class mostenirea implicita este PRIVATE, iar pentru struct este public. Cum in enunt se foloseste class, mostenirea este implicit private. c este corect. a (public) ar fi implicitul pentru struct, nu pentru class. b (protected) nu este niciodata mostenirea implicita (trebuie declarata explicit). d (virtual) nu este un specificator de acces la mostenire, ci un mecanism separat (mostenirea virtuala) folosit pentru rezolvarea diamantului la mostenirea multipla si trebuie oricum specificat explicit.

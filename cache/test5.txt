@@ -1,0 +1,695 @@
+=== ADMITERE MASTER CSIE3 - TEST SIMULARE 5 ===
+Sursă: generat original, pe baza tiparelor din subiectele 2024-2025
+Format sursă original: intrebari noi, verificate prin compilare (C/C++, OOP) si rationament riguros (SQL, PL/SQL)
+Număr total întrebări: 30
+Punctaj: 3 puncte/întrebare corectă, punctaj maxim 90 puncte
+
+##### ÎNTREBAREA 1 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Fiind dat programul:
+#include <iostream>
+#include <cstring>
+using namespace std;
+class Text {
+    char *p;
+public:
+    Text(const char *s) { p = new char[strlen(s)+1]; strcpy(p, s); }
+    void schimba(char c) { p[0] = c; }
+    void afis() { cout << p; }
+};
+int main() {
+    Text a("mama");
+    Text b = a;
+    b.schimba('P');
+    a.afis();
+    return 0;
+}
+Ce afiseaza programul?
+
+VARIANTE:
+a) mama
+b) Pama
+c) PamaPama
+d) programul nu compileaza (lipseste constructorul de copiere)
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Clasa Text nu defineste explicit un constructor de copiere, deci compilatorul genereaza unul IMPLICIT care copiaza membru cu membru (shallow copy / copie superficiala). La "Text b = a;" se copiaza doar valoarea pointerului p, astfel incat a.p si b.p indica ACELASI bloc de memorie alocat cu new. Apelul b.schimba('P') modifica primul caracter al buffer-ului partajat ('m' devine 'P'), deci si a "vede" modificarea. a.afis() tipareste "Pama". Varianta a) ar fi corecta doar daca constructorul de copiere ar face deep copy (buffere separate) - dar aici este implicit/superficial. Varianta c) e gresita: afis() tipareste continutul o singura data. Varianta d) e gresita: programul compileaza, constructorul de copiere implicit exista intotdeauna daca nu este interzis explicit.
+
+##### ÎNTREBAREA 2 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela:
+PRODUSE (id_produs NUMBER(5) PRIMARY KEY, denumire_produs VARCHAR2(32), pret_lista NUMBER(8,2)) avand cel putin 100 de randuri.
+Se executa, in aceasta ordine, intr-o singura sesiune:
+DELETE FROM produse WHERE pret_lista < 10;
+ALTER TABLE produse ADD (activ NUMBER(1));
+ROLLBACK;
+Precizati care dintre urmatoarele afirmatii este adevarata:
+
+VARIANTE:
+a) comanda ROLLBACK reface (restaureaza) randurile sterse de DELETE
+b) randurile sterse de DELETE raman sterse definitiv, ROLLBACK nu are ce anula
+c) comanda ALTER TABLE genereaza eroare deoarece tabela are randuri
+d) intreaga secventa este anulata, tabela ramane in starea initiala fara coloana activ
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Comanda ALTER TABLE este o comanda DDL, iar in Oracle orice comanda DDL declanseaza un COMMIT IMPLICIT inainte si dupa executarea ei. Prin urmare, in momentul executarii ALTER TABLE, tranzactia curenta (care contine DELETE-ul) este comisa (COMMIT) automat. ROLLBACK-ul ulterior nu mai are nicio modificare necomisa de anulat, deci randurile sterse raman sterse definitiv. Varianta a) e gresita tocmai din cauza commit-ului implicit al DDL. Varianta c) e gresita: ALTER TABLE ... ADD adauga o coloana noua (initializata NULL pe randurile existente), functioneaza indiferent de numarul de randuri. Varianta d) e gresita: coloana activ ramane adaugata (DDL comis), iar DELETE-ul ramane comis.
+
+##### ÎNTREBAREA 3 #####
+CATEGORIE: C/C++
+ENUNT:
+Fiind dat programul:
+#include <stdio.h>
+int main() {
+    int a[3][3] = {{1,2,3},{4,5,6},{7,8,9}};
+    int s = 0;
+    for (int i = 0; i < 3; i++)
+        s += a[i][2-i];
+    printf("%d", s);
+    return 0;
+}
+Ce valoare se afiseaza?
+
+VARIANTE:
+a) 15
+b) 6
+c) 12
+d) 45
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Bucla parcurge diagonala secundara (anti-diagonala) a matricei: pentru i=0 se aduna a[0][2]=3, pentru i=1 se aduna a[1][1]=5, pentru i=2 se aduna a[2][0]=7. Suma este 3+5+7=15. Varianta b) 6 este suma diagonalei principale minus ceva / o suma partiala gresita. Varianta c) 12 ar rezulta dintr-o indexare gresita. Varianta d) 45 este suma TUTUROR elementelor matricei (1+2+...+9), care s-ar obtine daca s-ar aduna toate cele 9 elemente, nu doar anti-diagonala. Verificat prin compilare si executie: rezultatul este 15.
+
+##### ÎNTREBAREA 4 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Care dintre urmatoarele declaratii foloseste CORECT atributul %TYPE, pentru o variabila care preia tipul coloanei salariul din tabela angajati?
+
+VARIANTE:
+a) v_sal salariul.angajati%TYPE;
+b) v_sal angajati.salariul%TYPE;
+c) v_sal angajati%TYPE.salariul;
+d) v_sal %TYPE(angajati.salariul);
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Sintaxa corecta a atributului %TYPE este nume_tabela.nume_coloana%TYPE, deci "angajati.salariul%TYPE" (numele tabelei, punct, numele coloanei, apoi %TYPE). Variabila v_sal va primi exact tipul si dimensiunea coloanei salariul. Varianta a) inverseaza tabela cu coloana (salariul.angajati) - incorect. Varianta c) foloseste %ROWTYPE-like/sintaxa inexistenta cu %TYPE plasat gresit. Varianta d) nu este o sintaxa valida - %TYPE nu se apeleaza ca o functie cu paranteze. Avantajul lui %TYPE este ca variabila se adapteaza automat daca tipul coloanei se modifica in dictionar.
+
+##### ÎNTREBAREA 5 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Fiind dat programul:
+#include <iostream>
+using namespace std;
+class Baza {
+public:
+    virtual ~Baza() { cout << "B"; }
+};
+class Derivata : public Baza {
+public:
+    ~Derivata() { cout << "D"; }
+};
+int main() {
+    Baza *p = new Derivata();
+    delete p;
+    return 0;
+}
+Ce afiseaza programul?
+
+VARIANTE:
+a) B
+b) D
+c) DB
+d) BD
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Destructorul clasei de baza este declarat virtual. La "delete p", unde p este un pointer de tip Baza* care indica un obiect Derivata, mecanismul de dispatch dinamic (datorat lui virtual) apeleaza intai destructorul clasei DERIVATE (~Derivata, afiseaza "D"), apoi automat destructorul clasei de baza (~Baza, afiseaza "B") - ordinea de distrugere este inversa constructiei. Rezultatul este "DB". Daca destructorul din baza NU ar fi fost virtual, s-ar fi apelat doar ~Baza (comportament nedorit / distrugere incompleta a partii derivate), afisand "B" - de aceea destructorul virtual este obligatoriu la stergerea unui obiect derivat printr-un pointer de baza. Varianta a) corespunde cazului fara virtual. Varianta b) omite destructorul bazei. Varianta d) inverseaza gresit ordinea. Verificat prin compilare si executie: rezultatul este "DB".
+
+##### ÎNTREBAREA 6 #####
+CATEGORIE: SQL
+ENUNT:
+Se considera comenzile Oracle aplicate aceleiasi tabele populate:
+(1) DELETE FROM produse;
+(2) TRUNCATE TABLE produse;
+Precizati care dintre urmatoarele afirmatii este adevarata:
+
+VARIANTE:
+a) ambele comenzi pot fi anulate ulterior cu ROLLBACK
+b) DELETE poate fi anulat cu ROLLBACK, dar TRUNCATE nu (fiind DDL, face commit implicit)
+c) TRUNCATE poate fi anulat cu ROLLBACK, dar DELETE nu
+d) niciuna dintre comenzi nu poate fi anulata cu ROLLBACK
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: DELETE este o comanda DML: modificarile ei fac parte din tranzactia curenta si pot fi anulate cu ROLLBACK (cat timp nu a intervenit un COMMIT). TRUNCATE este o comanda DDL: ea sterge toate randurile prin dealocarea extentiilor si declanseaza un COMMIT IMPLICIT, deci NU poate fi anulata cu ROLLBACK. Prin urmare afirmatia corecta este b. Varianta a) e gresita: TRUNCATE (DDL) nu poate fi rollback-uit. Varianta c) inverseaza gresit rolurile. Varianta d) e gresita: DELETE (DML) poate fi anulat cu ROLLBACK. Aceasta este diferenta clasica DML vs DDL din perspectiva controlului tranzactiilor.
+
+##### ÎNTREBAREA 7 #####
+CATEGORIE: C/C++
+ENUNT:
+Fiind dat programul:
+#include <stdio.h>
+int main() {
+    int a[5] = {10, 20, 30, 40, 50};
+    int i = 0;
+    int x = a[i++];
+    int y = a[++i];
+    printf("%d", x + y);
+    return 0;
+}
+Ce valoare se afiseaza?
+
+VARIANTE:
+a) 40
+b) 30
+c) 50
+d) 60
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Fiecare instructiune are un singur efect secundar, deci nu exista ambiguitate de ordine. La "int x = a[i++];" se foloseste valoarea curenta i=0, deci x = a[0] = 10, iar apoi i devine 1 (post-incrementare). La "int y = a[++i];" se aplica intai pre-incrementarea: i devine 2, apoi y = a[2] = 30. Suma x+y = 10+30 = 40. Varianta b) 30 ar fi doar y. Varianta c) 50 ar rezulta dintr-o interpretare gresita a incrementarilor. Varianta d) 60 = 10 + a[?] gresit. Verificat prin compilare si executie: rezultatul este 40.
+
+##### ÎNTREBAREA 8 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera secventa PL/SQL:
+DECLARE
+    v_nr NUMBER;
+BEGIN
+    IF v_nr > 0 THEN
+        DBMS_OUTPUT.PUT_LINE('POZITIV');
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('ALTCEVA');
+    END IF;
+END;
+Ce se afiseaza la executie (variabila v_nr nu este initializata)?
+
+VARIANTE:
+a) POZITIV
+b) ALTCEVA
+c) nimic, deoarece se genereaza eroare (v_nr este NULL)
+d) atat POZITIV cat si ALTCEVA
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: O variabila NUMBER neinitializata are valoarea NULL. In logica cu trei valori din PL/SQL, orice comparatie cu NULL (aici v_nr > 0) returneaza NULL (necunoscut), NU TRUE. Instructiunea IF executa ramura THEN doar daca conditia este TRUE; cand conditia este NULL (sau FALSE), se executa ramura ELSE. Deci se afiseaza "ALTCEVA". Varianta a) ar fi corecta doar daca v_nr>0 ar fi TRUE. Varianta c) e gresita: o conditie NULL intr-un IF NU genereaza eroare, pur si simplu duce la ramura ELSE. Varianta d) e imposibila: se executa exact o singura ramura a instructiunii IF.
+
+##### ÎNTREBAREA 9 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Constructorul de copiere generat IMPLICIT de compilator (atunci cand programatorul nu il defineste) realizeaza:
+
+VARIANTE:
+a) o copie profunda (deep copy), alocand memorie noua pentru fiecare pointer membru
+b) o copie superficiala (shallow copy), copiind membru cu membru valorile datelor
+c) nu copiaza nimic, obiectul nou ramane neinitializat
+d) o copie doar a membrilor de tip static ai clasei
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Constructorul de copiere implicit efectueaza o copiere membru cu membru (memberwise copy) a datelor obiectului sursa - adica o copie superficiala (shallow copy). Pentru membrii de tip pointer, se copiaza doar valoarea pointerului (adresa), nu si blocul de memorie referit; astfel doua obiecte ajung sa indice acelasi bloc, ceea ce poate duce la probleme (double free, modificari partajate). De aceea, pentru clase care gestioneaza resurse dinamice, programatorul trebuie sa defineasca explicit un constructor de copiere cu deep copy. Varianta a) descrie deep copy, care NU este comportamentul implicit. Varianta c) e gresita: obiectul se initializeaza prin copiere. Varianta d) e gresita: membrii static apartin clasei, nu obiectului, si nu se copiaza; se copiaza membrii nestatici.
+
+##### ÎNTREBAREA 10 #####
+CATEGORIE: SQL
+ENUNT:
+Se creeaza vederea:
+CREATE VIEW v_ang AS
+    SELECT id_angajat, nume, salariul
+    FROM angajati;
+Presupunem ca celelalte coloane ale tabelei angajati accepta valori NULL. Se executa:
+INSERT INTO v_ang (id_angajat, nume, salariul) VALUES (500, 'Popescu', 4000);
+Precizati care dintre urmatoarele afirmatii este adevarata:
+
+VARIANTE:
+a) INSERT-ul esueaza deoarece nu se poate insera niciodata printr-o vedere
+b) INSERT-ul reuseste si adauga un rand nou in tabela de baza angajati (coloanele nespecificate raman NULL)
+c) INSERT-ul adauga randul doar in vedere, fara sa afecteze tabela angajati
+d) INSERT-ul genereaza eroare deoarece vederea nu contine toate coloanele tabelei
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: v_ang este o vedere SIMPLA (bazata pe o singura tabela, fara functii de grup, fara DISTINCT, fara GROUP BY si fara jonctiuni), deci este actualizabila (updatable) si permite INSERT. Comanda INSERT prin vedere se propaga catre tabela de baza angajati: se adauga un rand nou cu id_angajat=500, nume='Popescu', salariul=4000, iar coloanele nementionate (care accepta NULL) primesc NULL. O vedere nu stocheaza date proprii - datele exista doar in tabela de baza. Varianta a) e gresita: prin vederile simple se poate insera. Varianta c) e gresita: vederea nu are stocare proprie, INSERT-ul afecteaza tabela de baza. Varianta d) e gresita: nu este obligatoriu sa specifici toate coloanele tabelei atata timp cat coloanele omise accepta NULL sau au valori implicite.
+
+##### ÎNTREBAREA 11 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera blocul PL/SQL:
+BEGIN
+    FOR rec IN (SELECT nume, salariul FROM angajati WHERE salariul > 5000) LOOP
+        DBMS_OUTPUT.PUT_LINE(rec.nume);
+    END LOOP;
+END;
+Precizati care dintre urmatoarele afirmatii este adevarata despre acest bloc:
+
+VARIANTE:
+a) genereaza eroare deoarece variabila rec nu a fost declarata in sectiunea DECLARE
+b) este corect: intr-o bucla FOR cu cursor implicit, variabila rec este declarata automat, iar OPEN/FETCH/CLOSE se realizeaza implicit
+c) genereaza eroare deoarece lipsesc comenzile OPEN, FETCH si CLOSE pentru cursor
+d) bucla se executa o singura data, indiferent de numarul de randuri returnate
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Constructia "FOR rec IN (SELECT ...) LOOP ... END LOOP;" este o bucla FOR cu cursor (cursor FOR loop). In acest tip de bucla, variabila de ciclare rec este declarata IMPLICIT de PL/SQL, avand automat structura unei linii returnate de interogare (echivalent %ROWTYPE al cursorului), iar deschiderea cursorului (OPEN), extragerea randurilor (FETCH) si inchiderea (CLOSE) se fac AUTOMAT. Bucla itereaza o data pentru fiecare rand returnat. Deci afirmatia corecta este b. Varianta a) e gresita: rec nu trebuie declarata - este declarata implicit. Varianta c) e gresita: OPEN/FETCH/CLOSE sunt gestionate implicit, nu trebuie scrise. Varianta d) e gresita: bucla se executa o data pentru fiecare rand (sau deloc daca interogarea nu returneaza randuri).
+
+##### ÎNTREBAREA 12 #####
+CATEGORIE: C/C++
+ENUNT:
+Fiind dat programul:
+#include <stdio.h>
+int main() {
+    int m[2][3] = {{1,2,3},{4,5,6}};
+    int *p = &m[0][0];
+    printf("%d", *(p+4));
+    return 0;
+}
+Ce valoare se afiseaza?
+
+VARIANTE:
+a) 4
+b) 5
+c) 6
+d) valoare nedefinita (acces in afara matricei)
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: In C, o matrice bidimensionala este stocata in memorie in ordine pe linii (row-major), continuu: elementele sunt m[0][0], m[0][1], m[0][2], m[1][0], m[1][1], m[1][2] = 1,2,3,4,5,6. Pointerul p indica &m[0][0], adica primul element. Expresia *(p+4) acceseaza al 5-lea element (indexul 4) din aceasta secventa liniara, care este m[1][1] = 5. Accesul este valid (indexul 4 se afla in interiorul celor 6 elemente). Varianta a) 4 = *(p+3) = m[1][0]. Varianta c) 6 = *(p+5) = m[1][2]. Varianta d) e gresita: accesul se face in interiorul zonei alocate matricei. Verificat prin compilare si executie: rezultatul este 5.
+
+##### ÎNTREBAREA 13 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Fiind dat programul:
+#include <iostream>
+using namespace std;
+class C {
+public:
+    int x;
+    C(int v) : x(v) {}
+};
+void f(C obj) { obj.x = 100; }
+void g(C &obj) { obj.x = 200; }
+int main() {
+    C a(1);
+    f(a);
+    cout << a.x << " ";
+    g(a);
+    cout << a.x;
+    return 0;
+}
+Ce afiseaza programul?
+
+VARIANTE:
+a) 1 200
+b) 100 200
+c) 1 1
+d) 100 100
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia f primeste obiectul PRIN VALOARE (C obj): la apel se creeaza o copie a lui a, iar modificarea obj.x=100 afecteaza doar copia locala, nu obiectul original a. Dupa f(a), a.x ramane 1, deci primul cout afiseaza "1". Functia g primeste obiectul PRIN REFERINTA (C &obj): obj este un alias al lui a, deci obj.x=200 modifica direct obiectul original. Dupa g(a), a.x devine 200, deci al doilea cout afiseaza "200". Rezultatul complet este "1 200". Varianta b) ar presupune ca f modifica originalul (fals - e transmitere prin valoare). Varianta c) ar presupune ca nici g nu modifica (fals - e prin referinta). Varianta d) e gresita din ambele motive. Verificat prin compilare si executie: rezultatul este "1 200".
+
+##### ÎNTREBAREA 14 #####
+CATEGORIE: SQL
+ENUNT:
+Precizati care dintre urmatoarele comenzi Oracle este o comanda DDL (Data Definition Language):
+
+VARIANTE:
+a) INSERT INTO produse VALUES (1, 'Monitor', 999.99)
+b) UPDATE produse SET pret_lista = pret_lista * 1.1
+c) CREATE TABLE clienti (id NUMBER PRIMARY KEY, nume VARCHAR2(30))
+d) DELETE FROM produse WHERE id_produs = 5
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Comenzile DDL definesc/modifica STRUCTURA obiectelor bazei de date: CREATE, ALTER, DROP, TRUNCATE, RENAME. CREATE TABLE creeaza o noua tabela, deci este DDL (si declanseaza commit implicit). Comenzile INSERT (a), UPDATE (b) si DELETE (d) sunt comenzi DML (Data Manipulation Language): ele modifica DATELE (randurile) dintr-o tabela existenta, fac parte din tranzactia curenta si pot fi anulate cu ROLLBACK. Prin urmare singura comanda DDL din lista este CREATE TABLE (varianta c).
+
+##### ÎNTREBAREA 15 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera secventa PL/SQL:
+DECLARE
+    v_val NUMBER;
+    v_contor NUMBER := 0;
+BEGIN
+    WHILE v_val = 0 LOOP
+        v_contor := v_contor + 1;
+        v_val := 0;
+    END LOOP;
+    DBMS_OUTPUT.PUT_LINE(v_contor);
+END;
+Ce se afiseaza (v_val nu este initializata)?
+
+VARIANTE:
+a) 0
+b) 1
+c) bucla este infinita, nu se afiseaza nimic
+d) se genereaza eroare deoarece v_val este NULL
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: La prima evaluare a conditiei buclei WHILE, v_val are valoarea NULL (neinitializata). Comparatia v_val = 0 cu v_val NULL returneaza NULL (necunoscut), nu TRUE. O bucla WHILE isi executa corpul doar daca conditia este TRUE; deoarece conditia este NULL (tratata ca ne-adevarata), corpul buclei NU se executa niciodata. Astfel v_contor ramane 0 si se afiseaza 0. Varianta b) ar presupune ca bucla se executa o data. Varianta c) e gresita: bucla nu devine infinita, pentru ca nici nu intra (daca ar intra, atribuirea v_val:=0 ar face-o infinita - dar nu se ajunge acolo). Varianta d) e gresita: o conditie NULL intr-un WHILE nu genereaza eroare, doar impiedica intrarea in bucla.
+
+##### ÎNTREBAREA 16 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+De ce este necesar ca destructorul unei clase de baza sa fie declarat virtual atunci cand se sterge (delete) un obiect al clasei derivate printr-un pointer catre clasa de baza?
+
+VARIANTE:
+a) pentru ca altfel programul nu compileaza
+b) pentru ca fara destructor virtual se apeleaza doar destructorul clasei de baza, iar partea derivata nu este eliberata corect
+c) pentru ca destructorul virtual accelereaza dealocarea memoriei
+d) pentru ca doar destructorii virtuali pot elibera memoria alocata cu new
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Cand se face "delete p", unde p este de tip Baza* dar indica un obiect Derivata, alegerea destructorului apelat depinde de faptul daca destructorul este virtual. Daca destructorul bazei NU este virtual, se apeleaza static doar ~Baza, iar destructorul clasei derivate ~Derivata NU se executa - resursele gestionate de partea derivata (memorie, fisiere etc.) raman neeliberate (resource leak), comportamentul fiind chiar nedefinit conform standardului. Daca destructorul este virtual, dispatch-ul dinamic apeleaza intai ~Derivata, apoi ~Baza, asigurand distrugerea completa si corecta. Deci raspunsul este b. Varianta a) e gresita: programul compileaza si fara virtual. Varianta c) e gresita: virtual nu are rolul de a accelera, ci de a asigura corectitudinea. Varianta d) e gresita: si destructorii nevirtuali pot elibera memorie - problema este ca cel derivat nu este apelat deloc in acest scenariu.
+
+##### ÎNTREBAREA 17 #####
+CATEGORIE: SQL
+ENUNT:
+Se creeaza vederea:
+CREATE VIEW v_stat AS
+    SELECT id_departament, COUNT(*) AS nr_ang, AVG(salariul) AS sal_mediu
+    FROM angajati
+    GROUP BY id_departament;
+Se incearca apoi:
+UPDATE v_stat SET sal_mediu = 5000 WHERE id_departament = 10;
+Precizati care dintre urmatoarele afirmatii este adevarata:
+
+VARIANTE:
+a) UPDATE-ul reuseste si modifica salariul mediu al departamentului 10
+b) UPDATE-ul genereaza eroare: nu se pot modifica prin vedere coloane rezultate din functii de grup / GROUP BY
+c) UPDATE-ul modifica direct fiecare salariu al angajatilor din departamentul 10
+d) UPDATE-ul reuseste dar nu are niciun efect asupra tabelei angajati
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: v_stat este o vedere COMPLEXA: contine functii de grup (COUNT, AVG) si o clauza GROUP BY. Astfel de vederi NU sunt actualizabile - coloanele nr_ang si sal_mediu sunt valori agregate (calculate din mai multe randuri), nu corespund direct unor coloane individuale ale tabelei de baza, deci nu pot fi tinta unui UPDATE/INSERT/DELETE. Oracle genereaza eroare (de ex. ORA-01732: data manipulation operation not legal on this view). Deci raspunsul este b. Varianta a) e gresita: modificarea unei coloane agregate nu are sens si nu este permisa. Varianta c) e gresita: UPDATE-ul nu se poate propaga la salarii individuale. Varianta d) e gresita: comanda nu reuseste, ci esueaza cu eroare.
+
+##### ÎNTREBAREA 18 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera declaratia:
+DECLARE
+    v_ang angajati%ROWTYPE;
+BEGIN
+    ...
+END;
+Precizati care dintre urmatoarele afirmatii despre variabila v_ang este adevarata:
+
+VARIANTE:
+a) v_ang este o variabila de acelasi tip cu prima coloana a tabelei angajati
+b) v_ang este o inregistrare (record) cu campuri corespunzatoare tuturor coloanelor tabelei angajati
+c) v_ang este un cursor asupra tabelei angajati
+d) v_ang este un tablou (colectie) cu toate randurile tabelei angajati
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Atributul %ROWTYPE aplicat unei tabele (angajati%ROWTYPE) declara o variabila de tip RECORD (inregistrare) a carei structura corespunde unei singure LINII a tabelei: are cate un camp pentru fiecare coloana, cu numele si tipul coloanei respective (ex. v_ang.id_angajat, v_ang.nume, v_ang.salariul etc.). Deci v_ang poate retine un rand intreg. Varianta a) descrie %TYPE aplicat unei singure coloane, nu %ROWTYPE. Varianta c) e gresita: %ROWTYPE nu creeaza un cursor. Varianta d) e gresita: v_ang retine UN singur rand (o inregistrare), nu o colectie de randuri - pentru mai multe randuri ar fi nevoie de o colectie/tablou (nested table, VARRAY etc.).
+
+##### ÎNTREBAREA 19 #####
+CATEGORIE: C/C++
+ENUNT:
+Fiind dat programul:
+#include <stdio.h>
+int main() {
+    int a[] = {2, 4, 6, 8, 10};
+    int *p = a;
+    p += 2;
+    printf("%d", *p + *(p-1));
+    return 0;
+}
+Ce valoare se afiseaza?
+
+VARIANTE:
+a) 10
+b) 14
+c) 6
+d) 18
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Initial p indica a[0]. Dupa "p += 2", p indica a[2], care are valoarea 6. Expresia *p este 6 (valoarea lui a[2]), iar *(p-1) este a[1] = 4. Suma este 6 + 4 = 10. Aritmetica pointerilor lucreaza in unitati de element (int), deci p+=2 avanseaza cu doua pozitii. Varianta b) 14 = a[2]+a[3] = 6+8 (indexare gresita). Varianta c) 6 ar fi doar *p. Varianta d) 18 = a[3]+a[4]. Verificat prin compilare si executie: rezultatul este 10.
+
+##### ÎNTREBAREA 20 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Fiind dat programul:
+#include <iostream>
+using namespace std;
+class C {
+public:
+    C() { cout << "c"; }
+    C(const C &) { cout << "k"; }
+};
+void f(C obj) { }
+int main() {
+    C a;
+    f(a);
+    C b = a;
+    return 0;
+}
+Ce afiseaza programul?
+
+VARIANTE:
+a) ckk
+b) c
+c) ck
+d) ckkk
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Se urmareste cate obiecte se construiesc si prin ce constructor. "C a;" apeleaza constructorul implicit (fara parametri), afisand "c". "f(a);" transmite obiectul PRIN VALOARE, deci se creeaza o copie a lui a pentru parametrul obj - se apeleaza constructorul de copiere, afisand "k". "C b = a;" initializeaza b din a - din nou constructorul de copiere, afisand "k". Rezultatul este "ckk". Varianta b) ignora copiile. Varianta c) numara doar o copiere. Varianta d) presupune o copiere in plus care nu are loc (nu exista o a treia copiere). Verificat prin compilare si executie: rezultatul este "ckk".
+
+##### ÎNTREBAREA 21 #####
+CATEGORIE: Baze de date (teorie)
+ENUNT:
+In algebra relationala, operatorul de PROIECTIE (notat cu pi) aplicat unei relatii:
+
+VARIANTE:
+a) selecteaza (pastreaza) doar liniile care satisfac o conditie data
+b) selecteaza (pastreaza) doar anumite coloane (atribute) ale relatiei, eliminand duplicatele
+c) combina doua relatii pe baza unei conditii de egalitate intre atribute
+d) returneaza toate combinatiile posibile de tupluri din doua relatii
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Operatorul de proiectie (pi) actioneaza pe VERTICALA relatiei: pastreaza doar atributele (coloanele) specificate si elimina restul, iar in algebra relationala pura elimina si tuplurile duplicate rezultate. Varianta a) descrie operatorul de SELECTIE (sigma), care actioneaza pe orizontala, pastrand liniile ce satisfac un predicat. Varianta c) descrie operatorul de JONCTIUNE (join), care combina tupluri din doua relatii pe baza unei conditii. Varianta d) descrie PRODUSUL CARTEZIAN, care asociaza fiecare tuplu al unei relatii cu fiecare tuplu al celeilalte. Deci proiectia corespunde variantei b (selectie de coloane).
+
+##### ÎNTREBAREA 22 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Fiind dat programul:
+#include <iostream>
+#include <cstring>
+using namespace std;
+class Text {
+    char *p;
+public:
+    Text(const char *s) { p = new char[strlen(s)+1]; strcpy(p, s); }
+    Text(const Text &t) { p = new char[strlen(t.p)+1]; strcpy(p, t.p); }
+    void schimba(char c) { p[0] = c; }
+    void afis() { cout << p; }
+};
+int main() {
+    Text a("mama");
+    Text b = a;
+    b.schimba('P');
+    a.afis();
+    return 0;
+}
+Ce afiseaza programul?
+
+VARIANTE:
+a) mama
+b) Pama
+c) PamaPama
+d) mamaPama
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Spre deosebire de cazul cu constructor de copiere implicit, aici clasa Text defineste EXPLICIT un constructor de copiere care realizeaza deep copy (copie profunda): aloca un bloc NOU de memorie si copiaza continutul sirului. La "Text b = a;" se apeleaza acest constructor, deci b.p indica un buffer propriu, independent de a.p. Apelul b.schimba('P') modifica doar buffer-ul lui b ('m' -> 'P'), fara a afecta obiectul a. Prin urmare a.afis() tipareste continutul nemodificat "mama". Varianta b) ar fi rezultatul unei copii superficiale (shallow), care aici nu se produce. Variantele c) si d) presupun afisari multiple/concatenate care nu au loc. Verificat prin compilare si executie: rezultatul este "mama".
+
+##### ÎNTREBAREA 23 #####
+CATEGORIE: SQL
+ENUNT:
+Precizati care dintre urmatoarele afirmatii despre o vedere (VIEW) in Oracle este adevarata:
+
+VARIANTE:
+a) o vedere stocheaza fizic, in mod permanent, datele returnate de interogarea sa
+b) o vedere este o tabela virtuala definita printr-o interogare SELECT, fara sa stocheze date proprii
+c) o vedere nu poate fi folosita niciodata intr-o clauza FROM a altei interogari
+d) crearea unei vederi duplica automat toate randurile tabelelor de baza
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: O vedere (VIEW) este o tabela VIRTUALA: ea memoreaza doar DEFINITIA interogarii SELECT (in dictionarul de date), nu si datele rezultate. La fiecare interogare a vederii, interogarea de baza se re-executa asupra tabelelor sursa, iar datele sunt intotdeauna cele curente. Deci raspunsul corect este b. Varianta a) descrie o vedere materializata (materialized view), care este un obiect diferit, nu o vedere obisnuita. Varianta c) e gresita: o vedere poate fi folosita in clauza FROM ca orice tabela. Varianta d) e gresita: crearea unei vederi NU copiaza date - nu ocupa spatiu de stocare pentru randuri.
+
+##### ÎNTREBAREA 24 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Care este diferenta corecta intre atributele %TYPE si %ROWTYPE in PL/SQL?
+
+VARIANTE:
+a) %TYPE preia tipul unei singure coloane (sau variabile), iar %ROWTYPE preia structura unei linii intregi (record cu toate coloanele)
+b) %TYPE preia structura unei linii intregi, iar %ROWTYPE preia tipul unei singure coloane
+c) ambele preiau doar tipul unei coloane, fiind complet echivalente
+d) %TYPE se aplica doar cursoarelor, iar %ROWTYPE doar tabelelor
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: %TYPE se ataseaza unei coloane (tabela.coloana%TYPE) sau unei variabile deja declarate si preia TIPUL de date al acesteia - deci defineste o variabila scalara. %ROWTYPE se ataseaza unei tabele sau unui cursor (tabela%ROWTYPE, cursor%ROWTYPE) si preia structura unei LINII intregi, generand un record (inregistrare) cu cate un camp pentru fiecare coloana. Deci varianta a este corecta. Varianta b) inverseaza cele doua atribute. Varianta c) e gresita: nu sunt echivalente - unul da un scalar, celalalt un record. Varianta d) e gresita: %TYPE se poate aplica coloanelor/variabilelor, iar %ROWTYPE atat tabelelor cat si cursoarelor.
+
+##### ÎNTREBAREA 25 #####
+CATEGORIE: C/C++
+ENUNT:
+Fiind dat programul:
+#include <stdio.h>
+int main() {
+    int n = 4;
+    int f = 1;
+    while (n > 1)
+        f *= n--;
+    printf("%d", f);
+    return 0;
+}
+Ce valoare se afiseaza?
+
+VARIANTE:
+a) 24
+b) 6
+c) 12
+d) 120
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Instructiunea "f *= n--;" foloseste post-decrementarea: se inmulteste f cu valoarea CURENTA a lui n, apoi n se decrementeaza. Urmarim iteratiile: (1) n=4>1: f = 1*4 = 4, apoi n devine 3; (2) n=3>1: f = 4*3 = 12, apoi n devine 2; (3) n=2>1: f = 12*2 = 24, apoi n devine 1; (4) n=1, conditia n>1 este falsa, bucla se opreste. Se afiseaza 24 (adica 4! = 4*3*2). Varianta b) 6 = 3! (daca s-ar porni de la 3). Varianta c) 12 este o suma partiala (dupa a doua iteratie). Varianta d) 120 = 5!. Verificat prin compilare si executie: rezultatul este 24.
+
+##### ÎNTREBAREA 26 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce se intampla atunci cand un obiect al unei clase DERIVATE este transmis PRIN VALOARE unei functii al carei parametru este de tipul clasei de BAZA (ex.: void f(Baza obj))?
+
+VARIANTE:
+a) se produce object slicing (taierea obiectului): copia contine doar partea din clasa de baza, partea derivata fiind pierduta
+b) obiectul derivat este copiat integral, inclusiv membrii adaugati de clasa derivata
+c) programul nu compileaza, deoarece un obiect derivat nu poate fi convertit la clasa de baza
+d) parametrul obj devine automat o referinta la obiectul derivat original
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Cand un obiect derivat este transmis prin valoare catre o functie cu parametru de tip clasa de baza, se creeaza o COPIE de tipul clasei de baza folosind constructorul de copiere al bazei. In aceasta copie se pastreaza doar subobiectul (partea) mostenit(a) din clasa de baza, iar membrii si comportamentul specific clasei derivate sunt "taiate" - fenomen numit object slicing. Deci raspunsul este a. Varianta b) e gresita: parametrul fiind de tip Baza, nu are loc pentru membrii derivati. Varianta c) e gresita: conversia derivata->baza este permisa (upcast), programul compileaza. Varianta d) e gresita: transmiterea prin valoare creeaza o copie, NU o referinta (pentru referinta ar trebui Baza& si atunci nu ar avea loc slicing).
+
+##### ÎNTREBAREA 27 #####
+CATEGORIE: SQL
+ENUNT:
+Se executa, in aceeasi sesiune, in ordine:
+INSERT INTO departamente VALUES (91, 'IT');
+SAVEPOINT s1;
+INSERT INTO departamente VALUES (92, 'HR');
+CREATE INDEX idx_dep ON departamente(denumire_departament);
+ROLLBACK TO s1;
+Precizati care dintre urmatoarele afirmatii este adevarata:
+
+VARIANTE:
+a) ROLLBACK TO s1 anuleaza al doilea INSERT si pastreaza primul INSERT
+b) ROLLBACK TO s1 genereaza eroare, deoarece comanda CREATE INDEX (DDL) a comis implicit tranzactia si a invalidat punctul de salvare s1
+c) ROLLBACK TO s1 anuleaza ambele comenzi INSERT
+d) ROLLBACK TO s1 nu are efect, dar cele doua randuri raman necomise
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Comanda CREATE INDEX este DDL, deci declanseaza un COMMIT IMPLICIT: in acel moment ambele INSERT-uri sunt comise definitiv, iar tranzactia curenta se incheie. Odata cu incheierea tranzactiei, TOATE punctele de salvare (savepoints) definite in ea - inclusiv s1 - sunt eliminate/invalidate. Prin urmare, comanda ulterioara ROLLBACK TO s1 esueaza cu eroare (ORA-01086: savepoint 's1' never established in this session or is invalid), deoarece s1 nu mai exista. Deci raspunsul este b. Variantele a) si c) sunt gresite: nu se mai poate face rollback la un savepoint disparut si nici nu mai exista modificari necomise de anulat. Varianta d) e gresita: randurile sunt deja COMISE (nu necomise) datorita commit-ului implicit al DDL.
+
+##### ÎNTREBAREA 28 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera blocul PL/SQL:
+DECLARE
+    v_nr NUMBER := 0;
+BEGIN
+    FOR rec IN (SELECT id_produs FROM produse WHERE pret_lista < 0) LOOP
+        v_nr := v_nr + 1;
+    END LOOP;
+    DBMS_OUTPUT.PUT_LINE(v_nr);
+END;
+Stiind ca niciun produs nu are pret_lista negativ (interogarea nu returneaza niciun rand), ce se afiseaza?
+
+VARIANTE:
+a) 0
+b) se genereaza exceptia NO_DATA_FOUND
+c) 1
+d) blocul nu compileaza deoarece interogarea nu returneaza randuri
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Intr-o bucla FOR cu cursor, daca interogarea nu returneaza niciun rand, corpul buclei pur si simplu NU se executa (zero iteratii) - fara nicio exceptie. Astfel v_nr ramane 0 si se afiseaza 0. Spre deosebire de SELECT ... INTO (care arunca NO_DATA_FOUND cand nu gaseste niciun rand), bucla FOR cu cursor trateaza multimea vida ca o iteratie de zero pasi. Deci varianta a este corecta. Varianta b) e gresita: NO_DATA_FOUND apare la SELECT INTO, nu la cursorul dintr-o bucla FOR. Varianta c) ar presupune o iteratie, care nu are loc. Varianta d) e gresita: blocul compileaza corect indiferent de datele existente (compilarea nu depinde de continutul tabelei).
+
+##### ÎNTREBAREA 29 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Care dintre urmatoarele situatii determina APELAREA constructorului de copiere al unei clase?
+
+VARIANTE:
+a) atribuirea intre doua obiecte deja existente (obj1 = obj2;)
+b) transmiterea unui obiect prin valoare ca argument al unei functii
+c) transmiterea unui obiect prin referinta ca argument al unei functii
+d) declararea unui obiect fara initializare (C obj;)
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Constructorul de copiere se apeleaza atunci cand se creeaza un obiect NOU ca o copie a altuia. Transmiterea unui obiect PRIN VALOARE ca argument (varianta b) creeaza un obiect nou (parametrul functiei) initializat prin copiere din argument - deci apeleaza constructorul de copiere. Varianta a) descrie atribuirea intre obiecte EXISTENTE, care apeleaza operatorul de atribuire (operator=), nu constructorul de copiere (nu se creeaza un obiect nou). Varianta c) e gresita: transmiterea prin referinta NU creeaza o copie, deci nu apeleaza constructorul de copiere. Varianta d) apeleaza constructorul IMPLICIT (fara parametri), nu pe cel de copiere. Prin urmare raspunsul este b.
+
+##### ÎNTREBAREA 30 #####
+CATEGORIE: C/C++
+ENUNT:
+Fiind dat programul:
+#include <stdio.h>
+int main() {
+    char *v[] = {"unu", "doi", "trei", "patru"};
+    printf("%c%c", v[2][0], v[3][2]);
+    return 0;
+}
+Ce afiseaza programul?
+
+VARIANTE:
+a) tt
+b) tr
+c) dp
+d) up
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: v este un tablou de pointeri catre char (siruri de caractere). v[2] este pointerul catre sirul "trei", deci v[2][0] este primul caracter al sirului "trei", adica 't'. v[3] este pointerul catre sirul "patru", deci v[3][2] este al treilea caracter (indexul 2) al sirului "patru": p(0) a(1) t(2) - adica 't'. Astfel se afiseaza "tt". Varianta b) "tr" ar rezulta din v[2][0] si v[2][1]. Variantele c) si d) provin din indexari gresite ale sirurilor. Un tablou de pointeri se indexeaza intai pentru a alege sirul (primul index), apoi caracterul din sir (al doilea index). Verificat prin compilare si executie: rezultatul este "tt".

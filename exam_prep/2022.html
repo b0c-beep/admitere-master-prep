@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CSIE3 2022 — Test grilă admitere master</title>
+<meta name="description" content="Test grilă interactiv admitere master CSIE 2022 — C/C++, SQL, PL/SQL, baze de date">
+<style>
+:root{
+  --bg:#f5f6fa; --surface:#ffffff; --surface-2:#eef0f6; --border:#dde1ea;
+  --text:#1a2030; --text-dim:#5c6579; --accent:#4a55d6; --accent-ink:#ffffff;
+  --good:#177a4c; --good-bg:#e2f6ec; --good-bd:#a9e3c3;
+  --bad:#a8271f; --bad-bg:#fbeae8; --bad-bd:#f0b8b2;
+  --warn:#8a6100; --warn-bg:#fff3d6; --warn-bd:#f0d998;
+  --code-bg:#eef0f7; --code-text:#2a3040;
+  --radius:14px; --shadow:0 2px 14px rgba(20,25,45,.07);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#10131c; --surface:#171b28; --surface-2:#1e2332; --border:#2a3042;
+    --text:#e8eaf2; --text-dim:#9aa2b8; --accent:#8b93ff; --accent-ink:#0d0f18;
+    --good:#3ddb92; --good-bg:#123326; --good-bd:#1f5c3f;
+    --bad:#ff8a80; --bad-bg:#3a1614; --bad-bd:#6e2a25;
+    --warn:#ffce6b; --warn-bg:#382b0a; --warn-bd:#6b4f14;
+    --code-bg:#12151f; --code-text:#d7dbe8;
+    --shadow:0 2px 18px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="light"]{
+  --bg:#f5f6fa; --surface:#ffffff; --surface-2:#eef0f6; --border:#dde1ea;
+  --text:#1a2030; --text-dim:#5c6579; --accent:#4a55d6; --accent-ink:#ffffff;
+  --good:#177a4c; --good-bg:#e2f6ec; --good-bd:#a9e3c3;
+  --bad:#a8271f; --bad-bg:#fbeae8; --bad-bd:#f0b8b2;
+  --warn:#8a6100; --warn-bg:#fff3d6; --warn-bd:#f0d998;
+  --code-bg:#eef0f7; --code-text:#2a3040;
+}
+:root[data-theme="dark"]{
+  --bg:#10131c; --surface:#171b28; --surface-2:#1e2332; --border:#2a3042;
+  --text:#e8eaf2; --text-dim:#9aa2b8; --accent:#8b93ff; --accent-ink:#0d0f18;
+  --good:#3ddb92; --good-bg:#123326; --good-bd:#1f5c3f;
+  --bad:#ff8a80; --bad-bg:#3a1614; --bad-bd:#6e2a25;
+  --warn:#ffce6b; --warn-bg:#382b0a; --warn-bd:#6b4f14;
+  --code-bg:#12151f; --code-text:#d7dbe8;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.55; min-height:100vh;
+}
+.wrap{max-width:840px;margin:0 auto;padding:20px 16px 64px}
+header.top{
+  display:flex;align-items:center;gap:12px;justify-content:space-between;
+  padding:14px 0;margin-bottom:18px;border-bottom:1px solid var(--border);
+}
+.brand{display:flex;flex-direction:column;gap:2px;min-width:0}
+.brand a{color:var(--text-dim);text-decoration:none;font-size:13px}
+.brand a:hover{color:var(--accent)}
+.brand h1{font-size:19px;margin:0;font-weight:700;letter-spacing:.2px}
+.brand .sub{font-size:12.5px;color:var(--text-dim)}
+.iconbtn{
+  border:1px solid var(--border);background:var(--surface);color:var(--text);
+  width:38px;height:38px;border-radius:10px;cursor:pointer;font-size:16px;
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+}
+.iconbtn:hover{border-color:var(--accent)}
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:22px;margin-bottom:16px;
+}
+h2.section-title{font-size:16px;margin:0 0 12px;color:var(--text)}
+.muted{color:var(--text-dim)}
+.small{font-size:12.5px}
+
+/* setup screen */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 18px}
+.chip{
+  border:1px solid var(--border);background:var(--surface-2);color:var(--text);
+  padding:8px 14px;border-radius:999px;cursor:pointer;font-size:13.5px;user-select:none;
+  display:flex;align-items:center;gap:7px;transition:border-color .15s,background .15s;
+}
+.chip .count{color:var(--text-dim);font-size:12px}
+.chip.active{border-color:var(--accent);background:color-mix(in srgb, var(--accent) 14%, var(--surface-2));}
+.chip.active .count{color:var(--accent)}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border)}
+.toggle-row:last-of-type{border-bottom:none}
+.toggle-row .label{font-size:14px}
+.toggle-row .desc{font-size:12.5px;color:var(--text-dim);margin-top:2px}
+.switch{
+  position:relative;width:44px;height:26px;border-radius:999px;background:var(--surface-2);
+  border:1px solid var(--border);cursor:pointer;flex:0 0 auto;
+}
+.switch::after{
+  content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;
+  background:var(--text-dim);transition:transform .18s ease, background .18s ease;
+}
+.switch.on{background:color-mix(in srgb, var(--accent) 30%, var(--surface-2));border-color:var(--accent)}
+.switch.on::after{transform:translateX(18px);background:var(--accent)}
+.btn{
+  appearance:none;border:none;border-radius:11px;padding:13px 22px;font-size:15px;font-weight:600;
+  cursor:pointer;display:inline-flex;align-items:center;gap:8px;justify-content:center;
+}
+.btn-primary{background:var(--accent);color:var(--accent-ink);width:100%;margin-top:6px}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.btn-secondary{background:var(--surface-2);color:var(--text);border:1px solid var(--border)}
+.best-score{font-size:13px;color:var(--text-dim);margin-top:10px}
+
+/* quiz screen */
+.progress-outer{height:7px;border-radius:999px;background:var(--surface-2);overflow:hidden;margin-bottom:16px}
+.progress-inner{height:100%;background:var(--accent);transition:width .25s ease}
+.quiz-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:13px;color:var(--text-dim)}
+.badge{
+  display:inline-block;padding:3px 10px;border-radius:999px;background:var(--surface-2);
+  border:1px solid var(--border);font-size:12px;color:var(--text-dim);
+}
+.enunt p{margin:0 0 10px;font-size:15.5px}
+.enunt pre.code{
+  background:var(--code-bg);color:var(--code-text);border:1px solid var(--border);
+  border-radius:10px;padding:12px 14px;overflow-x:auto;font-size:13.5px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;margin:0 0 12px;
+  white-space:pre;line-height:1.5;
+}
+.options{display:flex;flex-direction:column;gap:9px;margin-top:14px}
+.opt{
+  text-align:left;border:1px solid var(--border);background:var(--surface-2);color:var(--text);
+  border-radius:11px;padding:12px 14px;cursor:pointer;font-size:14.5px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  display:flex;gap:10px;align-items:flex-start;transition:border-color .12s, background .12s;
+}
+.opt:hover:not(.locked){border-color:var(--accent)}
+.opt .letter{font-weight:700;flex:0 0 auto;color:var(--text-dim)}
+.opt .txt{white-space:pre-wrap;word-break:break-word}
+.opt .tag{margin-left:auto;font-size:11px;color:var(--text-dim);font-family:inherit;flex:0 0 auto;padding-left:8px}
+.opt.correct{background:var(--good-bg);border-color:var(--good-bd);color:var(--good)}
+.opt.correct .letter,.opt.correct .tag{color:var(--good)}
+.opt.incorrect{background:var(--bad-bg);border-color:var(--bad-bd);color:var(--bad)}
+.opt.incorrect .letter,.opt.incorrect .tag{color:var(--bad)}
+.opt.locked{cursor:default}
+.opt.dim{opacity:.55}
+
+.feedback{margin-top:16px;border-radius:12px;padding:14px 16px;font-size:14.5px;display:none}
+.feedback.show{display:block}
+.feedback.ok{background:var(--good-bg);border:1px solid var(--good-bd);color:var(--text)}
+.feedback.ko{background:var(--bad-bg);border:1px solid var(--bad-bd);color:var(--text)}
+.feedback .fb-title{font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.feedback .fb-title.ok-txt{color:var(--good)}
+.feedback .fb-title.ko-txt{color:var(--bad)}
+.barem-warn{
+  background:var(--warn-bg);border:1px solid var(--warn-bd);color:var(--warn);
+  border-radius:10px;padding:10px 12px;margin:10px 0;font-size:13.5px;font-weight:600;
+}
+.explic{margin-top:10px;white-space:pre-wrap;font-size:14px;color:var(--text)}
+.quiz-actions{display:flex;justify-content:flex-end;margin-top:18px;gap:10px}
+
+/* results screen */
+.score-hero{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.score-circle{
+  width:104px;height:104px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  flex-direction:column;border:6px solid var(--accent);flex:0 0 auto;
+}
+.score-circle .n{font-size:26px;font-weight:800}
+.score-circle .d{font-size:11px;color:var(--text-dim)}
+.cat-bar-row{margin:8px 0}
+.cat-bar-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}
+.cat-bar-outer{height:8px;border-radius:999px;background:var(--surface-2);overflow:hidden}
+.cat-bar-inner{height:100%;background:var(--accent)}
+table.review{width:100%;border-collapse:collapse;margin-top:8px;font-size:13.5px}
+table.review th, table.review td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--border)}
+table.review tr.miss td:first-child{color:var(--bad);font-weight:700}
+table.review tr.hit td:first-child{color:var(--good);font-weight:700}
+table.review tr{cursor:pointer}
+table.review tr:hover td{background:var(--surface-2)}
+.review-detail{display:none;padding:10px 6px 16px;font-size:13.5px;white-space:pre-wrap;border-bottom:1px solid var(--border)}
+.review-detail.show{display:table-row}
+.footer-note{font-size:12px;color:var(--text-dim);text-align:center;margin-top:26px}
+.view{display:none}
+.view.active{display:block}
+.hint{font-size:12.5px;color:var(--text-dim);margin-top:4px}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <a href="../index.html">&larr; Toate anii</a>
+      <h1>CSIE3 &middot; Admitere master &middot; 2022</h1>
+      <div class="sub">subiecte_ani_anteriori/CSIE_3_2022.pdf &nbsp;&bull;&nbsp; conform barem oficial</div>
+    </div>
+    <button class="iconbtn" id="themeToggle" title="Comută tema">&#9788;</button>
+  </header>
+
+  <div id="view-setup" class="view active">
+    <div class="card">
+      <h2 class="section-title">Categorii incluse</h2>
+      <div class="chips" id="categoryChips"></div>
+
+      <h2 class="section-title">Opțiuni</h2>
+      <div class="toggle-row">
+        <div>
+          <div class="label">Amestecă ordinea întrebărilor</div>
+          <div class="desc">Întrebările apar într-o ordine aleatorie la fiecare start</div>
+        </div>
+        <div class="switch on" id="toggleShuffleQ"></div>
+      </div>
+      <div class="toggle-row">
+        <div>
+          <div class="label">Amestecă ordinea variantelor</div>
+          <div class="desc">Variantele a/b/c/d sunt reordonate aleator</div>
+        </div>
+        <div class="switch on" id="toggleShuffleA"></div>
+      </div>
+
+      <button class="btn btn-primary" id="startBtn">Începe testul (30 întrebări)</button>
+      <div class="best-score" id="bestScoreNote"></div>
+    </div>
+  </div>
+
+  <div id="view-quiz" class="view">
+    <div class="progress-outer"><div class="progress-inner" id="progressBar" style="width:0%"></div></div>
+    <div class="quiz-meta">
+      <span id="quizPos">Întrebarea 1 din 30</span>
+      <span class="badge" id="quizCat">—</span>
+      <span id="quizScore">Scor: 0</span>
+    </div>
+    <div class="card">
+      <div class="enunt" id="quizEnunt"></div>
+      <div class="options" id="quizOptions"></div>
+      <div class="feedback" id="quizFeedback">
+        <div class="fb-title" id="fbTitle"></div>
+        <div class="barem-warn" id="fbBaremWarn" style="display:none"></div>
+        <div class="explic" id="fbExplic"></div>
+      </div>
+      <div class="quiz-actions">
+        <button class="btn btn-secondary" id="quitBtn">Renunță</button>
+        <button class="btn btn-primary" id="nextBtn" style="display:none;width:auto">Următoarea &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="view-results" class="view">
+    <div class="card">
+      <h2 class="section-title">Rezultat final</h2>
+      <div class="score-hero">
+        <div class="score-circle"><div class="n" id="resScoreN">0/0</div><div class="d">corecte</div></div>
+        <div>
+          <div style="font-size:20px;font-weight:700" id="resPercent">0%</div>
+          <div class="muted small" id="resPunctaj">Punctaj estimat: 0 puncte</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Pe categorii</h2>
+      <div id="resCatBars"></div>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Recapitulare (click pe un rând pentru detalii)</h2>
+      <table class="review" id="resTable">
+        <thead><tr><th>#</th><th>Categorie</th><th>Răspunsul tău</th><th>Corect</th></tr></thead>
+        <tbody id="resTableBody"></tbody>
+      </table>
+    </div>
+    <button class="btn btn-primary" id="restartBtn">Înapoi la opțiuni</button>
+  </div>
+
+  <div class="footer-note">Grile extrase din subiectele oficiale de anii anteriori și verificate independent. Explicațiile marcate „barem oficial eronat” indică o discrepanță identificată față de baremul original — verifică și tu raționamentul.</div>
+</div>
+
+<script>
+const DATA = {"year": "2022", "sursa": "subiecte_ani_anteriori/CSIE_3_2022.pdf", "punctaj": "conform barem oficial", "questions": [{"nr": 1, "categorie": "SQL", "enunt": "Care dintre urmatoarele optiuni poate fi utilizata la stergerea unei tabele?", "variante": {"a": "PRIOR", "b": "CASCADE CONSTRAINTS", "c": "CONNECT BY", "d": "DELETE"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Stergerea unei tabele (structura + date) se face cu comanda DDL \"DROP TABLE nume_tabela\". Clauza optionala CASCADE CONSTRAINTS se ataseaza acestei comenzi (DROP TABLE ... CASCADE CONSTRAINTS) pentru a elimina automat si constrangerile de integritate referentiala (cheile straine) din alte tabele care refera tabela stearsa. Prin urmare CASCADE CONSTRAINTS este singura optiune legata de stergerea unei tabele. De ce sunt gresite celelalte: (a) PRIOR este un operator folosit in interogari ierarhice (CONNECT BY PRIOR), nu are legatura cu stergerea tabelelor; (c) CONNECT BY este clauza de parcurgere ierarhica a randurilor, nimic de-a face cu DROP; (d) DELETE este o comanda DML care sterge RANDURI dintr-o tabela, dar pastreaza structura (definitia) tabelei - deci nu \"sterge tabela\"."}, {"nr": 2, "categorie": "Baze de date (teorie)", "enunt": "Fie doua relatii R1 si R2. Operatia definita pe cele doua relatii, R1 si R2, care consta din construirea unei noi relatii R3, prin concatenarea unor tupluri din R1 cu tupluri din R2, pe baza unei conditii specificate explicit in cadrul operatiei, poarta denumirea de:", "variante": {"a": "reuniune", "b": "intersectie", "c": "jonctiune", "d": "produs cartezian"}, "raspuns_barem": "c", "raspuns_corect": "c", "status_verificare": "CONFIRMAT", "explicatie": "Jonctiunea (join) este operatorul din algebra relationala care combina tupluri din R1 cu tupluri din R2 pe baza unei CONDITII de jonctiune specificate explicit (theta-join), rezultand tupluri concatenate care satisfac conditia. Elementul cheie din enunt este \"pe baza unei conditii specificate explicit\" - acesta distinge jonctiunea de produsul cartezian. De ce sunt gresite celelalte: (a) reuniunea combina multimile de tupluri (R1 UNION R2), presupune relatii compatibile, nu concateneaza atribute; (b) intersectia returneaza tuplurile comune ambelor relatii, nu concateneaza; (d) produsul cartezian concateneaza FIECARE tuplu din R1 cu FIECARE tuplu din R2 fara nicio conditie - lipsa conditiei il deosebeste de jonctiune."}, {"nr": 3, "categorie": "C/C++", "enunt": "Fie secventa de cod C urmatoare:\n#include <stdio.h>\nint f1(int *a)\n{\n   int n=sizeof (a)/sizeof (*a),s=0;\n   for(int i=0;i<n;i++){s+=a[i];}\n   return s;\n}\nint f2(int a[])\n{\n   int n=sizeof (a)/sizeof (*a),s=0;\n   for(int i=0;i<n;i++){s+=a[i];}\n   return s;\n}\nint f3(int a[],int n)\n{\n   int s=0;\n   for(int i=0;i<n;i++){s+=a[i];}\n   return s;\n}\n\nint main()\n{\n   int a[3] = { 8, 4, 5 };\n   int n = sizeof (a)/sizeof (*a);\n   ...\n   return 0;\n}\nCare dintre urmatoarele apeluri ale functiilor f1, f2 si f3 vor intoarce corect suma elementelor vectorului a?", "variante": {"a": "f1(a) si f2(a)", "b": "f3(a,n)", "c": "f1(a), f2(a) si f3(a,n)", "d": "f1(a)"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "In C, cand un vector este transmis ca argument unei functii, el \"decade\" (array decay) intr-un pointer catre primul element. In interiorul functiilor f1 (parametru \"int *a\") si f2 (parametru \"int a[]\", identic cu int *a), operatorul sizeof(a) NU da dimensiunea vectorului original, ci dimensiunea unui pointer (tipic 8 octeti pe sisteme pe 64 de biti), iar sizeof(*a) = sizeof(int) = 4. Astfel n = 8/4 = 2, deci f1 si f2 vor aduna gresit doar primele 2 elemente (8+4=12), nu toate cele 3. Doar f3 primeste explicit dimensiunea n ca parametru separat (n=3 calculat corect in main, unde \"a\" este inca vectorul real) si aduna toate elementele (8+4+5=17). De aceea singurul apel corect este f3(a,n). Celelalte variante includ f1/f2 care sunt afectate de problema sizeof pe pointer."}, {"nr": 4, "categorie": "PL/SQL", "enunt": "Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), data_angajare DATE, salariul NUMBER(10,2)) cu cel putin 100 de randuri (inregistrari) si blocul PL/SQL:\nSET SERVEROUTPUT ON\nDECLARE\nCURSOR cursor1 IS SELECT nume, salariul FROM angajati;\nvnume angajati.nume%TYPE;\nvsalariul angajati.salariul%TYPE;\nBEGIN\nOPEN cursor1;\nWHILE cursor1%NOTFOUND LOOP\nFETCH cursor1 INTO vnume, vsalariul;\nDBMS_OUTPUT.PUT_LINE('Angajatul '||vnume|| 'are salariul '||vsalariul);\nEND LOOP;\nEND;\n/\nCare afirmatie este corecta?", "variante": {"a": "blocul va afisa numele tuturor angajatilor din tabela ANGAJATI", "b": "blocul se executa, dar nu afiseaza nimic", "c": "blocul va afisa numele primului angajat din tabela", "d": "blocul contine o eroare deoarece nu este corect utilizata conditia cursor1%NOTFOUND"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Problema este in conditia buclei WHILE. Imediat dupa OPEN cursor1, inainte de primul FETCH, atributul cursor1%NOTFOUND are valoarea NULL (nu TRUE si nu FALSE). O bucla \"WHILE conditie LOOP\" executa corpul doar cand conditia este TRUE; NULL este tratat ca non-TRUE, deci corpul buclei nu se executa niciodata, nu se face nici macar un FETCH, si nu se afiseaza nimic. Blocul este sintactic valid si ruleaza fara eroare - doar ca nu produce output. De ce sunt gresite celelalte: (a) si (c) presupun ca s-ar afisa ceva, dar bucla nici nu intra; corect ar fi fost \"WHILE cursor1%FOUND\" combinat cu FETCH inaintea testului, sau folosirea lui %NOTFOUND ca conditie de EXIT dupa FETCH; (d) nu este o \"eroare\" - blocul se compileaza si ruleaza; este o eroare de LOGICA, nu una care sa opreasca executia, deci afirmatia \"contine o eroare\" este falsa."}, {"nr": 5, "categorie": "PL/SQL", "enunt": "Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), comision NUMBER(4,2)).\nSe considera blocul PL/SQL:\nSET SERVEROUTPUT ON\nDECLARE\nv_venit NUMBER;\nBEGIN\nSELECT SUM(salariul*(1+NVL(comision,0))) INTO v_venit FROM ANGAJATI WHERE\nid_departament=50;\nDBMS_OUTPUT.PUT_LINE(v_venit);\nEND;\n/\nCare afirmatie este corecta?", "variante": {"a": "blocul este eronat deoarece lipseste clauza GROUP BY", "b": "blocul se va rula cu succes si se va afisa venitul total din departamentul 50 in cazul in care acesta exista si zero in cazul in care departamentul 50 nu exista", "c": "in cazul in care departamentul 50 nu exista va apare un mesaj de eroare", "d": "blocul se va rula cu succes si se va afisa venitul total din departamentul 50 in cazul in care acesta exista si nu se va afisa nimic in cazul in care departamentul 50 nu exista"}, "raspuns_barem": "d", "raspuns_corect": "d", "status_verificare": "CONFIRMAT", "explicatie": "Nota: definitia tabelei din enunt nu include coloana id_departament, dar intentia clara a subiectului (si cea in raport cu care se evalueaza baremul) este ca aceasta coloana sa existe; sub aceasta ipoteza raspunsul d este corect. Motivul tehnic: SUM este o functie de grup (agregat). Un SELECT ... INTO cu o functie de agregare returneaza INTOTDEAUNA exact un rand, chiar daca nicio inregistrare nu indeplineste conditia WHERE - in acest caz SUM returneaza NULL (nu 0). Deci nu se declanseaza exceptia NO_DATA_FOUND. Daca departamentul 50 exista, v_venit primeste venitul total; daca nu exista, v_venit devine NULL, iar DBMS_OUTPUT.PUT_LINE(NULL) afiseaza un rand gol, adica practic \"nu se afiseaza nimic\". De ce sunt gresite celelalte: (a) GROUP BY nu este necesar cand se agrega intreaga selectie intr-o singura valoare; (b) valoarea pentru un departament inexistent este NULL, NU zero - de aceea b este gresit desi este foarte apropiat de d; (c) nu apare eroare, functiile de agregat nu declanseaza NO_DATA_FOUND."}, {"nr": 6, "categorie": "C/C++", "enunt": "Fie functia C definita in felul urmator:\nint f(int a,int b)\n{\n   if (a<b)\n   {\n      return f(a+3,b-1);\n   }\n   else\n   {\n      return a + b;\n   }\n}\nCe rezultat va intoarce apelul f(1000,2000)?", "variante": {"a": "1500", "b": "3000", "c": "3500", "d": "Va genera eroare de executie si va afisa un mesaj de depasire stiva"}, "raspuns_barem": "c", "raspuns_corect": "c", "status_verificare": "CONFIRMAT", "explicatie": "La fiecare apel recursiv, cand a<b, a creste cu 3 si b scade cu 1. Dupa k pasi: a = 1000+3k, b = 2000-k. Recursia continua cat timp a<b, adica 1000+3k < 2000-k => 4k < 1000 => k < 250. La k=250: a = 1000+750 = 1750, b = 2000-250 = 1750, deci a<b este fals (1750 nu este < 1750), se intra pe ramura else si se returneaza a+b = 1750+1750 = 3500. Recursia are exact 250 de nivele, mult sub limita stivei, deci nu apare depasire de stiva. De ce sunt gresite celelalte: (a) 1500 si (b) 3000 sunt valori nefondate; (d) numarul de apeluri (250) este mic, nu provoaca stack overflow."}, {"nr": 7, "categorie": "PL/SQL", "enunt": "Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), data_angajare DATE, salariul NUMBER(10,2)) cu cel putin 100 de randuri (inregistrari) si urmatoarea secventa de comenzi:\nCREATE OR REPLACE FUNCTION f_emp_vechime\n(p_data_angajare IN angajati.data_angajare%type)\nreturn NUMBER\nIS\nBEGIN\nRETURN to_number(round((sysdate-p_data_angajare)/365,0));\nEND f_emp_vechime;\n/\nSELECT id_angajat, nume, prenume, f_emp_vechime(data_angajare)\nFROM angajati\nWHERE f_emp_vechime(data_angajare)>10;\nCare afirmatie este corecta?", "variante": {"a": "instructiunea SELECT afiseaza angajatii cu vechimea mai mare de 10 ani", "b": "instructiunea SELECT afiseaza angajatii cu vechimea mai mare de 10 zile", "c": "functia f_emp_vechime returneaza numarul de zile dintre data curenta si data primita ca parametru", "d": "se va genera o eroare deoarece functia f_emp_vechime nu poate fi utilizata in comanda SELECT"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "In Oracle, diferenta a doua date (sysdate - p_data_angajare) da numarul de ZILE. Impartind la 365 se obtine numarul de ANI, iar ROUND(...,0) il rotunjeste la un intreg. Deci functia returneaza vechimea aproximativa in ANI. Conditia WHERE f_emp_vechime(data_angajare)>10 selecteaza angajatii cu vechimea mai mare de 10 ani. De ce sunt gresite celelalte: (b) \"10 zile\" este gresit pentru ca s-a impartit la 365 (ani), nu zile; (c) functia returneaza ani (dupa impartirea la 365), nu zile; (d) functiile PL/SQL definite de utilizator care returneaza tipuri scalare pot fi apelate perfect in clauza SELECT si WHERE, nu genereaza eroare."}, {"nr": 8, "categorie": "C/C++", "enunt": "Ce se va intampla la rularea urmatorului program C?\n#include <stdio.h>\nvoid f(int i);\nint main()\n{\n   f(1);\n}\nvoid f(int i)\n{\n   if (i > 10)\n      return ;\n   printf(\"%d \", i);\n   return f((i+=3, --i));\n}", "variante": {"a": "Se va afisa: 1 4 7 10", "b": "Programul va rula fara sa afiseze nimic", "c": "Va fi generata o eroare de depasire stiva", "d": "Se va afisa: 1 3 5 7 9"}, "raspuns_barem": "d", "raspuns_corect": "d", "status_verificare": "CONFIRMAT", "explicatie": "Cheia este operatorul virgula din apel: (i+=3, --i). Se evalueaza intai i+=3 (efect lateral), apoi --i, iar valoarea expresiei virgula este ultima subexpresie (--i). Deci per apel, i creste net cu 2 (+3 apoi -1). Trace: f(1) -> i=1 nu >10, afiseaza \"1\", apoi i+=3 => 4, --i => 3, apel f(3); f(3) afiseaza \"3\", devine 6 apoi 5, apel f(5); afiseaza \"5\" -> 7; afiseaza \"7\" -> 9; afiseaza \"9\" -> 11; f(11): 11>10 => return. Se afiseaza: 1 3 5 7 9. De ce sunt gresite celelalte: (a) \"1 4 7 10\" ar rezulta daca s-ar aduna cate 3 fara --i; (b) programul chiar afiseaza; (c) recursia are doar 6 nivele, fara depasire de stiva."}, {"nr": 9, "categorie": "SQL", "enunt": "Sa se precizeze care dintre interogarile SQL-Oracle de mai jos afiseaza urmatoarea zi de duminica fata de data curenta?", "variante": {"a": "SELECT sysdate('SUNDAY') from dual;", "b": "SELECT next_day('SUNDAY') from sysdate;", "c": "SELECT last_day(sysdate, 'SUNDAY') from dual;", "d": "SELECT next_day(sysdate, 'SUNDAY') from dual;"}, "raspuns_barem": "d", "raspuns_corect": "d", "status_verificare": "CONFIRMAT", "explicatie": "Functia Oracle NEXT_DAY(data, 'zi') returneaza data primei aparitii a zilei specificate (de ex. 'SUNDAY') dupa data data. Sintaxa corecta necesita doua argumente: data de referinta (sysdate) si numele zilei, iar sursa este tabela DUAL. Deci NEXT_DAY(sysdate, 'SUNDAY') FROM dual este corect. De ce sunt gresite celelalte: (a) SYSDATE nu accepta argumente si nu are aceasta semantica; (b) sintaxa inversa - \"from sysdate\" nu este valida (sysdate nu e tabela) si NEXT_DAY primeste doar un argument; (c) LAST_DAY returneaza ultima zi a LUNII pentru o data si accepta un singur argument, nu are legatura cu numele zilei si sintaxa cu al doilea argument este invalida."}, {"nr": 10, "categorie": "C/C++", "enunt": "Ce va afisa urmatorul program C?\n#include \"stdio.h\"\nint main()\n{\n   int i = 3;\n   goto LOOP;\n   i++;\n   for (i = 0; i < 10; i+=2)\n   {\n      printf(\"%d\", i);\n   LOOP:\n      continue;\n      printf(\"%d\", i++);\n   }\n   return 0;\n}", "variante": {"a": "Nu va afisa nimic", "b": "356789", "c": "579", "d": "3579"}, "raspuns_barem": "c", "raspuns_corect": "c", "status_verificare": "CONFIRMAT", "explicatie": "Instructiunea \"goto LOOP\" sare direct la eticheta LOOP aflata IN interiorul buclei for, ocolind atat \"i++\" cat si initializarea \"i=0\" din for (partea de init a for-ului nu se mai executa). In momentul saltului i=3. La eticheta LOOP se executa \"continue\", care trece la pasul de incrementare al for-ului: i+=2 => i=5, apoi se verifica i<10 (adevarat) si se intra in corp de la inceput: printf(\"%d\", i) afiseaza 5. Se ajunge din nou la LOOP: continue => i+=2 => 7, afiseaza 7; => 9, afiseaza 9; => 11, i<10 fals, iese. Se afiseaza \"579\". Observatie: al doilea printf (dupa continue) este cod mort, nu se executa niciodata. De ce sunt gresite celelalte: (a) chiar afiseaza; (b) valori inexistente; (d) \"3579\" ar include un 3 initial, dar valoarea 3 nu se afiseaza vreodata pentru ca primul continue muta direct la i=5 inainte de orice printf."}, {"nr": 11, "categorie": "C/C++", "enunt": "Care va fi valoarea afisata de urmatorul program C?\n#include <stdio.h>\nint main()\n{\n   static int s=1;\n   for(int i=0;i<5;i++)\n   {\n      static int s=0;\n      s+=i;\n   }\n   printf(\" %d\", s);\n   return 0;\n}", "variante": {"a": "O valoare intreaga nedefinita", "b": "10", "c": "11", "d": "1"}, "raspuns_barem": "d", "raspuns_corect": "d", "status_verificare": "CONFIRMAT", "explicatie": "Exista DOUA variabile distincte numite s. Cea exterioara (static int s=1) este declarata la nivelul functiei main. Cea interioara (static int s=0) este declarata in blocul buclei for si o \"umbreste\" (shadowing) pe cea exterioara doar in interiorul acelui bloc. Instructiunea s+=i din bucla modifica DOAR s-ul interior (ajunge la 0+0+1+2+3+4=10), fara sa atinga s-ul exterior. Instructiunea printf este in afara buclei, unde s-ul interior nu mai este vizibil, deci afiseaza s-ul exterior, care a ramas 1. Rezultat: 1. De ce sunt gresite celelalte: (a) variabilele static sunt initializate determinist, nu nedefinit; (b) 10 este valoarea s-ului interior, nu a celui afisat; (c) 11 nu corespunde niciunui calcul."}, {"nr": 12, "categorie": "C/C++", "enunt": "Fie a, un masiv bidimensional de tip double cu n linii si n coloane, n intreg par.\nCare instructiune dintre cele specificate in raspunsurile de mai jos poate inlocui punctele de suspensie (...) din secventa de program C urmatoare, astfel incat executarea acesteia sa permita memorarea in variabila s a valorii sumei elementelor aflate pe diagonalele matricei?\nint s=0;\nfor(int i=0;i<n;i++){\n          ...\n}", "variante": {"a": "s+=a[n-i-1][i]+a[i][n-i-1];", "b": "s+=a[i][i]+a[i][n-i-1];", "c": "s+=a[i][i]+a[n-i-1][n-i-1];", "d": "s+=a[i][n-i-1]+a[n-i-1][i];"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Pentru o matrice patratica, diagonala PRINCIPALA are elementele a[i][i] (linie = coloana), iar diagonala SECUNDARA are elementele a[i][n-i-1] (linie + coloana = n-1). Suma ambelor diagonale se obtine adunand, pentru fiecare i, a[i][i] (principala) + a[i][n-i-1] (secundara), exact ca in varianta b. Deoarece n este par, cele doua diagonale nu au niciun element comun, deci nu apare dubla numarare. De ce sunt gresite celelalte: (a) a[n-i-1][i] si a[i][n-i-1] sunt AMANDOUA elemente ale diagonalei secundare (ambele au suma indicilor = n-1), deci se aduna diagonala secundara de doua ori si se ignora complet principala; (d) la fel, a[i][n-i-1] si a[n-i-1][i] sunt tot pe diagonala secundara - diagonala secundara numarata de doua ori; (c) a[i][i] si a[n-i-1][n-i-1] sunt ambele pe diagonala PRINCIPALA (indici egali), deci principala numarata de doua ori si secundara ignorata."}, {"nr": 13, "categorie": "PL/SQL", "enunt": "Care dintre urmatoarele afirmatii despre cursorii expliciti in PL/SQL este adevarata?", "variante": {"a": "la deschidere se utilizeaza intotdeauna clauza NOTOPEN", "b": "stocheaza informatii cu privire la procesarea instructiunilor LCT (limbajul de control al tranzactiilor)", "c": "pot fi declarati ca variabile si constante", "d": "pot avea parametri"}, "raspuns_barem": "d", "raspuns_corect": "d", "status_verificare": "CONFIRMAT", "explicatie": "Cursorii expliciti in PL/SQL pot fi definiti cu parametri, de exemplu: CURSOR c (p_dept NUMBER) IS SELECT ... WHERE id_departament = p_dept; iar la deschidere se transmit valorile: OPEN c(50). Aceasta permite reutilizarea aceluiasi cursor cu valori diferite. De ce sunt gresite celelalte: (a) nu exista o clauza \"NOTOPEN\" la deschidere; deschiderea se face cu OPEN, iar %ISOPEN este un atribut de stare (nu o clauza obligatorie); (b) cursorii stocheaza informatii despre procesarea instructiunilor SELECT/DML (numar de randuri, stare), NU despre instructiunile LCT (COMMIT/ROLLBACK/SAVEPOINT); (c) cursorii sunt structuri de control care pointeaza spre o zona de context a unei interogari, nu se declara ca \"variabile si constante\" (desi exista variabile de tip cursor/REF CURSOR, afirmatia generala pentru cursorii expliciti clasici este falsa, iar parametrizarea de la d este trasatura clar corecta)."}, {"nr": 14, "categorie": "C/C++", "enunt": "Care va fi outputul generat la executia urmatorului program C?\n#include<stdio.h>\nint main()\n{\n   int a[5] = { 5 };\n   for (int i = 0; i < 5; i++){\n      if ((char)a[i] != '5'){\n         printf(\"FAIL \");\n      } else {\n         printf(\"%d \",a[i]);\n      }\n   }\n   return 0;\n}", "variante": {"a": "FAIL FAIL FAIL FAIL 5", "b": "5 FAIL FAIL FAIL FAIL", "c": "5 5 5 5 5", "d": "FAIL FAIL FAIL FAIL FAIL"}, "raspuns_barem": "d", "raspuns_corect": "d", "status_verificare": "CONFIRMAT", "explicatie": "La initializarea \"int a[5] = {5}\", doar a[0] primeste valoarea 5, iar restul (a[1]..a[4]) sunt initializate automat cu 0. Capcana este comparatia (char)a[i] != '5'. Constanta caracter '5' NU are valoarea numerica 5, ci codul ASCII al cifrei '5', adica 53. Astfel: pentru a[0]=5, (char)5 = 5, iar 5 != 53 este ADEVARAT => se afiseaza \"FAIL\"; pentru a[1..4]=0, (char)0 = 0, 0 != 53 adevarat => \"FAIL\". Deci toate cele 5 iteratii afiseaza \"FAIL\", rezultand \"FAIL FAIL FAIL FAIL FAIL\". De ce sunt gresite celelalte: (a), (b), (c) presupun ca 5 s-ar potrivi cu '5', dar confuzia intre valoarea numerica 5 si codul ASCII 53 face ca ramura else sa nu fie atinsa niciodata."}, {"nr": 15, "categorie": "C/C++", "enunt": "Ce se va afisa in urma executarii urmatorului program C?\n#include <stdio.h>\n#include <string.h>\nvoid f(char str1[], char str2[])\n{\n   if (*str1++ = *str2++) { f(str1, str2); }\n}\nint main()\n{\n   int k='a'-'A';\n   char a[100];\n   f(a,\"Examen Master 2022\");\n   for(int i=0;i<(int)strlen(a);i++)\n      a[i]=a[i]>='a'&&a[i]<='z'?a[i]-k:a[i];\n   printf(\"%s\",a);\n   return 0;\n}", "variante": {"a": "EXAMEN MASTER 2022", "b": "EXAMENMASTER", "c": "XAMEN ASTER 2022", "d": "Va genera o eroare deoarece functia f utilizeaza incorect doua masive de caractere care nu sunt lvalues"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Functia f copiaza recursiv sirul str2 in str1, caracter cu caracter. Expresia \"*str1++ = *str2++\" este o ATRIBUIRE (nu comparatie), care copiaza caracterul curent si returneaza valoarea copiata; cat timp aceasta este diferita de 0 (caracter nenul) se continua recursiv. Cand se ajunge la terminatorul '\\0', acesta este mai intai COPIAT in str1 (deci sirul devine corect terminat), iar valoarea 0 face conditia falsa si opreste recursia. Astfel a = \"Examen Master 2022\". Apoi k = 'a'-'A' = 32. Bucla for transforma fiecare litera mica in litera mare (a[i]-32), lasand neschimbate literele mari, spatiile si cifrele. Rezultatul: \"EXAMEN MASTER 2022\". De ce sunt gresite celelalte: (b) elimina spatiile si cifrele - fals, spatiile si cifrele raman; (c) pierde prima litera din fiecare cuvant - nu se intampla, copierea incepe corect de la primul caracter; (d) parametrii str1++/str2++ sunt pointeri locali (copii ale argumentelor), sunt lvalues valide, deci nu apare nicio eroare."}, {"nr": 16, "categorie": "SQL", "enunt": "Se considera tabela PRODUSE (id_produs NUMBER(6), denumire_produs VARCHAR2(150), descriere VARCHAR2(150), categorie VARCHAR2(50), pret_lista NUMBER(4)) si interogarea:\nSELECT denumire_produs, descriere\nFROM produse WHERE categorie IN\n(SELECT categorie FROM produse\nWHERE LOWER(denumire_produs) LIKE '%laptop%')\nAND pret_lista >100;\nAlegeti varianta corecta:", "variante": {"a": "afiseaza produsele care au pret_lista mai mare de 100 si se afla in aceleasi categorii cu produsele care contin in denumire cuvantul „laptop”", "b": "afiseaza doar produsele care contin in denumire cuvantul „laptop”", "c": "afiseaza o eroare deoarce subcererea returneaza mai multe valori", "d": "afiseaza o eroare deoarece operatorul LIKE nu este corect utilizat"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Subcererea returneaza multimea de CATEGORII in care exista cel putin un produs a carui denumire (adusa la litere mici cu LOWER) contine \"laptop\". Interogarea exterioara selecteaza produsele a caror categorie se afla in acea multime (operatorul IN) SI care au pret_lista > 100. Rezultatul: produse din aceleasi categorii cu produsele \"laptop\", filtrate suplimentar de pret > 100. De ce sunt gresite celelalte: (b) nu se afiseaza doar laptopurile, ci toate produsele din categoriile respective; (c) operatorul IN accepta explicit mai multe valori returnate de subcerere - nu apare eroare (eroarea ORA-01427 apare doar cand o subcerere care ar trebui sa dea o singura valoare, ex. cu \"=\", da mai multe); (d) LIKE '%laptop%' cu LOWER este perfect corect sintactic."}, {"nr": 17, "categorie": "C/C++", "enunt": "Ce va afisa urmatorul program C?\n\n#include<stdio.h>\nint main()\n{\n  printf(\"%d\", 3<<2 );\n  return 0;\n}", "variante": {"a": "9", "b": "2", "c": "12", "d": "6"}, "raspuns_barem": "c", "raspuns_corect": "c", "status_verificare": "CONFIRMAT", "explicatie": "Operatorul << este deplasarea (shift) la stanga pe biti. Deplasarea cu k pozitii la stanga echivaleaza cu inmultirea cu 2^k. Astfel 3 << 2 = 3 * 2^2 = 3 * 4 = 12. In binar: 3 = 0011, deplasat cu 2 pozitii => 1100 = 12. De ce sunt gresite celelalte: (a) 9 ar fi 3*3 sau 3^2, nu shift; (b) 2 ar corespunde unei deplasari la dreapta; (d) 6 ar fi 3<<1 (o singura deplasare)."}, {"nr": 18, "categorie": "PL/SQL", "enunt": "Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), id_departament NUMBER(3)) cu cel putin 200 angajati care lucreaza in peste 10 departamente si blocul PL/SQL:\nSET SERVEROUTPUT ON\nDECLARE\nCURSOR cursor2 IS SELECT id_departament, COUNT(salariul) nr_angajati, AVG (salariul) sal_mediu FROM Angajati GROUP BY id_departament ORDER BY 2 DESC;\nr2 cursor2%rowtype;\nBEGIN\nFOR r2 IN cursor2 LOOP\nDBMS_OUTPUT.PUT_LINE('In departamentul '||r2.id_departament|| ' lucreaza '||r2.nr_angajati|| ' cu salariul mediu '||r2.sal_mediu);\nEXIT WHEN cursor2%ROWCOUNT>3;\nEND LOOP;\nEND;\n/\nCare afirmatie este corecta?", "variante": {"a": "blocul contine o eroare deoarece nu este corect utilizata conditia cursor2%ROWCOUNT", "b": "blocul va afisa primele trei departamente cu cei mai multi angajati", "c": "blocul va afisa toate departamentele", "d": "blocul va afisa primele patru departamente cu cei mai multi angajati"}, "raspuns_barem": "d", "raspuns_corect": "d", "status_verificare": "CONFIRMAT", "explicatie": "Cursorul sorteaza departamentele descrescator dupa numarul de angajati (ORDER BY 2 DESC, coloana 2 fiind nr_angajati). In bucla FOR se AFISEAZA mai intai randul (PUT_LINE) si abia APOI se testeaza EXIT WHEN cursor2%ROWCOUNT>3. Trace: rand 1 afisat (%ROWCOUNT=1, 1>3 fals, continua); rand 2 (2>3 fals); rand 3 (3>3 fals); rand 4 afisat (%ROWCOUNT=4, 4>3 adevarat => EXIT). Deoarece afisarea precede testul, se afiseaza exact 4 departamente inainte de iesire. Deci primele PATRU departamente cu cei mai multi angajati. De ce sunt gresite celelalte: (a) %ROWCOUNT este folosit corect, nu produce eroare; (b) \"trei\" ar fi corect daca EXIT-ul s-ar face inainte de afisare sau conditia ar fi >=3, dar aici afisarea este inaintea testului deci se ajunge la 4; (c) nu se afiseaza toate, se iese devreme prin EXIT."}, {"nr": 19, "categorie": "SQL", "enunt": "Fie tabela RAND_COMENZI (id_comanda NUMBER(6), id_produs NUMBER(8), cantitate NUMBER(7), pret NUMBER(7,2)) avand 100 de randuri precum si interogarea SQL Oracle:\nSELECT id_comanda, ROUND(AVG(cantitate*pret)) VAL_MEDIE\nFROM rand_comenzi\nGROUP BY id_comanda\nHAVING COUNT(id_produs) >=3;\nCare din urmatoarele afirmatii este adevarata?", "variante": {"a": "interogarea contine o eroare deoarece clauza HAVING este incorect utilizata", "b": "se afiseaza valoarea medie a produselor daca acestea apar pe cel putin trei comenzi", "c": "se afiseaza valoarea medie a comenzilor daca acestea contin cel putin trei produse", "d": "interogarea contine o eroare deoarece functia ROUND este incorect utilizata"}, "raspuns_barem": "c", "raspuns_corect": "c", "status_verificare": "CONFIRMAT", "explicatie": "Interogarea grupeaza randurile pe id_comanda (deci per comanda). AVG(cantitate*pret) calculeaza valoarea medie a liniilor comenzii, rotunjita cu ROUND. Clauza HAVING COUNT(id_produs) >= 3 pastreaza doar grupurile (comenzile) care au cel putin 3 linii de produs. Astfel se afiseaza valoarea medie a fiecarei comenzi care contine cel putin trei produse. De ce sunt gresite celelalte: (a) HAVING este folosit corect - filtreaza grupurile dupa o functie de agregare, exact scopul sau; (b) gruparea este pe comanda, nu pe produs; enuntul din b inverseaza rolurile (produse care apar pe comenzi) - gresit; (d) ROUND aplicata pe AVG(...) este corecta sintactic."}, {"nr": 20, "categorie": "C/C++", "enunt": "Care va fi outputul generat de urmatorul program C?\n#include <stdio.h>\nint f()\n{\n  static int v = 10;\n  return v--;\n}\n\nint main()\n{\n  for(f(); f(); f())\n   printf(\"%d \", f());\n  return 0;\n}", "variante": {"a": "Va rula la infinit si va genera o eroare de executie pentru depasire stiva", "b": "8 5 2", "c": "Va genera eroare de compilare deoarece bucla for este incorecta sintactic", "d": "8 6 4 2"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "v este static, deci pastreaza valoarea intre apeluri, pornind de la 10. f() returneaza v-- (valoarea curenta, apoi decrementeaza). Ordinea de executie a for-ului este: init o data, apoi (conditie -> corp -> incrementare) repetat. Trace: init f() -> returneaza 10 (v devine 9). Conditie f() -> 9 (adevarat, v=8). Corp printf f() -> afiseaza 8 (v=7). Increment f() -> 7 (v=6). Conditie f() -> 6 (adevarat, v=5). Corp printf f() -> afiseaza 5 (v=4). Increment f() -> 4 (v=3). Conditie f() -> 3 (adevarat, v=2). Corp printf f() -> afiseaza 2 (v=1). Increment f() -> 1 (v=0). Conditie f() -> 0 (fals) => iesire. Se afiseaza: \"8 5 2\". De ce sunt gresite celelalte: (a) v scade catre 0 si bucla se opreste, nu e infinita; (c) sintaxa for(f(); f(); f()) este perfect valida; (d) \"8 6 4 2\" ignora consumul suplimentar de apeluri f() din conditie si increment - fiecare iteratie consuma 3 apeluri, nu 2."}, {"nr": 21, "categorie": "Baze de date (teorie)", "enunt": "In modelul relational pentru baze de date:", "variante": {"a": "cheia primara nu trebuie sa fie unica", "b": "proiectia, negatia si produsul cartezian sunt operatori din algebra relationala", "c": "sunt utilizati operatori din algebra relationala", "d": "selectia, conjunctia si jonctiunea sunt operatori din calculul relational"}, "raspuns_barem": "c", "raspuns_corect": "c", "status_verificare": "CONFIRMAT", "explicatie": "Modelul relational se bazeaza pe doua formalisme echivalente de interogare: algebra relationala (operatori: selectie, proiectie, reuniune, diferenta, produs cartezian, jonctiune etc.) si calculul relational. Afirmatia c (\"sunt utilizati operatori din algebra relationala\") este general adevarata si corecta. De ce sunt gresite celelalte: (a) cheia primara TREBUIE sa fie unica (si nenula) - identifica in mod unic fiecare tuplu; (b) \"negatia\" nu este un operator standard al algebrei relationale (operatorii clasici sunt selectia, proiectia, reuniunea, diferenta, produsul cartezian, jonctiunea, redenumirea) - includerea negatiei face afirmatia falsa; (d) \"selectia, conjunctia si jonctiunea\" nu sunt operatori din calculul relational - selectia si jonctiunea apartin ALGEBREI relationale, iar \"conjunctia\" nu este un operator relational de sine statator - deci afirmatia amesteca gresit conceptele."}, {"nr": 22, "categorie": "C/C++", "enunt": "Care va fi numarul de afisari ale cuvantului Examen la rularea programului C de mai jos?\n#include <stdio.h>\nint main()\n{\n   unsigned int i = 10;\n   for (; i; i >>= 1)\n      printf(\"Examen\\n\");\n   return 0;\n}", "variante": {"a": "0", "b": "4", "c": "10", "d": "3"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Bucla se executa cat timp i este nenul, iar la fiecare pas i se deplaseaza la dreapta cu o pozitie (i >>= 1, echivalent cu impartirea intreaga la 2). Pornind de la i=10: iteratia 1: i=10 (afiseaza), apoi i=5; iteratia 2: i=5 (afiseaza), apoi i=2; iteratia 3: i=2 (afiseaza), apoi i=1; iteratia 4: i=1 (afiseaza), apoi i=0; conditia i devine falsa => iesire. Numarul de afisari = 4. In binar 10 = 1010 are 4 biti pana la anularea completa prin deplasari. De ce sunt gresite celelalte: (a) i pornind nenul face bucla sa se execute cel putin o data; (c) 10 ar fi cazul unei decrementari i--, nu al unei deplasari; (d) 3 subestimeaza cu o iteratie."}, {"nr": 23, "categorie": "SQL", "enunt": "Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), id_departament NUMBER) avand 200 randuri (inregistrari).\nPrecizati ce rezultat va furniza interogarea urmatoare:\nSELECT * FROM angajati a WHERE salariul > (SELECT MAX(salariul) FROM angajati WHERE id_departament=a.id_departament)\nORDER BY salariul;", "variante": {"a": "afiseaza angajatii care au salariul cel mai mare in departamentul in care lucreaza", "b": "se executa, dar nu afiseaza nimic", "c": "afiseaza toti angajatii indiferent de salariu deoarece conditia din subcerere este adevarata intotdeauna", "d": "va apare o eroare deoarece lipseste clauza GROUP BY in subcerere"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Este o subcerere CORELATA: pentru fiecare angajat \"a\", subcererea calculeaza salariul MAXIM din PROPRIUL sau departament (id_departament = a.id_departament). Conditia cere ca salariul angajatului sa fie STRICT MAI MARE decat maximul salariilor din departamentul sau. Insa niciun angajat nu poate avea salariul strict mai mare decat maximul din departamentul din care el insusi face parte (el este inclus in acel MAX). Prin urmare conditia este imposibil de satisfacut si nu se returneaza niciun rand. De ce sunt gresite celelalte: (a) pentru \"cel mai mare\" ar trebui \">=\" sau \"= MAX\", nu \">\" strict - cu \">\" nu apare nimeni; (c) conditia nu este mereu adevarata, ci mereu falsa; (d) subcererea foloseste o functie de agregat MAX fara alte coloane in SELECT, deci nu necesita GROUP BY - nu apare eroare de sintaxa."}, {"nr": 24, "categorie": "C/C++", "enunt": "Ce va afisa urmatorul program C?\n#include<stdio.h>\nint main()\n{\n   char p[] = \"ropot\";\n   char t;\n   int l = sizeof (p)/sizeof (p[0])-1;\n   for (int i= 0, j = l-1; i < j; i++)\n   {\n       t = p[i];\n       p[i] = p[j];\n       p[j] = t;\n     }\n     printf(\"%s\", p);\n     return 0;\n}", "variante": {"a": "ropot", "b": "Nu va afisa nimic", "c": "tropo", "d": "topor"}, "raspuns_barem": "c", "raspuns_corect": "c", "status_verificare": "CONFIRMAT", "explicatie": "sizeof(p) = 6 (5 litere + '\\0'), deci l = 6/1 - 1 = 5. In for, j este initializat cu l-1 = 4 SI NU SE MODIFICA in bucla (se incrementeaza doar i). Astfel se schimba mereu p[i] cu p[4] (ultima pozitie), pentru i = 0,1,2,3 (cat timp i < 4). Trace pornind de la p = [r,o,p,o,t]: i=0 swap(0,4) -> [t,o,p,o,r]; i=1 swap(1,4) -> [t,r,p,o,o]; i=2 swap(2,4) -> [t,r,o,o,p]; i=3 swap(3,4) -> [t,r,o,p,o]; i=4: 4<4 fals, stop. Sirul rezultat este \"tropo\". De ce sunt gresite celelalte: (a) \"ropot\" ar fi sirul neschimbat; (b) chiar afiseaza; (d) \"topor\" ar fi rezultatul inversarii CORECTE a sirului (daca si j ar scadea, j--), dar aici j ramane fix la 4, deci nu se obtine oglinditul complet."}, {"nr": 25, "categorie": "PL/SQL", "enunt": "Care din urmatoarele functii SQL nu poate fi folosita in instructiuni de atribuire specifice PL/SQL?", "variante": {"a": "AVG", "b": "TO_DATE", "c": "INSTR", "d": "NVL"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "AVG este o functie de GRUP (de agregare), care opereaza pe multimi de randuri si are sens doar in contextul unei instructiuni SQL (SELECT cu grupare). Ea NU poate fi apelata direct intr-o instructiune de atribuire procedurala PL/SQL de forma \"variabila := AVG(...)\" - functiile de grup nu sunt permise in expresiile procedurale, ci doar in instructiuni SQL. Pentru a folosi AVG trebuie inclusa intr-un SELECT ... INTO. De ce sunt gresite celelalte: (b) TO_DATE, (c) INSTR si (d) NVL sunt functii cu un singur rand (single-row), care pot fi apelate direct in atribuiri PL/SQL, ex. v := NVL(x, 0); v := INSTR('abc','b'); v := TO_DATE('01-01-2022','DD-MM-YYYY')."}, {"nr": 26, "categorie": "C/C++", "enunt": "Ce va afisa urmatorul program C?\n\n#include <stdio.h>\nint g(int n,int v) {\n   if (n) {\n      return g(n / 10,v) * 10 + n % 10;\n   }\n   else {\n      return v==n;\n   }\n}\nint main()\n{\n   int n = 6779;\n   printf(\"%d\",g(n,n));\n}", "variante": {"a": "9776", "b": "6779", "c": "1", "d": "0"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Functia g reconstruieste numarul n din cifrele sale. Recurenta \"return g(n/10, v) * 10 + n % 10\" construieste numarul cifra cu cifra in ORDINEA ORIGINALA (nu inversata), deoarece cifrele mai semnificative sunt procesate primele in adancimea recursiei si inmultite corespunzator cu puteri ale lui 10. Cazul de baza (n==0) returneaza v==n, adica v==0; cum v=6779 (nenul), rezulta 0, care devine \"cifra\" de start si nu afecteaza rezultatul (0*10 + prima cifra). Trace: g(0,...)=0; g(6,...)=0*10+6=6; g(67,...)=6*10+7=67; g(677,...)=67*10+7=677; g(6779,...)=677*10+9=6779. Rezultat: 6779. De ce sunt gresite celelalte: (a) 9776 ar fi valoarea INVERSATA - dar recurenta aceasta pastreaza ordinea, nu o inverseaza; (c) 1 ar rezulta daca v==n ar fi adevarat in baza, dar v=6779 != 0; (d) 0 este doar valoarea din cazul de baza, nu rezultatul final."}, {"nr": 27, "categorie": "C/C++", "enunt": "Ce valoare contine variabila C de tip double a, in urma atribuirii: a = 9 * 3 / 2 * 2 / 3?", "variante": {"a": "9", "b": "8", "c": "0", "d": "Atribuirea va genera o eroare deoarece nu este permisa o expresie aritmetica formata doar din constante"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Toti operanzii (9, 3, 2, 2, 3) sunt constante INTREGI, deci expresia se evalueaza in aritmetica INTREAGA (cu trunchiere la impartire), indiferent ca rezultatul se atribuie unei variabile double. Operatorii * si / au aceeasi prioritate si se evalueaza de la stanga la dreapta: 9*3 = 27; 27/2 = 13 (impartire intreaga, se pierde 0.5); 13*2 = 26; 26/3 = 8 (impartire intreaga, se pierde restul). Rezultatul intreg 8 este apoi convertit la double, deci a = 8.0. De ce sunt gresite celelalte: (a) 9 ar rezulta doar daca toate impartirile ar fi exacte (aritmetica reala), dar aici sunt intregi; (c) 0 nu corespunde calculului; (d) o expresie formata doar din constante este perfect legala in C (se poate calcula chiar la compilare), nu genereaza eroare."}, {"nr": 28, "categorie": "SQL", "enunt": "Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3)) avand 200 randuri (inregistrari).\nAlegeti varianta corecta referitoare la urmatoarea comanda SQL:\nUPDATE angajati SET salariul=salariul *1.1\nWHERE EXTRACT(month from data_angajare) = EXTRACT(month from sysdate)\nAND id_departament IN (SELECT id_departament FROM angajati WHERE salariul > (SELECT AVG(salariul) FROM angajati));", "variante": {"a": "se majoreaza doar salariile angajatilor care au in prezent salariul mai mare decat salariul mediu", "b": "se majoreaza doar salariile persoanelor angajate in luna curenta, indiferent de zi sau an, daca acestea lucreaza in prezent intr-un departament in care toti angajatii au salariul mai mai mare decat salariul mediu", "c": "instructiunea este eronata deoarece in tabela nu exista coloana sysdate", "d": "se majoreaza salariile persoanelor angajate in luna curenta, indiferent de zi sau an, daca acestea lucreaza in prezent intr-un departament in care exista angajati care au salariul mai mai mare decat salariul mediu"}, "raspuns_barem": "d", "raspuns_corect": "d", "status_verificare": "CONFIRMAT", "explicatie": "Comanda majoreaza cu 10% salariile angajatilor care indeplinesc DOUA conditii combinate cu AND: (1) EXTRACT(month from data_angajare) = EXTRACT(month from sysdate) - au fost angajati in aceeasi LUNA calendaristica cu luna curenta (se compara doar luna, indiferent de zi sau an); (2) id_departament IN (SELECT id_departament FROM angajati WHERE salariul > (SELECT AVG(salariul) FROM angajati)) - lucreaza intr-un departament care CONTINE cel putin un angajat cu salariul peste media generala. Subcererea returneaza departamentele in care EXISTA (macar un) angajat peste medie. Deci d este corect. De ce sunt gresite celelalte: (a) ignora complet conditia de luna si conditia de departament - descrie doar subcererea interioara, gresit; (b) spune \"TOTI angajatii au salariul mai mare decat media\", dar subcererea garanteaza doar ca EXISTA cel putin unul (IN + o simpla conditie), nu ca toti - de aceea b este gresit iar d corect; (c) sysdate este o pseudo-coloana/functie Oracle valida, EXTRACT(month from sysdate) este corect, nu apare eroare."}, {"nr": 29, "categorie": "PL/SQL", "enunt": "Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(20), prenume VARCHAR2(30), salariul NUMBER(10,2), id_departament NUMBER) avand 200 randuri (inregistrari).\nSe considera urmatorul bloc PL/SQL:\nSET SERVEROUTPUT ON\nDECLARE\nCURSOR cursor1 IS SELECT id_angajat, nume FROM angajati ORDER BY salariul DESC;\nvid angajati.id_angajat%TYPE;\nvnume CHAR (20);\nBEGIN\nOPEN cursor1;\nFETCH cursor1 INTO vid,vnume;\nDBMS_OUTPUT.PUT_LINE('Angajatul '||vnume);\nCLOSE cursor1;\nEND;\n/\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "afiseaza numele tuturor angajatilor ordonati descrescator in functie de salariu", "b": "lucreaza cu un cursor implicit", "c": "blocul PL/SQL genereaza o eroare deoarece lipseste structura repetitiva", "d": "se afiseaza numele angajatului cu cel mai mare salariu"}, "raspuns_barem": "d", "raspuns_corect": "d", "status_verificare": "CONFIRMAT", "explicatie": "Cursorul selecteaza angajatii ordonati descrescator dupa salariu (ORDER BY salariul DESC), deci primul rand al cursorului corespunde angajatului cu cel mai mare salariu. Se face un SINGUR FETCH, care aduce exact acest prim rand, iar PUT_LINE afiseaza numele lui. Cursorul este apoi inchis. Rezultatul: se afiseaza numele angajatului cu cel mai mare salariu. De ce sunt gresite celelalte: (a) un singur FETCH aduce doar primul angajat, nu pe toti (nu exista bucla); (b) cursorul este declarat explicit (CURSOR cursor1 IS ...), gestionat manual cu OPEN/FETCH/CLOSE - deci este EXPLICIT, nu implicit; (c) un cursor explicit poate fi folosit cu un singur FETCH fara bucla - nu este obligatorie o structura repetitiva, deci nu apare nicio eroare."}, {"nr": 30, "categorie": "C/C++", "enunt": "Ce se va intampla la executia urmatorului program C?\n#include<stdio.h>\nstruct st\n{\n   int x;\n   struct st *next;\n};\nint main()\n{\n   struct st temp;\n   temp.x = 100;\n   temp.next = &temp;\n   printf(\"%d\", temp.next->next->x);\n   return 0;\n}", "variante": {"a": "Va fi generata o eroare de compilare deoarece recursivitatea in descrierea unei structuri nu este permisa", "b": "Va fi afisata valoarea 100", "c": "Va fi afisata valoarea 0", "d": "Va fi afisata o valoare intreaga nedefinita"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Structura contine un POINTER catre propriul tip (struct st *next) - aceasta este o structura auto-referentiala, perfect legala in C (baza listelor inlantuite). Nu este recursivitate interzisa, deoarece campul este un pointer, nu o instanta completa a structurii. In cod temp.next = &temp face ca pointerul sa indice spre insasi variabila temp. Astfel: temp.next este &temp, iar temp.next->next este tot &temp (pentru ca (&temp)->next = &temp), deci temp.next->next->x = temp.x = 100. Se afiseaza 100. De ce sunt gresite celelalte: (a) auto-referirea prin pointer este permisa; (c) x a fost initializat la 100, nu 0; (d) valoarea nu este nedefinita - lantul de pointeri revine mereu la temp, al carui x este 100."}]};
+
+/* ---------- theme ---------- */
+(function(){
+  const saved = localStorage.getItem('csie3-theme');
+  if(saved) document.documentElement.setAttribute('data-theme', saved);
+  document.getElementById('themeToggle').addEventListener('click', function(){
+    const cur = document.documentElement.getAttribute('data-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light');
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('csie3-theme', next);
+  });
+})();
+
+/* ---------- helpers ---------- */
+function escapeHtml(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+const CODE_RE = /[;{}]|^(SELECT|FROM|WHERE|GROUP BY|ORDER BY|HAVING|UPDATE|INSERT|DELETE|CREATE|DROP|ALTER|BEGIN|END|DECLARE|EXCEPTION|LOOP|EXIT|IF |IF\(|ELSIF|ELSE|RETURN|SET SERVEROUTPUT|DBMS_OUTPUT|#include|int |void |char |float |double |struct |class |public:|private:|protected:|printf|scanf|namespace |using |for\s*\(|while\s*\(|switch\s*\()/i;
+function isCodeLine(line){
+  if(line === '/') return true;
+  return CODE_RE.test(line);
+}
+function formatEnunt(text){
+  const rawLines = text.split('\n');
+  const groups = [];
+  let cur = null;
+  for(const raw of rawLines){
+    const line = raw.trim();
+    if(line === ''){ cur = null; continue; }
+    const type = isCodeLine(line) ? 'code' : 'text';
+    if(cur && cur.type === type){ cur.lines.push(line); }
+    else { cur = {type, lines:[line]}; groups.push(cur); }
+  }
+  return groups.map(g => g.type === 'code'
+    ? '<pre class="code">'+escapeHtml(g.lines.join('\n'))+'</pre>'
+    : '<p>'+escapeHtml(g.lines.join(' '))+'</p>'
+  ).join('');
+}
+function letters(str){
+  return str.split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);
+}
+
+/* ---------- state ---------- */
+const state = {
+  pool: [],
+  shuffleQ: true,
+  shuffleA: true,
+  selectedCats: new Set(DATA.questions.map(q=>q.categorie)),
+  index: 0,
+  score: 0,
+  order: [],
+  results: []
+};
+
+const categories = Array.from(new Set(DATA.questions.map(q=>q.categorie)));
+
+function catCount(cat){ return DATA.questions.filter(q=>q.categorie===cat).length; }
+
+function renderChips(){
+  const el = document.getElementById('categoryChips');
+  el.innerHTML = '';
+  categories.forEach(cat=>{
+    const chip = document.createElement('div');
+    chip.className = 'chip active';
+    chip.innerHTML = escapeHtml(cat)+' <span class="count">'+catCount(cat)+'</span>';
+    chip.addEventListener('click', ()=>{
+      if(state.selectedCats.has(cat)){
+        if(state.selectedCats.size>1){ state.selectedCats.delete(cat); chip.classList.remove('active'); }
+      } else {
+        state.selectedCats.add(cat); chip.classList.add('active');
+      }
+      updateStartBtn();
+    });
+    el.appendChild(chip);
+  });
+}
+
+function updateStartBtn(){
+  const n = DATA.questions.filter(q=>state.selectedCats.has(q.categorie)).length;
+  document.getElementById('startBtn').textContent = 'Începe testul ('+n+' întrebări)';
+  document.getElementById('startBtn').disabled = n===0;
+}
+
+document.getElementById('toggleShuffleQ').addEventListener('click', function(){
+  state.shuffleQ = !state.shuffleQ; this.classList.toggle('on', state.shuffleQ);
+});
+document.getElementById('toggleShuffleA').addEventListener('click', function(){
+  state.shuffleA = !state.shuffleA; this.classList.toggle('on', state.shuffleA);
+});
+
+function showView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+}
+
+function bestScoreKey(){ return 'csie3-best-'+DATA.year; }
+function loadBest(){
+  const raw = localStorage.getItem(bestScoreKey());
+  return raw ? JSON.parse(raw) : null;
+}
+function renderBestNote(){
+  const b = loadBest();
+  const el = document.getElementById('bestScoreNote');
+  el.textContent = b ? ('Cel mai bun scor anterior: '+b.score+'/'+b.total+' ('+b.pct+'%)') : '';
+}
+
+document.getElementById('startBtn').addEventListener('click', startQuiz);
+document.getElementById('quitBtn').addEventListener('click', ()=>{ showView('setup'); renderBestNote(); });
+document.getElementById('restartBtn').addEventListener('click', ()=>{ showView('setup'); renderBestNote(); });
+document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+
+function startQuiz(){
+  let pool = DATA.questions.filter(q=>state.selectedCats.has(q.categorie));
+  if(state.shuffleQ) pool = shuffle(pool);
+  state.pool = pool;
+  state.index = 0;
+  state.score = 0;
+  state.results = [];
+  state.order = pool.map(q=>{
+    const opts = ['a','b','c','d'];
+    return state.shuffleA ? shuffle(opts) : opts;
+  });
+  showView('quiz');
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const q = state.pool[state.index];
+  const dispOrder = state.order[state.index];
+  document.getElementById('progressBar').style.width = Math.round(100*state.index/state.pool.length)+'%';
+  document.getElementById('quizPos').textContent = 'Întrebarea '+(state.index+1)+' din '+state.pool.length;
+  document.getElementById('quizCat').textContent = q.categorie;
+  document.getElementById('quizScore').textContent = 'Scor: '+state.score;
+  document.getElementById('quizEnunt').innerHTML = formatEnunt(q.enunt);
+  document.getElementById('nextBtn').style.display = 'none';
+  const fb = document.getElementById('quizFeedback');
+  fb.classList.remove('show','ok','ko');
+  document.getElementById('fbBaremWarn').style.display = 'none';
+
+  const optsEl = document.getElementById('quizOptions');
+  optsEl.innerHTML = '';
+  optsEl.dataset.locked = '0';
+  const displayLetters = ['A','B','C','D'];
+  dispOrder.forEach((origLetter, i)=>{
+    const btn = document.createElement('div');
+    btn.className = 'opt';
+    btn.dataset.orig = origLetter;
+    btn.innerHTML = '<span class="letter">'+displayLetters[i]+')</span><span class="txt">'+escapeHtml(q.variante[origLetter])+'</span>';
+    btn.addEventListener('click', ()=>selectOption(origLetter));
+    optsEl.appendChild(btn);
+  });
+}
+
+function selectOption(chosenLetter){
+  const q = state.pool[state.index];
+  const optsEl = document.getElementById('quizOptions');
+  if(optsEl.dataset.locked === '1') return;
+  optsEl.dataset.locked = '1';
+
+  const correctSet = letters(q.raspuns_corect);
+  const baremSet = letters(q.raspuns_barem);
+  const isCorrect = correctSet.includes(chosenLetter);
+  if(isCorrect) state.score++;
+
+  Array.from(optsEl.children).forEach(btn=>{
+    btn.classList.add('locked');
+    const l = btn.dataset.orig;
+    if(correctSet.includes(l)) btn.classList.add('correct');
+    else if(l === chosenLetter) btn.classList.add('incorrect');
+    else btn.classList.add('dim');
+    let tag = 'sursă: '+l.toUpperCase();
+    if(q.status_verificare === 'EROARE_BAREM' && baremSet.includes(l) && !correctSet.includes(l)){
+      tag += ' · alegerea baremului oficial';
+    }
+    const span = document.createElement('span');
+    span.className = 'tag';
+    span.textContent = tag;
+    btn.appendChild(span);
+  });
+
+  const fb = document.getElementById('quizFeedback');
+  fb.classList.add('show', isCorrect ? 'ok':'ko');
+  const title = document.getElementById('fbTitle');
+  title.className = 'fb-title '+(isCorrect?'ok-txt':'ko-txt');
+  title.textContent = isCorrect ? '✓ Corect' : ('✗ Greșit — răspunsul corect: '+correctSet.join(', ').toUpperCase());
+
+  const warnEl = document.getElementById('fbBaremWarn');
+  if(q.status_verificare === 'EROARE_BAREM'){
+    warnEl.style.display = 'block';
+    warnEl.textContent = '⚠ Barem oficial eronat: documentul original indică "'+baremSet.join(', ').toUpperCase()+'", dar răspunsul corect verificat este "'+correctSet.join(', ').toUpperCase()+'". Detalii mai jos.';
+  } else {
+    warnEl.style.display = 'none';
+  }
+  document.getElementById('fbExplic').textContent = q.explicatie;
+  document.getElementById('nextBtn').style.display = 'inline-flex';
+  document.getElementById('quizScore').textContent = 'Scor: '+state.score;
+
+  state.results.push({
+    nr: q.nr, categorie: q.categorie, chosen: chosenLetter, correctSet, isCorrect,
+    variante: q.variante, explicatie: q.explicatie, status_verificare: q.status_verificare,
+    baremSet
+  });
+}
+
+function nextQuestion(){
+  state.index++;
+  if(state.index >= state.pool.length){ renderResults(); showView('results'); }
+  else renderQuestion();
+}
+
+function renderResults(){
+  const total = state.results.length;
+  const score = state.results.filter(r=>r.isCorrect).length;
+  const pct = total ? Math.round(100*score/total) : 0;
+  document.getElementById('resScoreN').textContent = score+'/'+total;
+  document.getElementById('resPercent').textContent = pct+'%';
+  document.getElementById('resPunctaj').textContent = 'Punctaj estimat: '+(score*3)+' puncte (din '+(total*3)+')';
+
+  const best = loadBest();
+  if(!best || score/total > best.score/best.total){
+    localStorage.setItem(bestScoreKey(), JSON.stringify({score, total, pct}));
+  }
+
+  const catStats = {};
+  state.results.forEach(r=>{
+    catStats[r.categorie] = catStats[r.categorie] || {ok:0,total:0};
+    catStats[r.categorie].total++;
+    if(r.isCorrect) catStats[r.categorie].ok++;
+  });
+  const catBarsEl = document.getElementById('resCatBars');
+  catBarsEl.innerHTML = '';
+  Object.keys(catStats).forEach(cat=>{
+    const s = catStats[cat];
+    const p = Math.round(100*s.ok/s.total);
+    const row = document.createElement('div');
+    row.className = 'cat-bar-row';
+    row.innerHTML = '<div class="cat-bar-label"><span>'+escapeHtml(cat)+'</span><span>'+s.ok+'/'+s.total+'</span></div>'+
+      '<div class="cat-bar-outer"><div class="cat-bar-inner" style="width:'+p+'%"></div></div>';
+    catBarsEl.appendChild(row);
+  });
+
+  const tbody = document.getElementById('resTableBody');
+  tbody.innerHTML = '';
+  state.results.forEach((r, idx)=>{
+    const tr = document.createElement('tr');
+    tr.className = r.isCorrect ? 'hit':'miss';
+    tr.innerHTML = '<td>'+(r.isCorrect?'✓':'✗')+' '+r.nr+'</td><td>'+escapeHtml(r.categorie)+'</td><td>'+r.chosen.toUpperCase()+'</td><td>'+r.correctSet.join(',').toUpperCase()+'</td>';
+    const detail = document.createElement('tr');
+    detail.className = 'review-detail';
+    const td = document.createElement('td');
+    td.colSpan = 4;
+    let warnHtml = '';
+    if(r.status_verificare === 'EROARE_BAREM'){
+      warnHtml = '<div class="barem-warn" style="display:block;margin-bottom:8px">⚠ Barem oficial eronat (indica '+r.baremSet.join(',').toUpperCase()+')</div>';
+    }
+    td.innerHTML = warnHtml + escapeHtml(r.explicatie).replace(/\n/g,'<br>');
+    detail.appendChild(td);
+    tr.addEventListener('click', ()=>{ detail.classList.toggle('show'); });
+    tbody.appendChild(tr);
+    tbody.appendChild(detail);
+  });
+}
+
+renderChips();
+updateStartBtn();
+renderBestNote();
+</script>
+</body>
+</html>

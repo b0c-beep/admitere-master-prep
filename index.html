@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admitere Master CSIE — Pregătire Test Grilă</title>
+<meta name="description" content="Teste grilă interactive pentru admiterea la master CSIE (ASE) — C/C++, SQL, PL/SQL, baze de date, 2019-2025">
+<style>
+:root{
+  --bg:#f5f6fa; --surface:#ffffff; --surface-2:#eef0f6; --border:#dde1ea;
+  --text:#1a2030; --text-dim:#5c6579; --accent:#4a55d6; --accent-ink:#ffffff;
+  --good:#177a4c; --good-bg:#e2f6ec; --good-bd:#a9e3c3;
+  --warn:#8a6100; --warn-bg:#fff3d6; --warn-bd:#f0d998;
+  --radius:14px; --shadow:0 2px 14px rgba(20,25,45,.07);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#10131c; --surface:#171b28; --surface-2:#1e2332; --border:#2a3042;
+    --text:#e8eaf2; --text-dim:#9aa2b8; --accent:#8b93ff; --accent-ink:#0d0f18;
+    --good:#3ddb92; --good-bg:#123326; --good-bd:#1f5c3f;
+    --warn:#ffce6b; --warn-bg:#382b0a; --warn-bd:#6b4f14;
+    --shadow:0 2px 18px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="light"]{
+  --bg:#f5f6fa; --surface:#ffffff; --surface-2:#eef0f6; --border:#dde1ea;
+  --text:#1a2030; --text-dim:#5c6579; --accent:#4a55d6; --accent-ink:#ffffff;
+  --good:#177a4c; --good-bg:#e2f6ec; --good-bd:#a9e3c3;
+  --warn:#8a6100; --warn-bg:#fff3d6; --warn-bd:#f0d998;
+}
+:root[data-theme="dark"]{
+  --bg:#10131c; --surface:#171b28; --surface-2:#1e2332; --border:#2a3042;
+  --text:#e8eaf2; --text-dim:#9aa2b8; --accent:#8b93ff; --accent-ink:#0d0f18;
+  --good:#3ddb92; --good-bg:#123326; --good-bd:#1f5c3f;
+  --warn:#ffce6b; --warn-bg:#382b0a; --warn-bd:#6b4f14;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.55; min-height:100vh;
+}
+.wrap{max-width:960px;margin:0 auto;padding:20px 16px 64px}
+header.top{
+  display:flex;align-items:center;gap:12px;justify-content:space-between;
+  padding:14px 0;margin-bottom:8px;
+}
+.brand h1{font-size:22px;margin:0;font-weight:800;letter-spacing:.2px}
+.brand .sub{font-size:13.5px;color:var(--text-dim);margin-top:4px}
+.iconbtn{
+  border:1px solid var(--border);background:var(--surface);color:var(--text);
+  width:38px;height:38px;border-radius:10px;cursor:pointer;font-size:16px;
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+}
+.iconbtn:hover{border-color:var(--accent)}
+.intro{font-size:15px;color:var(--text-dim);margin:6px 0 20px;max-width:70ch}
+.stats-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+.stat{
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:14px 18px;flex:1 1 140px;box-shadow:var(--shadow);
+}
+.stat .n{font-size:22px;font-weight:800}
+.stat .l{font-size:12px;color:var(--text-dim);margin-top:2px}
+.cat-legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:26px}
+.cat-legend .item{
+  font-size:12.5px;color:var(--text-dim);background:var(--surface);border:1px solid var(--border);
+  border-radius:999px;padding:5px 12px;
+}
+.cat-legend .item b{color:var(--text)}
+h2.section-title{font-size:16px;margin:0 0 14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.year-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:18px 20px;display:flex;flex-direction:column;gap:10px;
+  text-decoration:none;color:var(--text);transition:transform .12s, border-color .12s;
+}
+.year-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.year-card .yr{font-size:24px;font-weight:800}
+.year-card .meta{font-size:12.5px;color:var(--text-dim)}
+.year-card .cats{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.year-card .cats span{
+  font-size:11px;background:var(--surface-2);border:1px solid var(--border);
+  border-radius:999px;padding:3px 9px;color:var(--text-dim);
+}
+.year-card .flag{
+  font-size:12px;font-weight:700;color:var(--warn);background:var(--warn-bg);
+  border:1px solid var(--warn-bd);border-radius:8px;padding:5px 9px;display:inline-block;width:fit-content;
+}
+.year-card .go{margin-top:auto;font-size:13.5px;font-weight:700;color:var(--accent);display:flex;align-items:center;gap:4px}
+.footer-note{font-size:12px;color:var(--text-dim);text-align:center;margin-top:34px}
+.section-block{margin-bottom:34px}
+.badge-ai{
+  font-size:11px;font-weight:700;color:var(--accent);background:var(--surface-2);
+  border:1px solid var(--border);border-radius:999px;padding:3px 10px;display:inline-block;
+  width:fit-content;
+}
+.sim-card{border-color:color-mix(in srgb, var(--accent) 35%, var(--border))}
+.disclaimer{
+  font-size:12.5px;color:var(--text-dim);background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:10px 14px;margin:8px 0 16px;max-width:70ch;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <h1>Admitere Master CSIE &middot; Pregătire Test Grilă</h1>
+      <div class="sub">Cibernetică, Statistică și Informatică Economică &mdash; ASE București</div>
+    </div>
+    <button class="iconbtn" id="themeToggle" title="Comută tema">&#9788;</button>
+  </header>
+
+  <p class="intro">
+    Teste-grilă interactive, generate din subiectele oficiale de admitere din anii 2019&ndash;2025.
+    Fiecare întrebare a fost transcrisă din sursa originală (PDF tipărit sau scanat) și verificată
+    independent față de baremul oficial. Poți amesteca ordinea întrebărilor și a variantelor de
+    răspuns, filtra pe categorii (C/C++, SQL, PL/SQL, baze de date, OOP) și primești explicație
+    detaliată după fiecare răspuns.
+  </p>
+
+  <div class="stats-row">
+    <div class="stat"><div class="n">210</div><div class="l">întrebări totale</div></div>
+    <div class="stat"><div class="n">7</div><div class="l">ani (2019&ndash;2025)</div></div>
+    <div class="stat"><div class="n">5</div><div class="l">categorii tematice</div></div>
+    <div class="stat"><div class="n">2</div><div class="l">erori de barem identificate</div></div>
+  </div>
+
+  <div class="cat-legend">
+    <div class="item"><b>77</b> C/C++</div>
+    <div class="item"><b>47</b> PL/SQL</div>
+    <div class="item"><b>44</b> SQL</div>
+    <div class="item"><b>28</b> OOP (C++)</div>
+    <div class="item"><b>14</b> Baze de date (teorie)</div>
+  </div>
+
+  <div class="section-block">
+    <h2 class="section-title">Teste de simulare &mdash; generate AI <span class="badge-ai">NOU</span></h2>
+    <p class="disclaimer">
+      Acestea NU sunt subiecte oficiale reale, ci 5 teste de simulare a 30 de întrebări
+      fiecare (150 în total), generate original pe baza tiparelor și stilului din
+      subiectele 2024&ndash;2025 (anii cei mai probabili să prefigureze structura viitorului
+      examen). Fiecare întrebare de cod (C/C++, OOP) a fost verificată prin compilare și
+      execuție reală, nu doar prin raționament; întrebările SQL/PL-SQL au fost verificate
+      riguros pe baza semanticii Oracle consacrate. Util ca antrenament suplimentar, dar
+      folosește-le ca supliment la subiectele reale de mai jos, nu ca substitut.
+    </p>
+    <div class="grid" id="simGrid"></div>
+  </div>
+
+  <h2 class="section-title">Subiecte oficiale &mdash; alege anul</h2>
+  <div class="grid" id="yearGrid"></div>
+
+  <div class="footer-note">
+    Sursă text brut verificat: folderul <code>cache/</code> (fișiere .txt, un an per fișier). Fiecare
+    întrebare marcată &bdquo;barem oficial eronat&rdquo; a fost verificată tehnic independent (compilare
+    de cod, verificare semantică SQL/PL-SQL) &mdash; recomandăm oricum verificare proprie la nevoie.
+  </div>
+</div>
+
+<script>
+(function(){
+  const saved = localStorage.getItem('csie3-theme');
+  if(saved) document.documentElement.setAttribute('data-theme', saved);
+  document.getElementById('themeToggle').addEventListener('click', function(){
+    const cur = document.documentElement.getAttribute('data-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light');
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('csie3-theme', next);
+  });
+})();
+
+const YEARS = [
+  {year:"2025", count:30, err:1, cats:{"PL/SQL":7,"OOP (C++)":8,"SQL":6,"C/C++":7,"Baze de date (teorie)":2}},
+  {year:"2024", count:30, err:0, cats:{"SQL":8,"OOP (C++)":11,"PL/SQL":6,"C/C++":4,"Baze de date (teorie)":1}},
+  {year:"2023", count:30, err:0, cats:{"OOP (C++)":9,"PL/SQL":7,"C/C++":6,"SQL":6,"Baze de date (teorie)":2}},
+  {year:"2022", count:30, err:0, cats:{"SQL":6,"Baze de date (teorie)":2,"C/C++":15,"PL/SQL":7}},
+  {year:"2021", count:30, err:0, cats:{"C/C++":15,"SQL":6,"PL/SQL":7,"Baze de date (teorie)":2}},
+  {year:"2020", count:30, err:1, cats:{"C/C++":15,"Baze de date (teorie)":2,"SQL":6,"PL/SQL":7}},
+  {year:"2019", count:30, err:0, cats:{"PL/SQL":6,"SQL":6,"C/C++":15,"Baze de date (teorie)":3}}
+];
+
+const SIMTESTS = [
+  {id:"test1", label:"Test de simulare 1", theme:"Recursivitate, pointeri și moștenire de bază",
+   cats:{"OOP (C++)":9,"SQL":7,"PL/SQL":7,"C/C++":6,"Baze de date (teorie)":1}},
+  {id:"test2", label:"Test de simulare 2", theme:"Structuri, uniuni și polimorfism",
+   cats:{"OOP (C++)":9,"SQL":7,"PL/SQL":7,"C/C++":6,"Baze de date (teorie)":1}},
+  {id:"test3", label:"Test de simulare 3", theme:"Șiruri de caractere și supraîncărcare de operatori",
+   cats:{"OOP (C++)":9,"SQL":7,"PL/SQL":7,"C/C++":6,"Baze de date (teorie)":1}},
+  {id:"test4", label:"Test de simulare 4", theme:"Moștenire, specificatori de acces și constrângeri",
+   cats:{"OOP (C++)":9,"SQL":7,"PL/SQL":7,"C/C++":6,"Baze de date (teorie)":1}},
+  {id:"test5", label:"Test de simulare 5", theme:"Tablouri, constructor de copiere și tranzacții",
+   cats:{"OOP (C++)":9,"SQL":7,"PL/SQL":7,"C/C++":6,"Baze de date (teorie)":1}}
+];
+
+function bestScore(key){
+  const raw = localStorage.getItem('csie3-best-'+key);
+  return raw ? JSON.parse(raw) : null;
+}
+
+const grid = document.getElementById('yearGrid');
+YEARS.forEach(y=>{
+  const a = document.createElement('a');
+  a.className = 'year-card';
+  a.href = 'exam_prep/'+y.year+'.html';
+  const catSpans = Object.entries(y.cats).map(([c,n])=>'<span>'+c+' &middot; '+n+'</span>').join('');
+  const best = bestScore(y.year);
+  const bestHtml = best ? '<div class="meta">Cel mai bun scor: '+best.score+'/'+best.total+' ('+best.pct+'%)</div>' : '';
+  a.innerHTML =
+    '<div class="yr">'+y.year+'</div>'+
+    '<div class="meta">'+y.count+' întrebări</div>'+
+    (y.err>0 ? '<div class="flag">&#9888; '+y.err+' eroare de barem detectată</div>' : '') +
+    bestHtml +
+    '<div class="cats">'+catSpans+'</div>'+
+    '<div class="go">Deschide testul &rarr;</div>';
+  grid.appendChild(a);
+});
+
+const simGrid = document.getElementById('simGrid');
+SIMTESTS.forEach(t=>{
+  const a = document.createElement('a');
+  a.className = 'year-card sim-card';
+  a.href = 'exam_prep/'+t.id+'.html';
+  const catSpans = Object.entries(t.cats).map(([c,n])=>'<span>'+c+' &middot; '+n+'</span>').join('');
+  const best = bestScore(t.id);
+  const bestHtml = best ? '<div class="meta">Cel mai bun scor: '+best.score+'/'+best.total+' ('+best.pct+'%)</div>' : '';
+  a.innerHTML =
+    '<div class="yr">'+t.label+'</div>'+
+    '<div class="meta">'+t.theme+'</div>'+
+    bestHtml +
+    '<div class="cats">'+catSpans+'</div>'+
+    '<div class="go">Deschide testul &rarr;</div>';
+  simGrid.appendChild(a);
+});
+</script>
+</body>
+</html>

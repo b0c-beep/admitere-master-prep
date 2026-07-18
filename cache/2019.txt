@@ -1,0 +1,687 @@
+=== ADMITERE MASTER CSIE3 - TEST GRILĂ 2019 ===
+Sursă: subiecte_ani_anteriori/CSIE-3_2019.pdf
+Format sursă original: scanat, transcris manual din imagini (nu OCR)
+Număr total întrebări: 30
+Punctaj: 3 puncte/întrebare corectă (barem oficial), punctaj maxim 90 puncte
+
+##### ÎNTREBAREA 1 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Fie tabela ANGAJATI(id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE) si blocul PL/SQL:
+SET SERVEROUTPUT ON
+DECLARE
+nume_complet VARCHAR2(300);
+BEGIN
+SELECT nume||' '||prenume into nume_complet FROM Angajati
+WHERE id_angajat=101;
+DBMS_OUTPUT.PUT_LINE(nume_complet);
+END;
+/
+Care afirmatie este corecta?
+
+VARIANTE:
+a) se foloseste un cursor explicit
+b) blocul contine o eroare si nu va rula
+c) blocul va afisa numele complet al angajatului cu id_angajat = 101 (daca exista)
+d) blocul foloseste un operator de grup
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Blocul foloseste un SELECT ... INTO, adica un cursor IMPLICIT (nu explicit), care concateneaza nume si prenume cu operatorul ||. Daca exista exact un angajat cu id_angajat=101 (id-ul e cheie primara, deci maxim un rand), numele complet este stocat in variabila si afisat cu DBMS_OUTPUT.PUT_LINE. Deci c este corect. a) e gresit: cursorul e implicit, nu explicit. b) e gresit: sintaxa blocului e corecta, nu contine erori. d) e gresit: || este operator de concatenare de siruri, nu un operator de grup (operatorii de grup sunt functiile de agregare gen SUM, COUNT, AVG). Observatie: daca id_angajat=101 nu exista, s-ar produce exceptia NO_DATA_FOUND la rulare, dar enuntul variantei c precizeaza explicit "daca exista".
+
+##### ÎNTREBAREA 2 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE) avand 107 randuri (inregistrari).
+Alegeti varianta corecta referitoare la urmatoarea comanda SQL:
+UPDATE Angajati SET salariul=3500 where data_angajare = EXTRACT(MONTH FROM sysdate);
+
+VARIANTE:
+a) se actualizeaza, in sens de modificare, salariile persoanelor angajate anul trecut
+b) se actualizeaza, in sens de modificare, salariile persoanelor angajate in luna curenta
+c) comanda nu ruleaza
+d) se actualizeaza, in sens de modificare, salariile persoanelor angajate in anul curent
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: data_angajare este de tip DATE, iar EXTRACT(MONTH FROM sysdate) returneaza un NUMBER (numarul lunii curente, ex. 7). Comparatia din clauza WHERE pune fata in fata o valoare DATE cu o valoare NUMBER. Oracle NU face conversie implicita de la NUMBER la DATE, deci comanda esueaza cu eroarea ORA-00932: inconsistent datatypes: expected DATE got NUMBER. Prin urmare comanda nu ruleaza (c). a), b), d) presupun toate ca s-ar face o comparatie logica pe luna/anul angajarii, dar comparatia e invalida ca tip de date, deci niciuna nu descrie un rezultat efectiv (comanda nici nu se executa).
+
+##### ÎNTREBAREA 3 #####
+CATEGORIE: C/C++
+ENUNT:
+Programul C de mai jos:
+#include<stdio.h>
+void print(int n)
+{
+        if (n != 0) {
+                printf("%d", n--);
+                print(n-1);
+        }
+}
+void main()
+{
+        print(9);
+}
+
+VARIANTE:
+a) Produce o bucla infinita
+b) tipareste: 97531
+c) tipareste: 7531
+d) tipareste: 987654321
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: In printf("%d", n--) se afiseaza valoarea curenta a lui n, apoi n se decrementeaza (post-decrement). La print(9): afiseaza 9, n devine 8, apeleaza print(8-1)=print(7). La print(7): afiseaza 7, apeleaza print(5). Apoi print(5) -> print(3) -> print(1). La print(1): afiseaza 1, n devine 0, apeleaza print(0-1)=print(-1). La print(-1): conditia n!=0 este ADEVARATA (-1 != 0), afiseaza -1, apeleaza print(-3), apoi print(-5)... Recursia continua la infinit cu valori negative, care nu ating niciodata 0. Deci se produce o recursie infinita (bucla infinita) -> a. Variantele b/c/d ar fi corecte doar daca recursia s-ar opri la 0, dar din cauza saltului print(n-1) peste valoarea 0 (n a fost deja decrementat la 0, iar apoi se cheama print(n-1)=print(-1)) conditia de oprire nu este atinsa.
+
+##### ÎNTREBAREA 4 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela RAND_COMENZI (nr_comanda NUMBER(6), id_produs NUMBER(8), cantitate NUMBER(7), pret NUMBER(7,2)) si tabela PRODUSE (id_produs NUMBER(8), denumire_produs VARCHAR2(32)) avand 100 de randuri (inregistrari) precum si interogarea SQL Oracle:
+SELECT p.denumire_produs, SUM(pret*cantitate) val
+FROM Produse p JOIN Rand_Comenzi r ON p.id_produs=r.id_produs
+GROUP BY p.denumire_produs HAVING count(1)>=3 order by count(1) desc;
+Care din urmatoarele afirmatii este adevarata?
+
+VARIANTE:
+a) interogarea va afisa produsele pentru care valoarea totala comandata este mai mare de 3
+b) interogarea va afisa valoarea totala a comenzilor pentru fiecare produs care a fost comandat de cel putin 3 ori
+c) interogarea contine o eroare si nu va rula
+d) se realizeaza o jonctiune externa
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Interogarea grupeaza dupa denumire_produs si calculeaza SUM(pret*cantitate) = valoarea totala comandata per produs. Clauza HAVING count(1)>=3 pastreaza doar grupurile care au cel putin 3 randuri in Rand_Comenzi (adica produse aparute de cel putin 3 ori in liniile de comanda = comandate de cel putin 3 ori). Deci b este corect. a) e gresit: conditia "mai mare de 3" nu se aplica valorii totale (SUM), ci numarului de aparitii (count). c) e gresit: sintaxa este corecta, interogarea ruleaza. d) e gresit: JOIN ... ON este o jonctiune INTERNA (inner join), nu externa.
+
+##### ÎNTREBAREA 5 #####
+CATEGORIE: C/C++
+ENUNT:
+Care este rezultatul obtinut prin rularea umatorului program C?
+#include<stdio.h>
+void swap(int a, int b) {
+        a = a + b;
+        b = a - b;
+        a = a - b;
+}
+void main() {
+        int a = 10, b = 20;
+        swap(a, b);
+        printf("%d,%d", a, b);
+}
+
+VARIANTE:
+a) 20,10
+b) 10,20
+c) 20,20
+d) 10,10
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia swap primeste parametrii PRIN VALOARE (int a, int b), nu prin referinta/pointer. Interschimbarea (folosind trucul aritmetic cu +/-) se face doar pe copiile locale ale lui a si b din interiorul functiei; variabilele a si b din main raman neschimbate. Dupa apel, in main a=10 si b=20, deci se afiseaza 10,20 -> b. Ca sa fi functionat interschimbarea reala in main ar fi fost nevoie de parametri de tip pointer (int *a, int *b) si de apel swap(&a, &b). a) ar fi rezultatul daca schimbul s-ar fi propagat in main. c) si d) nu corespund niciunei logici a codului.
+
+##### ÎNTREBAREA 6 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Fie tabela COMENZI(nr_comanda NUMBER, data DATE, modalitate CHAR(1), id_client NUMBER, stare_comanda NUMBER, id_angajat NUMBER).
+Se da urmatoarea secventa de comenzi:
+SET SERVEROUTPUT ON
+BEGIN
+UPDATE Comenzi SET data=data-1 where sysdate!=sysdate;
+DBMS_OUTPUT.PUT_LINE (SQL%ROWCOUNT);
+ROLLBACK;
+EXCEPTION
+WHEN OTHERS THEN DBMS_OUTPUT.PUT_LINE('Eroare');
+END;
+/
+Presupunem ca tabela COMENZI are 105 inregistrari. In aceste conditii, blocul PL/SQL afiseaza:
+
+VARIANTE:
+a) 0
+b) 'Eroare'
+c) o valoare intre 1 si 105
+d) 105
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Conditia din WHERE este sysdate!=sysdate, adica "sysdate diferit de sysdate", ceea ce este INTOTDEAUNA FALS. Prin urmare UPDATE-ul nu modifica niciun rand. Atributul implicit SQL%ROWCOUNT retine numarul de randuri afectate de ultima comanda SQL, adica 0. Se afiseaza 0 -> a. Comanda ruleaza fara erori (nu se intra pe ramura EXCEPTION), deci b) e gresit. Numarul de randuri afectate nu este 105 (d) si nu e intre 1 si 105 (c), pentru ca predicatul nu selecteaza niciun rand.
+
+##### ÎNTREBAREA 7 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa urmatorul program C:
+#include <stdio.h>
+void main(){
+        int a=2;
+        switch(a)
+        {
+                case 1: printf("A");
+                case 2: printf("B");
+                case 3: printf("C");
+                break;
+                case 4: printf("D");
+                default : printf("E");
+                break;
+        }
+}
+
+VARIANTE:
+a) E
+b) BC
+c) BE
+d) ABC
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: a=2, deci executia sare la case 2. Nu exista break dupa case 2, deci apare "fall-through": se afiseaza "B", apoi se continua cu case 3 unde se afiseaza "C", iar dupa case 3 exista break, care iese din switch. Rezultat: "BC" -> b. Nu se ajunge la case 4/default deoarece break-ul de dupa case 3 opreste executia. a) ar fi corect doar daca s-ar fi ajuns la default. d) ar include si "A" (case 1), dar case 1 nu se executa deoarece a=2. c) e o combinatie inexistenta in fluxul de executie.
+
+##### ÎNTREBAREA 8 #####
+CATEGORIE: Baze de date (teorie)
+ENUNT:
+Care din urmatoarele afirmatii este falsa (SQL Oracle):
+
+VARIANTE:
+a) in functie de randurile din tabele, o jonctiune externa intre doua tabele poate returna aceleasi randuri ca o jonctiune interna intre aceleasi doua tabele
+b) cheile externe se definesc in limbajul de descriere a datelor (LDD)
+c) pentru a realiza o jonctiune intre doua sau mai multe tabele trebuie sa fie declarate chei externe intre aceste tabele
+d) o cheie externa trebuie sa refere o cheie primara sau o cheie unica
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Se cere afirmatia FALSA. c) este falsa: pentru a realiza o jonctiune (JOIN) NU este necesar sa existe chei externe declarate intre tabele; jonctiunea se poate face pe orice coloane compatibile, indiferent de existenta unei constrangeri de cheie externa. Celelalte sunt adevarate: a) daca toate randurile au corespondent, jonctiunea externa returneaza exact aceleasi randuri ca cea interna (adevarat); b) cheile externe (FOREIGN KEY) se definesc prin comenzi LDD/DDL (CREATE/ALTER TABLE) (adevarat); d) o cheie externa trebuie sa refere o cheie primara sau o cheie unica din tabela parinte (adevarat).
+
+##### ÎNTREBAREA 9 #####
+CATEGORIE: C/C++
+ENUNT:
+Considerand urmatorul program C:
+#include <stdio.h>
+#define PRINT(i, limit) do { if (i++ < limit) { printf("Salut"); continue;} } while (0)
+void main()
+{
+        int i = 0;
+        PRINT(i, 6);
+}
+De cate ori va fi tiparit textul "Salut"?
+
+VARIANTE:
+a) 0
+b) 6
+c) 7
+d) 1
+
+RASPUNS_BAREM: d
+RASPUNS_CORECT: d
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Macro-ul se expandeaza intr-un do { if (i++ < 6) { printf("Salut"); continue; } } while (0). Constructia do{...}while(0) se executa o SINGURA data. La prima (si singura) iteratie: i++<6 inseamna se compara i(=0) cu 6 -> 0<6 este adevarat, deci se afiseaza "Salut" o data, apoi i devine 1. Instructiunea continue intr-un do-while sare la evaluarea conditiei while(0), care este falsa, deci bucla se termina imediat. Nu este o bucla care sa se repete de 6 ori; do-while(0) e un idiom uzual doar pentru a grupa instructiuni intr-un macro. Rezultat: "Salut" tiparit o singura data -> d. b)/c) presupun gresit ca bucla itereaza pana cand i atinge limita; a) ar fi corect doar daca conditia ar fi falsa de la inceput.
+
+##### ÎNTREBAREA 10 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce rezultat va afisa urmatorul program C?
+#include <stdio.h>
+void main()
+{
+        int var = 0110;
+        printf("%d", var);
+}
+
+VARIANTE:
+a) 6
+b) 72
+c) 272
+d) 110
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: In C, un literal numeric intreg care incepe cu cifra 0 este interpretat in baza 8 (OCTAL). Deci 0110 este un numar octal, nu zecimal. Valoarea sa zecimala este 1*8^2 + 1*8^1 + 0*8^0 = 64 + 8 + 0 = 72. printf cu %d il afiseaza in zecimal: 72 -> b. d) 110 ar fi corect doar daca ar fi interpretat ca zecimal (fara 0 in fata). a) si c) nu corespund conversiei octale corecte.
+
+##### ÎNTREBAREA 11 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera urmatorul bloc PL/SQL:
+SET SERVEROUTPUT ON
+DECLARE
+v CHAR(2):= 'ok';
+BEGIN
+IF 1==1 THEN
+DBMS_OUTPUT.PUT_LINE(v);
+END IF;
+END;
+/
+Care afirmatie este corecta?
+
+VARIANTE:
+a) blocul contine o eroare si nu ruleaza
+b) blocul nu afiseaza nimic
+c) blocul are o structura repetitiva de program
+d) executia blocului afiseaza intotdeauna variabila v cu valoarea "ok"
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: In PL/SQL operatorul de EGALITATE (comparatie) este un singur semn "=", NU "==" (care exista in C/Java). Expresia "IF 1==1 THEN" contine "==", care este sintaxa invalida in PL/SQL si genereaza o eroare de compilare (PLS-00103). Prin urmare blocul nu se compileaza si nu ruleaza -> a. d) ar fi corect daca s-ar fi scris "IF 1=1 THEN" (atunci s-ar afisa 'ok'). b) e gresit: daca blocul ar rula ar afisa 'ok', deci nu "nimic". c) e gresit: IF este o structura de decizie, nu una repetitiva.
+
+##### ÎNTREBAREA 12 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela ANGAJATI(id_angajat NUMBER PRIMARY KEY, nume VARCHAR2(30), id_departament NUMBER, salariul NUMBER NOT NULL) avand 100 de randuri (inregistrari).
+Ce afiseaza comanda:
+SELECT nume FROM Angajati a WHERE salariul <= ANY (SELECT salariul FROM Angajati b);
+
+VARIANTE:
+a) nimic
+b) toti angajatii
+c) angajatii cu salariul maxim din intreaga firma
+d) angajatii cu salariul minim din intreaga firma
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Operatorul "<= ANY" inseamna "mai mic sau egal decat CEL PUTIN UNA dintre valorile din lista", ceea ce este echivalent cu "<= valoarea MAXIMA din lista". Subinterogarea returneaza toate salariile din tabela. Orice angajat are salariul <= salariul maxim (chiar si angajatul cu salariul maxim satisface conditia, fiind egal cu maximul). Coloana salariul este NOT NULL, deci nu apar probleme cu valori NULL in subinterogare. Prin urmare conditia este adevarata pentru TOTI angajatii -> b. c) ar corespunde lui ">= ALL"; d) ar corespunde lui "<= ALL"; a) e gresit deoarece conditia nu este niciodata falsa pentru toate randurile.
+
+##### ÎNTREBAREA 13 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Fie blocul PL/SQL:
+SET SERVEROUTPUT ON
+DECLARE
+n NUMBER(2);
+BEGIN
+IF n<1 THEN DBMS_OUTPUT.PUT_LINE(NVL('A','C'));
+ELSE DBMS_OUTPUT.PUT_LINE(NVL('B','E'));
+END IF;
+END;
+/
+Care afirmatie este corecta?
+
+VARIANTE:
+a) blocul contine o eroare si nu ruleaza
+b) blocul ruleaza si afiseaza E
+c) blocul ruleaza si afiseaza C
+d) blocul ruleaza si afiseaza B
+
+RASPUNS_BAREM: d
+RASPUNS_CORECT: d
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Variabila n este declarata dar NEINITIALIZATA, deci valoarea ei este NULL. Conditia "n < 1" cu n=NULL da rezultatul NULL (necunoscut), care in logica IF este tratat ca NON-adevarat, asa ca se executa ramura ELSE. Pe ramura ELSE se afiseaza NVL('B','E'): functia NVL returneaza primul argument daca acesta nu este NULL. 'B' nu este NULL, deci NVL('B','E') returneaza 'B'. Se afiseaza B -> d. c) ar fi corect daca s-ar fi intrat pe ramura THEN (dar NULL<1 nu e adevarat). b) presupune gresit ca NVL ar returna al doilea argument. a) e gresit: blocul e valid sintactic si ruleaza fara erori.
+
+##### ÎNTREBAREA 14 #####
+CATEGORIE: SQL
+ENUNT:
+Se considera urmatoarea comanda SQL-Oracle:
+SELECT 2 val from DUAL
+union all
+SELECT 2 from DUAL
+minus
+SELECT 1 from DUAL;
+Ce valoare returneaza comanda anterioara:
+
+VARIANTE:
+a) 3
+b) 1
+c) 2
+d) NULL
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Operatorii de multime UNION ALL si MINUS au aceeasi prioritate si se evalueaza de la stanga la dreapta. Pas 1: (SELECT 2 UNION ALL SELECT 2) produce doua randuri: {2, 2}. Pas 2: {2, 2} MINUS (SELECT 1) elimina din primul set randurile care apar in al doilea (valoarea 1, care nu exista) SI elimina duplicatele (MINUS returneaza rezultat distinct). Rezultat: un singur rand cu valoarea 2 -> c. a) 3 ar rezulta dintr-o insumare, ceea ce nu se intampla. b) 1 este valoarea scazuta, nu rezultatul. d) NULL nu are sens aici, setul rezultat nu e gol.
+
+##### ÎNTREBAREA 15 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Fie blocul PL/SQL:
+SET SERVEROUTPUT ON
+DECLARE
+i PLS_INTEGER;
+BEGIN
+WHILE i < 30 LOOP
+DBMS_OUTPUT.PUT_LINE('Valoarea contorului i este: ' || i);
+END LOOP;
+END;
+/
+Care afirmatie este corecta?
+
+VARIANTE:
+a) blocul ruleaza si afiseaza 31 de randuri
+b) blocul ruleaza dar nu afiseaza nimic
+c) blocul contine o eroare si nu ruleaza
+d) blocul ruleaza dar declanseaza o exceptie implicita
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Variabila i este declarata PLS_INTEGER dar NEINITIALIZATA, deci are valoarea NULL. Conditia WHILE i<30 se evalueaza cu i=NULL -> rezultatul este NULL, care nu este TRUE, deci corpul buclei WHILE NU se executa niciodata (bucla WHILE testeaza conditia inainte de prima iteratie). Blocul ruleaza corect (nu contine erori de sintaxa) dar nu afiseaza nimic -> b. a) ar presupune ca bucla itereaza, dar ea nici nu porneste. c) e gresit: nu e eroare de compilare. d) e gresit: nu se declanseaza nicio exceptie, pur si simplu bucla nu se executa. (Daca i ar fi fost initializat cu o valoare < 30, atunci fara incrementare in bucla ar fi rezultat o bucla infinita, dar aici i este NULL.)
+
+##### ÎNTREBAREA 16 #####
+CATEGORIE: PL/SQL
+ENUNT:
+In limbajul PLSQL din Oracle, pentru a putea rula instructiunea care sterge o tabela folosim:
+
+VARIANTE:
+a) DELETE
+b) EXECUTE IMMEDIATE
+c) ALTER
+d) DROP
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Instructiunea care sterge o tabela este DROP TABLE, care este o comanda LDD/DDL. In PL/SQL comenzile DDL NU pot fi scrise direct intr-un bloc (nu se pot rula static); ele trebuie executate ca SQL dinamic prin EXECUTE IMMEDIATE 'DROP TABLE ...'. Deci raspunsul corect este b. d) DROP este cuvantul cheie care sterge tabela, dar el nu poate rula direct in PL/SQL fara EXECUTE IMMEDIATE; intrebarea cere mecanismul PL/SQL prin care "putem rula" instructiunea. a) DELETE sterge randuri, nu tabela. c) ALTER modifica structura, nu sterge tabela.
+
+##### ÎNTREBAREA 17 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela ANGAJATI(id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE) avand 107 randuri (inregistrari) si interogarea SQL Oracle:
+SELECT * FROM Angajati WHERE nume like '%a_';
+Care din urmatoarele afirmatii este adevarata?
+
+VARIANTE:
+a) interogarea va afisa doar angajatii al caror nume contine oriunde litera a
+b) interogarea va afisa doar angajatii al caror nume se termina cu litera a
+c) interogarea contine o eroare si nu va rula
+d) interogarea va afisa doar angajatii al caror nume contine pe penultima pozitie litera a
+
+RASPUNS_BAREM: d
+RASPUNS_CORECT: d
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: In sablonul LIKE, "%" inlocuieste orice sir de caractere (inclusiv vid), iar "_" inlocuieste EXACT un singur caracter. Sablonul '%a_' inseamna: orice caractere, urmate de litera 'a', urmata de exact inca UN caracter la final. Asadar litera 'a' se afla pe PENULTIMA pozitie a numelui -> d. b) ar corespunde sablonului '%a' (nume care se termina cu a). a) ar corespunde lui '%a%' (a oriunde). c) e gresit: sintaxa LIKE este corecta si interogarea ruleaza.
+
+##### ÎNTREBAREA 18 #####
+CATEGORIE: C/C++
+ENUNT:
+Care va fi rezultatul rularii urmatorului program C:
+#include<stdio.h>
+void main() {
+        int a = 5, b = 6, c = 7;
+        printf("%d", !((b + c) > (a + 10)));
+}
+
+VARIANTE:
+a) Va afisa 1
+b) Va genera eroare de compilare
+c) Va afisa 15
+d) Va afisa 0
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Se evalueaza b+c = 6+7 = 13 si a+10 = 5+10 = 15. Comparatia (13 > 15) este FALSA, adica are valoarea 0. Operatorul de negatie logica "!" aplicat lui 0 da 1 (!0 = 1). printf cu %d afiseaza 1 -> a. d) 0 ar fi corect daca comparatia ar fi fost adevarata inainte de negatie. c) 15 confunda rezultatul cu valoarea a+10. b) e gresit: programul se compileaza corect.
+
+##### ÎNTREBAREA 19 #####
+CATEGORIE: C/C++
+ENUNT:
+Dupa declaratia
+union Test { int i; char c; } t;
+valoarea expresiei sizeof(t) este in orice situatie egala cu:
+
+VARIANTE:
+a) sizeof(int)
+b) sizeof(char)
+c) sizeof(int) + sizeof(char)
+d) 0
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: La un UNION, toti membrii impart aceeasi zona de memorie, iar dimensiunea uniunii este egala cu dimensiunea celui mai MARE membru (eventual ajustata pentru aliniere). Membrii sunt int (de obicei 4 octeti) si char (1 octet). Cel mai mare este int, deci sizeof(t) = sizeof(int) -> a. c) sizeof(int)+sizeof(char) ar fi corect pentru un STRUCT (unde membrii ocupa zone separate), nu pentru union. b) subestimeaza (ar fi corect doar daca int ar fi mai mic decat char, imposibil). d) 0 e gresit, o uniune are dimensiune pozitiva.
+
+##### ÎNTREBAREA 20 #####
+CATEGORIE: C/C++
+ENUNT:
+Secventa de cod C:
+int n = 0;
+while (1 == 1) if (n > 3) break; else n = n + 1;
+printf("%d", n);
+afiseaza:
+
+VARIANTE:
+a) 3
+b) 4
+c) 5
+d) nu afiseaza nimic (bucla infinita)
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Conditia while(1==1) este mereu adevarata, dar corpul contine o iesire conditionata cu break. La fiecare iteratie: daca n>3 se face break, altfel n creste cu 1. Trasare: n=0 (0>3 fals -> n=1), n=1 -> n=2, n=2 -> n=3, n=3 (3>3 fals -> n=4), n=4 (4>3 ADEVARAT -> break). Se iese din bucla cu n=4, apoi se afiseaza 4 -> b. a) 3 e valoarea inainte de ultima incrementare. c) 5 ar fi daca ar mai fi crescut inca o data. d) e gresit: bucla NU e infinita, break-ul o opreste cand n=4.
+
+##### ÎNTREBAREA 21 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela RAND_COMENZI (nr_comanda NUMBER(6), id_produs NUMBER(8), cantitate NUMBER(7), pret NUMBER(7,2)) avand 100 de randuri precum si interogarea SQL Oracle:
+SELECT id_produs, TRUNC(AVG(pret*cantitate)) val FROM Rand_Comenzi GROUP BY id_produs ORDER BY 2;
+Care din urmatoarele afirmatii este adevarata?
+
+VARIANTE:
+a) se afiseaza valoarea comandata din fiecare produs ordonat crescator dupa valoare
+b) se afiseaza valoarea comandata din fiecare produs ordonat descrescator dupa valoare
+c) interogarea contine o eroare si nu va rula
+d) interogarea utilizeaza incorect o functie SQL
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Interogarea grupeaza dupa id_produs si calculeaza pentru fiecare produs media valorii (pret*cantitate), trunchiata la parte intreaga cu TRUNC. Clauza ORDER BY 2 sorteaza dupa a doua coloana din SELECT (aliasul val), iar in absenta cuvantului cheie DESC sortarea implicita este CRESCATOARE (ASC). Deci rezultatele sunt ordonate crescator dupa valoare -> a. b) e gresit: nu s-a specificat DESC, deci nu e descrescator. c) e gresit: sintaxa e valida. d) e gresit: TRUNC si AVG sunt folosite corect (AVG este functie de grup, TRUNC se aplica peste rezultat).
+
+##### ÎNTREBAREA 22 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va tipari codul de mai jos?
+#include <stdio.h>
+int main() {
+        int i;
+        for(i=0;i<5;i++) {
+                static int a=0;
+                int b=0;
+                a++;
+                b++;
+                printf("%d %d ",a,b);
+        }
+        return 0;
+}
+
+VARIANTE:
+a) 1 1 2 1 3 1 4 1 4 1
+b) 1 1 2 1 3 1 4 1 5 1
+c) 1 0 2 0 3 1 4 1 5 1
+d) 0 1 2 0 3 1 4 1 5 1
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Variabila a este STATIC: se initializeaza cu 0 o singura data si isi PASTREAZA valoarea intre iteratii, incrementandu-se de fiecare data: 1, 2, 3, 4, 5. Variabila b este locala obisnuita (automatica): se RE-initializeaza cu 0 la fiecare iteratie, apoi b++ o face 1 mereu. Deci la fiecare iteratie se afiseaza (a, 1). Rezultat: "1 1 2 1 3 1 4 1 5 1 " -> b. Verificat prin compilare gcc. a) are ultimul a=4 gresit (ar trebui 5). c) si d) au valori initiale gresite pentru b.
+
+##### ÎNTREBAREA 23 #####
+CATEGORIE: Baze de date (teorie)
+ENUNT:
+O tabela este in FN3 daca:
+
+VARIANTE:
+a) este in FN1 si fiecare atribut cheie primara depinde tranzitiv de atributele non-cheie
+b) este in FN2 si atributele non-cheie nu sunt dependente tranzitiv de cheia primara a relatiei
+c) este in FN2 si are dependente complete
+d) este in FN1 si are dependente functionale incomplete
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Definitia formei normale a treia (FN3): o relatie este in FN3 daca este in FN2 SI niciun atribut non-cheie nu depinde tranzitiv de cheia primara (adica nu exista dependente tranzitive ale atributelor non-cheie fata de cheie) -> b. a) e gresit din doua motive: inverseaza sensul (vorbeste de dependenta atributelor cheie de cele non-cheie) si spune "depinde tranzitiv" in loc de "nu depinde". c) descrie mai degraba trecerea la FN2 (dependente complete/eliminarea dependentelor partiale), nu FN3. d) e incorect: FN se defineste prin eliminarea, nu prin prezenta dependentelor incomplete.
+
+##### ÎNTREBAREA 24 #####
+CATEGORIE: Baze de date (teorie)
+ENUNT:
+Care tip de date nu poate fi folosit pentru a declara o coloana intr-o tabela folosind SQL-Oracle:
+
+VARIANTE:
+a) TIMESTAMP
+b) PLS_INTEGER
+c) NUMBER
+d) DATE
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: PLS_INTEGER este un tip de date specific limbajului PL/SQL (folosit pentru variabile in blocuri PL/SQL, optimizat pentru calcule intregi). El NU este un tip SQL si NU poate fi folosit pentru a defini o coloana intr-o tabela (CREATE TABLE) -> b. TIMESTAMP (a), NUMBER (c) si DATE (d) sunt toate tipuri de date SQL valide pentru coloane in Oracle.
+
+##### ÎNTREBAREA 25 #####
+CATEGORIE: C/C++
+ENUNT:
+Care va fi rezultatul afisat de urmatorul program C:
+#include <stdio.h>
+int f(int v[], int *n) {
+        int s = 0; int i = 2;
+        while (i <= *n) {
+                s = s + v[i] - v[i - 1];
+                if (v[i] == v[i - 1])
+                        *n = *n - 1;
+                i++;
+        }
+        return s;
+}
+void main() {
+        int v[10];
+        v[1] = 1; v[2] = 2; v[3] = 3;
+        v[4] = 3; v[5] = 4; v[6] = 5; v[7] = 6;
+        int n = 7;
+        printf("%d;%d", n, f(v, &n));
+}
+
+VARIANTE:
+a) 7;4
+b) 7;5
+c) 6;4
+d) 6;5
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Se calculeaza mai intai f(v,&n), care modifica pe n prin pointer. Trasare cu *n initial 7: i=2: s=v[2]-v[1]=2-1=1, v[2]!=v[1]. i=3: s=1+(3-2)=2, v[3]!=v[2]. i=4: s=2+(v[4]-v[3])=2+(3-3)=2, dar v[4]==v[3] (3==3) => *n devine 6. i=5: 5<=6, s=2+(4-3)=3. i=6: 6<=6, s=3+(5-4)=4. i=7: 7<=6 fals, iesire. f returneaza 4, iar n a devenit 6. In printf, argumentele se evalueaza (in gcc/x86) de la dreapta la stanga: se apeleaza intai f(v,&n) (=4, seteaza n=6), apoi se citeste n (=6). Se afiseaza "6;4" -> c. Verificat prin compilare gcc (rezultat: 6;4). OBSERVATIE: ordinea de evaluare a argumentelor functiei este nespecificata in standardul C; pe un compilator care ar evalua de la stanga la dreapta rezultatul ar fi "7;4" (varianta a). Baremul si compilatoarele uzuale (gcc) dau insa 6;4, deci raspunsul c este cel asteptat.
+
+##### ÎNTREBAREA 26 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va fi tiparit ca rezultat al operatiilor de mai jos?
+#include <stdio.h>
+void main() {
+        int x=7;
+        printf("%d,%d,%d",x,x<<2,x>>1);
+}
+
+VARIANTE:
+a) 7,24,2
+b) 7,28,3
+c) 7,27,1
+d) 7,25,3
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: x=7 (binar 111). x<<2 (deplasare la stanga cu 2 biti) = 7*4 = 28 (binar 11100). x>>1 (deplasare la dreapta cu 1 bit) = 7/2 = 3 (binar 11, se pierde bitul cel mai putin semnificativ). Se afiseaza "7,28,3" -> b. Celelalte variante contin valori gresite pentru deplasari (ex: 24=x<<... incorect, 27, 25 nu corespund deplasarilor de biti ale lui 7).
+
+##### ÎNTREBAREA 27 #####
+CATEGORIE: C/C++
+ENUNT:
+De cate ori va fi tiparit textul "Test" de catre programul C de mai jos?
+#include <stdio.h>
+void main()
+{
+        int i = 1024;
+        for (; i; i >>= 1)
+                printf("Test\n");
+}
+
+VARIANTE:
+a) 10
+b) 11
+c) de un numar infinit de ori
+d) 1024
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: i porneste de la 1024 = 2^10. Conditia buclei este "i" (adevarata cat timp i != 0). La fiecare iteratie i se deplaseaza la dreapta cu 1 bit (i>>=1, adica se imparte la 2). Valorile lui i la fiecare intrare in bucla: 1024, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1 - adica 11 valori nenule (de la 2^10 pana la 2^0). Dupa i=1, i>>=1 devine 0 si bucla se opreste. Deci "Test" se tipareste de 11 ori -> b. Verificat prin compilare gcc (COUNT=11). a) 10 numara gresit doar exponentii pana la 2^1. c) e gresit: bucla nu e infinita. d) 1024 confunda valoarea initiala cu numarul de iteratii.
+
+##### ÎNTREBAREA 28 #####
+CATEGORIE: C/C++
+ENUNT:
+Secventa de cod:
+int v[] = { 1,2,3,4 }; printf("%d", *(v + 1));
+
+VARIANTE:
+a) afiseaza 0
+b) afiseaza 1
+c) nu acceseaza corect vectorul deoarece nu foloseste operatorul []
+d) afiseaza 2
+
+RASPUNS_BAREM: d
+RASPUNS_CORECT: d
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Numele unui vector v se comporta ca adresa primului element (pointer catre v[0]). Aritmetica cu pointeri: (v+1) este adresa elementului de indice 1, iar *(v+1) dereferentiaza aceasta adresa, obtinand v[1]. Expresia *(v+1) este perfect echivalenta cu v[1], care pentru {1,2,3,4} este 2. Se afiseaza 2 -> d. c) e gresit: notatia cu pointeri *(v+1) este o modalitate corecta si standard de a accesa elementele; nu e nevoie de operatorul []. b) ar fi v[0]=1 (adica *v). a) 0 nu corespunde niciunui element.
+
+##### ÎNTREBAREA 29 #####
+CATEGORIE: C/C++
+ENUNT:
+Se considera urmatorul program:
+#include <stdio.h>
+int sum(int n, int i, int a[]) {
+        if (i <= n) {
+                return sum(n, i + 1, a);
+        }
+        else
+        {
+                return 0;
+        }
+}
+void main() {
+        int a[10];
+        a[1] = -1; a[2] = 2; a[3] = 8;
+        int s = sum(3, 1, a);
+        printf("%d", s);
+}
+Care este rezultatul afisat in urma executiei programului?
+
+VARIANTE:
+a) 9
+b) 0
+c) 8
+d) Va genera eroare de executie si va afisa un mesaj de depasire stiva
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Desi functia se numeste "sum" si primeste vectorul a[], ea NU insumeaza niciodata valorile din vector. Cat timp i<=n, functia doar se re-apeleaza recursiv cu i+1, fara sa adune vreun element; cand i>n, ramura else returneaza 0. Aceasta valoare 0 este propagata inapoi neschimbata prin toate apelurile recursive (fiecare "return sum(...)" returneaza exact ce a returnat apelul urmator). Trasare pentru sum(3,1,a): i=1<=3 -> sum(3,2,a) -> i=2<=3 -> sum(3,3,a) -> i=3<=3 -> sum(3,4,a) -> i=4>3 -> return 0. Rezultatul final este 0 -> b. a) 9 = suma -1+2+8 ar fi rezultatul unei sume reale, dar codul nu aduna elementele. c) 8 nu corespunde. d) e gresit: recursia are conditie de oprire corecta (i>n), deci nu depaseste stiva.
+
+##### ÎNTREBAREA 30 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa programul C de mai jos?
+int P(int a, int *b) {
+        *b*=a; a+=*b;
+        return a+*b;
+}
+int main() {
+        int a = 7; int b = a;
+        printf("P(a, b) = %d", P(a, &b));
+        printf("; a = %d", a);
+        printf("; b = %d\n", b);
+        return 0;
+}
+
+VARIANTE:
+a) P(a, b) = 105; a = 7; b = 7
+b) P(a, b) = 56; a = 7; b = 49
+c) P(a, b) = 105; a = 7; b = 49
+d) P(a, b) = 14; a = 7; b = 7
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: In main a=7 si b=7. Se apeleaza P(a, &b): parametrul a este primit PRIN VALOARE (copie=7), iar b PRIN POINTER (modifica variabila b din main). In functie: "*b *= a" => b = 7*7 = 49 (se modifica b din main). "a += *b" => a(local) = 7 + 49 = 56. "return a + *b" = 56 + 49 = 105. Deci P returneaza 105. In main, a a ramas 7 (transmis prin valoare, nemodificat de functie), iar b a devenit 49 (modificat prin pointer). Se afiseaza "P(a, b) = 105; a = 7; b = 49" -> c. Verificat prin compilare gcc. a) presupune gresit ca b ramane 7. b) calculeaza gresit valoarea returnata. d) ignora modificarile prin pointer.

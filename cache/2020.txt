@@ -1,0 +1,774 @@
+=== ADMITERE MASTER CSIE3 - TEST GRILĂ 2020 ===
+Sursă: subiecte_ani_anteriori/CSIE-3-2020.pdf
+Format sursă original: scanat (versiune rezolvată cu răspunsuri inline), transcris manual din imagini
+Număr total întrebări: 30
+Punctaj: 3 puncte/întrebare corectă, punctaj maxim 90 puncte
+
+##### ÎNTREBAREA 1 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afișa următorul program C?
+
+#include <stdio.h>
+int main()
+{
+    int x = 5, y = 10, z = 15;
+    x = y == z;
+    printf("%d", x);
+    getchar();
+}
+
+VARIANTE:
+a) 0
+b) 5
+c) 10
+d) 15
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Operatorul `==` are prioritate mai mare decât `=` (atribuirea). Se evaluează întâi `y == z`, adică `10 == 15`, care este fals, deci produce valoarea întreagă 0. Această valoare se atribuie lui x, deci x devine 0 și se afișează 0. Variantele b) 5, c) 10, d) 15 ar fi corecte doar dacă `x` ar primi valoarea vreuneia dintre variabile printr-o atribuire simplă; aici însă se atribuie rezultatul comparației (0 sau 1), nu valoarea unei variabile.
+
+##### ÎNTREBAREA 2 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afișa următorul program C?
+
+int suma_swap(int* x, int y)
+{
+    *x -= y;
+    y += *x;
+    *x = y - *x;
+    return *x+y;
+}
+int main()
+{
+    int i=0, j = 1, k = 5, l;
+    l = suma_swap(&j, k) == suma_swap(&k, j);
+    printf("%d %d %d %d", i++, j, k, l);
+}
+
+VARIANTE:
+a) 0 5 5 0
+b) 0 5 5 1
+c) 1 5 5 0
+d) 1 5 5 1
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Funcția suma_swap face un swap: pentru *x=a și y=b inițiale, după cele trei linii *x devine b (valoarea inițială a lui y), iar y local devine a, și returnează a+b. Evaluând stânga->dreapta: suma_swap(&j, k) cu j=1, k=5 face j=5 și returnează 1+5=6; apoi suma_swap(&k, j) cu k=5 și j=5 (deja modificat) face k=5 și returnează 5+5=10. Comparația 6==10 este falsă, deci l=0. La printf, `i++` afișează valoarea curentă 0 (post-incrementare), iar j=5, k=5, l=0, deci "0 5 5 0". Observație: ordinea de evaluare a celor doi operanzi ai lui `==` este nespecificată de standard (indeterminately sequenced); varianta stânga->dreapta produce răspunsul a) care este singura dintre variante care se potrivește unei trasări coerente — celelalte (b, c, d) au fie i=1 (imposibil, i++ post-incrementat afișează 0), fie l=1 (comparația nu poate fi adevărată).
+
+##### ÎNTREBAREA 3 #####
+CATEGORIE: C/C++
+ENUNT:
+Care va fi outputul generat de următorul program C?
+
+#include<stdio.h>
+int main()
+{
+    char* s[] = { "timpul","costa","bani" };
+    char** p;
+    p = s;
+    printf("%s ", ++*(++p+1));
+    printf("%s ", *p--);
+    printf("%s ", *p);
+}
+
+VARIANTE:
+a) ani costa timpul
+b) bani costa timpul
+c) ani timpul costa
+d) ani bani costa
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Inițial p=s (spre s[0]). Primul printf: `++p` mută p spre s[1]; `(++p+1)` este s[2]; `*(s[2])` este șirul "bani"; `++` pe acest char* îl avansează cu un caracter, deci indică "ani" (și modifică s[2] să indice "ani") -> afișează "ani". După acest apel p indică s[1]. Al doilea printf: `*p--` folosește *p = s[1] = "costa" (afișează "costa"), apoi post-decrementează p spre s[0]. Al treilea printf: `*p` = s[0] = "timpul". Rezultat: "ani costa timpul". Variantele b/c/d nu respectă ordinea operațiilor de incrementare/dereferențiere descrise.
+
+##### ÎNTREBAREA 4 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce se va întâmpla la execuția următorului program C?
+
+#include<stdio.h>
+int main()
+{
+    int x[] = { 10, 20, 30, 40 };
+    int *p = (int*)(&x+1);
+    printf("%d ", *(p - 2));
+}
+
+VARIANTE:
+a) Va afișa 30
+b) Va afișa 20
+c) Va afișa o valoare întreagă nedefinită
+d) Va genera o eroare de compilare deoarece variabila p este incorect inițializată
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: `&x` are tipul int(*)[4] (pointer la întregul tablou). `&x+1` avansează cu dimensiunea întregului tablou (4 întregi), deci indică imediat după x, adică adresa lui x[4]. După cast la int*, p = &x[4]. Atunci `p - 2` = &x[2], iar `*(p-2)` = x[2] = 30. Nu este eroare de compilare (d fals) și nu este valoare nedefinită (c fals) — aritmetica de pointeri este bine definită aici. Varianta b) 20 ar corespunde lui x[1], nu lui p-2.
+
+##### ÎNTREBAREA 5 #####
+CATEGORIE: C/C++
+ENUNT:
+Fie următoarea secvență de cod C:
+
+#include<stdio.h>
+void init(...) {
+    for (int i = 0; i < 3; i++)
+    {
+        x[i][i] = 1;
+    }
+}
+int main()
+{
+    int x[3][3];
+    init(x);
+    ...
+}
+
+Care dintre următoarele variante de parametru formal în metoda init() este potrivit pentru ca metoda să inițializeze corect elementele de pe diagonala principală ale matricei x cu 1?
+
+VARIANTE:
+a) int x[][3]
+b) int x[][]
+c) int **x
+d) int *x[3]
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Pentru a transmite un tablou bidimensional `int x[3][3]` unei funcții, prima dimensiune poate fi omisă, dar a doua (numărul de coloane) TREBUIE specificată, ca să se poată calcula corect adresa `x[i][j]` = baza + (i*3 + j). Deci `int x[][3]` este corect. b) `int x[][]` este invalid — nu se pot omite ambele dimensiuni. c) `int **x` este un pointer la pointer, incompatibil cu aranjamentul contiguu în memorie al unui tablou 2D (indexarea ar interpreta greșit octeții). d) `int *x[3]` este un tablou de 3 pointeri la int, tot incompatibil cu structura unui `int[3][3]`.
+
+##### ÎNTREBAREA 6 #####
+CATEGORIE: C/C++
+ENUNT:
+Care va fi outputul generat de următorul program C?
+
+# include <stdio.h>
+int main()
+{
+    for (int i = 0; i < 20; i++)
+    {
+        switch (i)
+        {
+        case 0:
+            i += 5;
+        case 5:
+            i += 5;
+            break;
+        case 10:
+            i += 5;
+        case 15:
+            i += 5;
+        default:
+            i += 4;
+            break;
+        }
+        printf("%d ", i);
+    }
+}
+
+VARIANTE:
+a) 10 15 20
+b) 5 10 15 20
+c) 10 24
+d) 10 15 24
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: i=0 -> case 0: i=5, cade (fără break) în case 5: i=10, break -> afișează 10; i++ -> i=11. i=11 -> niciun case, se merge la default: i=15, break -> afișează 15; i++ -> i=16. i=16 -> default: i=20, break -> afișează 20; i++ -> i=21, condiția 21<20 falsă, iese. Rezultat: "10 15 20". Nu se ajunge niciodată cu i=10 sau i=15 la switch (acele valori apar doar imediat înainte de printf, apoi i++), deci case 10 și case 15 nu se declanșează. Variantele b/c/d rezultă din trasări greșite ale căderilor prin case-uri.
+
+##### ÎNTREBAREA 7 #####
+CATEGORIE: C/C++
+ENUNT:
+Care va fi rezultatul rulării următorului program C?
+
+#include<stdio.h>
+int f(int a)
+{
+    if (a<12)
+    {
+        return f(f(a+2));
+    }
+    else
+    {
+        return a - 1;
+    }
+}
+int main()
+{
+    printf("%d", f(-1800));
+}
+
+VARIANTE:
+a) Va afișa 11
+b) Va afișa -1801
+c) Va afișa 12
+d) Va genera eroare de execuție și va afișa un mesaj de depășire stivă
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Pentru a>=12, f(a)=a-1. Pentru a<12, f(a)=f(f(a+2)). Calculând: f(12)=11, f(13)=12; f(11)=f(f(13))=f(12)=11; f(10)=f(f(12))=f(11)=11 etc. Prin inducție descendentă, pentru orice a<12 rezultă f(a)=11. Recursia se termină (nu depășește stiva — d fals) deoarece argumentul crește cu 2 la fiecare pas până depășește 12. Deci f(-1800)=11. Variantele b) -1801 (ar fi a-1 fără recursie) și c) 12 sunt greșite.
+
+##### ÎNTREBAREA 8 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afișa următorul program C?
+
+#include <stdio.h>
+g(int x)
+{
+    static int y = 2;
+    y += 1;
+    return y + x;
+}
+f(int x)
+{
+    int y = 5;
+    return g(x+y);
+}
+int main()
+{
+    int x = 5;
+    printf("%d ", f(x) + g(x));
+}
+
+VARIANTE:
+a) 22
+b) 21
+c) 18
+d) O valoare întreagă nedefinită
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Variabila `y` din g este static (persistă între apeluri), pornind de la 2. Evaluând f(5)+g(5): f(5) apelează g(5+5=10): y devine 3, returnează 3+10=13; apoi g(5): y devine 4, returnează 4+5=9; total 13+9=22. Chiar dacă ordinea de evaluare a operanzilor lui `+` este nespecificată, rezultatul este același: în ordine inversă g(5) dă 3+5=8, iar f(5) apelează g(10) cu y=4 -> 4+10=14, total 8+14=22. Deci suma este 22 indiferent de ordine. Nu e valoare nedefinită (d fals).
+
+##### ÎNTREBAREA 9 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce se va întâmpla la rularea următorului program C?
+
+#include<stdio.h>
+union test
+{
+    int x;
+    char arr[4];
+};
+int main()
+{
+    union test t;
+    t.x = 0;
+    t.arr[1] = 'G'; t.arr[2] = 'O'; t.arr[3] = 'L';
+    printf("%s", t.arr);
+}
+
+VARIANTE:
+a) Va rula fără să afișeze nimic
+b) Va afișa 0
+c) Va afișa GOL
+d) Va afișa o valoare întreagă nedefinită
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Într-un union, `x` și `arr` ocupă aceeași zonă de memorie. `t.x = 0` pune toți cei 4 octeți pe 0. Apoi se setează arr[1]='G', arr[2]='O', arr[3]='L', dar arr[0] rămâne 0, adică '\0'. La `printf("%s", t.arr)`, șirul începe cu terminatorul nul, deci nu se afișează niciun caracter. Nu se afișează "GOL" (c fals) pentru că primul octet este '\0'; nu se afișează 0 sau valoare nedefinită.
+
+##### ÎNTREBAREA 10 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afișa următorul program C?
+
+#include<stdio.h>
+#include<string.h>
+int main()
+{
+    char p[] = "noroc";
+    char t;
+    for (int i= 0, j = strlen(p); i < j; i++)
+    {
+        t = p[i];
+        p[i] = p[j - i];
+        p[j - i] = t;
+    }
+    printf("%s", p);
+}
+
+VARIANTE:
+a) Nu va afișa nimic
+b) noroc
+c) coron
+d) ccccc
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: strlen("noroc")=5, deci j=5, iar p[5] este '\0'. La prima iterație (i=0): se interschimbă p[0] cu p[j-i]=p[5], adică p[0] devine '\0' și p[5] devine 'n'. Deoarece p[0] devine acum terminatorul nul, `printf("%s", p)` nu afișează nimic. (Algoritmul de inversare este greșit — ar fi trebuit folosit indicele j-1-i; interschimbul cu poziția terminatorului distruge șirul.) Deci b) "noroc", c) "coron" (inversarea corectă) și d) sunt greșite.
+
+##### ÎNTREBAREA 11 #####
+CATEGORIE: C/C++
+ENUNT:
+Precizați valoarea afișată prin apelul printf("%d",045);
+
+VARIANTE:
+a) 37
+b) 45
+c) 69
+d) caracterul cu codul ASCI 45
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Un literal întreg care începe cu cifra 0 este interpretat în baza 8 (octal). `045` în octal = 4*8 + 5 = 37 în zecimal. Cu `%d` se afișează valoarea zecimală 37. Varianta b) 45 ar fi dacă ar fi zecimal; c) 69 ar corespunde interpretării hexazecimale (0x45=69), incorectă aici; d) este irelevantă (nu se afișează caractere cu %d).
+
+##### ÎNTREBAREA 12 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afișa următorul program C?
+
+#include <stdio.h>
+int main() {
+    int x = 8;
+    printf("%d,%d,%d", x++, x << 2, x >> 1);
+}
+
+VARIANTE:
+a) 8 36 4
+b) 9 36 4
+c) 8 32 4
+d) 9 32 4
+
+RASPUNS_BAREM: a, b
+RASPUNS_CORECT: a, c
+STATUS_VERIFICARE: EROARE_BAREM
+EXPLICATIE: Documentul indică drept corecte variantele "a și b". Tehnic acest lucru este greșit. Expresia conține comportament nedefinit (undefined behavior): argumentul `x++` modifică pe x, iar `x << 2` și `x >> 1` citesc pe x, fără punct de secvențiere între ele. INDIFERENT de ordinea de evaluare, `x++` (post-incrementare) produce ÎNTOTDEAUNA valoarea dinaintea incrementării, adică 8 — deci primul câmp afișat este mereu 8. Prin urmare variantele b) 9 36 4 și d) 9 32 4 sunt IMPOSIBILE (nu există cale ca x++ să afișeze 9). Ieșirile realiste posibile sunt: a) 8 36 4 (dacă x devine 9 înainte de shift-uri: 9<<2=36, 9>>1=4) și c) 8 32 4 (dacă shift-urile se evaluează cu x=8: 8<<2=32, 8>>1=4, ex. GCC care evaluează argumentele dreapta->stânga). Deci răspunsurile realmente valabile sunt a și c, nu a și b. Baremul a inclus greșit varianta b în locul lui c.
+
+##### ÎNTREBAREA 13 #####
+CATEGORIE: C/C++
+ENUNT:
+Fie funcția:
+
+int f(int v[], int k)
+{
+    int t;
+    if(k==0) return v[k];
+    else return v[k-1]<(t=f(v,k-1)) ? v[k-1] : t;
+}
+
+unde v este un vector de numere întregi și k > 0 este numărul de elemente al vectorului v. Ce returnează funcția f?
+
+VARIANTE:
+a) Elementul minim din vectorul v
+b) Elementul maxim din vectorul v
+c) Elementul v[0]
+d) Elementul v[k-1]
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Funcția calculează recursiv: dacă k==0 returnează v[0]; altfel t=f(v,k-1) (minimul primelor k-1 elemente), iar expresia `v[k-1] < t ? v[k-1] : t` returnează cea mai mică dintre v[k-1] și t, adică min(v[k-1], min(v[0..k-2])) = minimul din v[0..k-1]. Prin inducție, f returnează elementul minim din vector. Deci nu maximul (b), nici v[0] (c) sau v[k-1] (d) în general.
+
+##### ÎNTREBAREA 14 #####
+CATEGORIE: C/C++
+ENUNT:
+Programul:
+
+#include <stdio.h>
+int f(int x, int y)
+{
+    static int t = 0;
+    t += x + y;
+    return t;
+}
+int main()
+{
+    printf("%d,", f(5, 6));
+    printf("%d", f(7, 8));
+}
+
+VARIANTE:
+a) Afișează 11,26
+b) Afișează 11,15
+c) Afișează 5,12
+d) Generează o eroare de compilare deoarece funcția f returnează o variabilă locală (t)
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: `t` este static, deci își păstrează valoarea între apeluri, pornind de la 0. f(5,6): t = 0+11 = 11, afișează 11. f(7,8): t = 11+15 = 26, afișează 26. Rezultat: "11,26". Nu este eroare de compilare (d fals) — se returnează valoarea lui t, nu adresa unei variabile locale, iar variabilele static au durată de viață pe tot programul. b) 11,15 ar rezulta dacă t s-ar reseta la fiecare apel.
+
+##### ÎNTREBAREA 15 #####
+CATEGORIE: C/C++
+ENUNT:
+Programul:
+
+#include <stdio.h>
+#include <stdarg.h>
+int f(int n, ...)
+{
+    va_list lp;
+    va_start(lp, n);
+    int s = 0;
+    for (int i = 0; i < n; i++)
+    {
+        int v = va_arg(lp, int);
+        s += v > s ? v-s : 0;
+    }
+    va_end(lp);
+    return s;
+}
+int main()
+{
+    printf("%d,%d", f(3, 3, 20, 3), f(2, 10, 2, 30, 4));
+}
+
+VARIANTE:
+a) Afișează 20,10
+b) Afișează 23,42
+c) Afișează 3,10
+d) Generează o eroare deoarece funcția f este incorect definită din punct de vedere sintactic
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Funcția cu număr variabil de argumente parcurge primele n argumente și menține în s valoarea maximă întâlnită: la fiecare pas `s += v > s ? v-s : 0` face s să devină v dacă v>s (altfel rămâne). Deci s = max(primele n argumente). f(3, 3,20,3): max(3,20,3)=20. f(2, 10,2,...): citește doar primele 2 (10,2), max(10,2)=10 (30,4 sunt ignorate deoarece n=2). Rezultat: "20,10". Sintaxa cu stdarg este corectă (d fals). b) și c) rezultă din calcule greșite.
+
+##### ÎNTREBAREA 16 #####
+CATEGORIE: Baze de date (teorie)
+ENUNT:
+Fie două relații R1 și R2. În cazul restricției referențiale care afirmație este adevărată?
+
+VARIANTE:
+a) un atribut din R1 care are valori definite pe același domeniu ca și cheia primară a lui R2 are rolul de a modela asocierea dintre cele două relații
+b) cheia primară din R1 referă obligatoriu cheia primară din R2
+c) cheia primară din tabela părinte nu trebuie să fie compusă
+d) R1 și R2 trebuie să fie neapărat distincte
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Restricția referențială (cheia externă / foreign key) este realizată de un atribut din R1 definit pe același domeniu cu cheia primară a lui R2; acest atribut (cheia externă) modelează asocierea dintre cele două relații. b) fals — cheia externă nu este obligatoriu cheia primară a lui R1. c) fals — cheia primară (părinte) poate fi compusă. d) fals — R1 și R2 pot fi aceeași relație (autoreferire, ex. angajat-șef).
+
+##### ÎNTREBAREA 17 #####
+CATEGORIE: Baze de date (teorie)
+ENUNT:
+Care dintre următoarele afirmații despre normalizare nu este adevărată?
+
+VARIANTE:
+a) se transformă mai multe relații cu o structură mai simplă, în relații mai complexe
+b) se urmărește eliminarea anomaliilor de adăugare
+c) se urmărește reducerea redundanței
+d) atributele dintr-o relație normalizată trebuie să fie atomice (i.e., să nu mai poată fi descompus în alte atribute)
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Se cere afirmația FALSĂ. Normalizarea descompune relații complexe în relații mai simple (mai multe, cu structură mai simplă), nu invers. Afirmația a) descrie procesul invers și este deci FALSĂ. Celelalte sunt adevărate despre normalizare: b) elimină anomaliile de inserare/adăugare, c) reduce redundanța, d) impune atomicitatea atributelor (1NF).
+
+##### ÎNTREBAREA 18 #####
+CATEGORIE: SQL
+ENUNT:
+În SQL din Oracle, pentru a finaliza o tranzacție și a salva modificările realizate se folosește comanda:
+
+VARIANTE:
+a) COMMIT
+b) COMMIT ON TRANSACTION
+c) SET ROLLBACK = OFF
+d) SET AUTOCOMMIT = TRUE
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Comanda `COMMIT` finalizează tranzacția curentă și salvează permanent modificările în baza de date. b), c), d) nu sunt comenzi valide de finalizare a tranzacției în Oracle SQL (nu există sintaxa "COMMIT ON TRANSACTION" sau "SET ROLLBACK=OFF" pentru acest scop; AUTOCOMMIT este o setare a clientului, nu comanda cerută).
+
+##### ÎNTREBAREA 19 #####
+CATEGORIE: SQL
+ENUNT:
+Se considera tabelele:
+CLIENTI (id_client NUMBER(5), nume_client VARCHAR2(30), email VARCHAR2(50)) cu cel puțin 10 de rânduri (înregistrări).
+COMENZI (nr_comanda NUMBER(5) PRIMARY KEY, id_client NUMBER(5), data DATE) cu cel putin 100 de rânduri (inregistrări).
+Precizați care este efectul comenzii SQL în Oracle:
+
+CREATE VIEW V_CLIENTI AS
+SELECT nume_client, email, COUNT(nr_comanda) numar_comenzi
+FROM clienti cl, comenzi c
+WHERE cl.id_client=c.id_client
+GROUP BY nume_client, email
+HAVING COUNT(nr_comanda)>=3;
+
+VARIANTE:
+a) crearea unei tabele virtuale pe baza celor două tabele prin care se vor selecta clienții care au încheiat cel puțin 3 comenzi
+b) crearea unei noi tabele prin preluarea înregistrărilor din tabelele CLIENTI si COMENZI
+c) se va afișa o eroare deoarece clauza HAVING este incorect utilizată
+d) se va afișa o eroare în cazul în care nu există nici un client care a încheiat cel puțin 3 comenzi
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: `CREATE VIEW` creează o tabelă virtuală (view), nu stochează date proprii — interogarea se execută la fiecare accesare. View-ul face join între CLIENTI și COMENZI, grupează pe client și, prin HAVING COUNT>=3, reține clienții cu cel puțin 3 comenzi. b) fals — un view NU este o tabelă nouă cu date preluate. c) fals — HAVING este corect utilizat împreună cu GROUP BY. d) fals — dacă nu există astfel de clienți, view-ul se creează oricum (va fi doar gol la interogare), nu apare eroare.
+
+##### ÎNTREBAREA 20 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_functie VARCHAR2(30)) având 200 rânduri (înregistrări).
+Se consideră comanda SQL-Oracle:
+
+SELECT DISTINCT nume||' '||prenume nume_complet
+FROM angajati
+WHERE salariul NOT BETWEEN 5000 AND 10000;
+
+Care din următoarele afirmații este falsă?
+
+VARIANTE:
+a) se implementează operatorul de diferență
+b) se implementează operatorul relațional de proiecție
+c) se implementează operatorul relațional de selecție
+d) se folosește un operator logic
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: (Notă: în original variantele a treia și a doua sunt ambele etichetate "b)" — evident o eroare de tehnoredactare; le-am normalizat ca b) proiecție și c) selecție.) Se cere afirmația FALSĂ. Interogarea NU implementează operatorul de diferență (MINUS/EXCEPT), deci a) este FALSĂ. Celelalte sunt adevărate: b) DISTINCT + concatenarea coloanelor = proiecție; c) clauza WHERE = selecție; d) `NOT BETWEEN` folosește operatori logici (NOT, respectiv AND-ul implicit al lui BETWEEN).
+
+##### ÎNTREBAREA 21 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_functie VARCHAR2(30)) având 200 rânduri (înregistrări).
+Alegeți varianta corectă referitoare la următoarea comanda SQL:
+
+UPDATE angajati SET salariul=salariul *1.05
+WHERE EXTRACT(year from data_angajare) = EXTRACT(year from sysdate)-1
+AND id_functie IN (SELECT id_functie FROM angajati WHERE salariul < (SELECT AVG(salariul) FROM angajati));
+
+VARIANTE:
+a) se majorează salariile persoanelor angajate anul trecut, indiferent de lună, dacă acestea dețin în prezent o funcție similară cu angajații care au salariul mai mic decât salariul mediu
+b) se majorează salariile persoanelor angajate în ziua anterioară dacă acestea dețin în prezent o funcție similară cu angajații care au salariul mai mic decât salariul mediu
+c) instrucțiunea este eronată deoarece în tabelă nu există coloana sysdate
+d) se majorează doar salariile angajaților care au în prezent salariul mai mic decât salariul mediu
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Condiția `EXTRACT(year from data_angajare) = EXTRACT(year from sysdate)-1` selectează angajații al căror an de angajare este anul precedent celui curent, indiferent de lună. Suplimentar, `id_functie IN (SELECT id_functie ... WHERE salariul < AVG)` restrânge la angajații care dețin o funcție deținută (și) de persoane cu salariul sub media generală. Se aplică majorarea de 5% acestora. a) descrie corect. b) fals — este anul trecut, nu ziua anterioară. c) fals — `sysdate` este o funcție Oracle, nu o coloană; e validă. d) fals — filtrarea se face pe id_functie, nu direct pe salariul individual al angajatului.
+
+##### ÎNTREBAREA 22 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela RAND_COMENZI (nr_comanda NUMBER(6), id_produs NUMBER(8), cantitate NUMBER(7), pret NUMBER(7,2)) având 100 de rânduri precum și interogarea SQL Oracle:
+
+SELECT nr_comanda, ROUND(AVG(cantitate)) val FROM Rand_Comenzi GROUP BY nr_comanda ORDER BY 2;
+
+Care din următoarele afirmații este adevărată?
+
+VARIANTE:
+a) se afișează cantitatea medie comandată din fiecare comandă ordonat crescător după cantitatea medie
+b) se afișează cantitatea medie comandată din fiecare produs ordonat crescător după cantitate medie
+c) interogarea conține o eroare deoarece funcția ROUND nu este corect utilizată
+d) interogarea utilizează incorect clauza ORDER BY
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Se grupează pe `nr_comanda` (fiecare comandă) și se calculează media cantității, rotunjită cu ROUND. `ORDER BY 2` sortează crescător după a doua coloană din SELECT (val = media rotunjită). Deci se afișează cantitatea medie pe fiecare comandă, ordonată crescător după această medie. b) fals — gruparea este pe comandă, nu pe produs. c) fals — ROUND(AVG(...)) este corect. d) fals — `ORDER BY 2` (poziția coloanei) este sintaxă validă în Oracle.
+
+##### ÎNTREBAREA 23 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela COMENZI (nr_comanda NUMBER(5) PRIMARY KEY, id_client NUMBER (5), data DATE) și următoarele instrucțiuni:
+I1.
+SELECT id_client FROM comenzi WHERE extract(year from data)=1999
+GROUP BY id_client HAVING count(nr_comanda)<2;
+I2.
+SELECT id_client FROM comenzi WHERE to_char(data,'yyyy')=1999
+GROUP BY id_client HAVING count(nr_comanda)<2;
+I3.
+SELECT id_client FROM comenzi WHERE to_date(data,'year') like '%1999%'
+GROUP BY id_client HAVING count(nr_comanda)<2;
+
+Indicați răspunsurile corecte:
+
+VARIANTE:
+a) instrucțiunile I1 și I2 returnează același rezultat
+b) instrucțiunile I1, I2, I3 returnează același rezultat
+c) instrucțiunea I2 este eronată
+d) toate instrucțiunile sunt eronate
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: I1 folosește `extract(year from data)=1999` (extrage anul ca număr) — corect. I2 folosește `to_char(data,'yyyy')=1999`: to_char produce șirul '1999', comparat cu numărul 1999 Oracle face conversie implicită, deci returnează același rezultat ca I1. I3 este eronată: `to_date` se aplică pe un argument de tip DATE (data este deja DATE) și cu formatul 'year' — utilizare incorectă a lui to_date (se așteaptă un șir de caractere ca prim argument), deci I3 nu produce rezultatul dorit. Astfel a) este corect (I1=I2). b) fals — I3 e eronată. c) fals — I2 e corectă. d) fals.
+
+##### ÎNTREBAREA 24 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Care dintre următoarele afirmații despre cursorii impliciți din PL/SQL este adevărată?
+
+VARIANTE:
+a) sunt automat închiși după ce instrucțiunea a fost executată
+b) stochează informații cu privire la procesarea instrucțiunilor LCT (limbajul de control al tranzacțiilor)
+c) stochează informații cu privire la procesarea instrucțiunilor LDD (limbajul de descriere a datelor)
+d) pot fi parcurși folosind instrucțiunea FOR
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Cursorii impliciți (cursorul SQL) sunt deschiși și închiși AUTOMAT de Oracle la execuția fiecărei instrucțiuni SQL — programatorul nu îi gestionează manual. b) fals — cursorul implicit stochează informații despre instrucțiuni LMD (INSERT/UPDATE/DELETE/SELECT), nu despre LCT (COMMIT/ROLLBACK). c) fals — nu despre LDD. d) fals — parcurgerea cu FOR (cursor FOR loop) se aplică cursorilor expliciți; cursorul implicit se interoghează prin atribute (SQL%FOUND, SQL%ROWCOUNT etc.), nu cu un FOR.
+
+##### ÎNTREBAREA 25 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Într-un bloc PL/SQL din Oracle, pentru a putea rula instrucțiunea care șterge o tabelă folosim:
+
+VARIANTE:
+a) EXECUTE IMMEDIATE
+b) DELETE
+c) DROP
+d) CALL
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Ștergerea unei tabele se face cu DROP TABLE, o instrucțiune LDD (DDL). Instrucțiunile DDL NU pot fi executate direct într-un bloc PL/SQL; se folosește SQL dinamic prin `EXECUTE IMMEDIATE 'DROP TABLE ...'`. b) DELETE șterge rânduri, nu tabela. c) DROP nu poate apărea direct (static) într-un bloc PL/SQL. d) CALL este pentru apel de proceduri/funcții.
+
+##### ÎNTREBAREA 26 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Care din următoarele funcții SQL nu poate fi folosită în instrucțiuni specifice PL/SQL?
+
+VARIANTE:
+a) DECODE
+b) LENGTH
+c) SUBSTR
+d) NVL
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: `DECODE` este o funcție disponibilă doar în instrucțiuni SQL, nu în expresiile procedurale specifice PL/SQL (nu poate fi apelată direct într-o atribuire/expresie PL/SQL pură). LENGTH, SUBSTR și NVL sunt funcții single-row care pot fi folosite atât în SQL, cât și în instrucțiunile procedurale PL/SQL. Deci a) DECODE este răspunsul.
+
+##### ÎNTREBAREA 27 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se consideră următorul bloc PL/SQL:
+
+SET SERVEROUTPUT ON
+DECLARE
+data varchar2(25);
+v number(2);
+BEGIN
+select sysdate-30 into data from dual
+where 1=2;
+DBMS_OUTPUT.PUT_LINE(data);
+EXCEPTION
+WHEN NO_DATA_FOUND THEN
+DBMS_OUTPUT.PUT_LINE(v);
+END;
+/
+
+Care dintre următoarele afirmații sunt corecte:
+
+VARIANTE:
+a) blocul se execută cu succes, dar nu afișează nimic
+b) se afișează o dată calendaristică
+c) se afișează un număr de zile
+d) apare o eroare deoarece variabila data este de tip VARCHAR2
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Instrucțiunea `SELECT ... INTO ... WHERE 1=2` nu returnează niciun rând, deci declanșează excepția NO_DATA_FOUND. Aceasta este tratată în secțiunea EXCEPTION, unde se execută `DBMS_OUTPUT.PUT_LINE(v)`. Variabila v (number(2)) nu a fost inițializată, deci este NULL; PUT_LINE(NULL) afișează o linie goală (practic nimic vizibil). Astfel blocul se execută cu succes (excepția e tratată), dar nu afișează nimic. b)/c) false — SELECT-ul a eșuat, nu se afișează data/număr de zile. d) fals — nu apare eroare de tip; oricum NO_DATA_FOUND se declanșează înainte de atribuire.
+
+##### ÎNTREBAREA 28 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), data_angajare DATE, salariul NUMBER(10,2)) cu cel puțin 100 de rânduri (înregistrări) și blocul PL/SQL:
+
+SET SERVEROUTPUT ON
+DECLARE
+CURSOR cursor1 IS SELECT id_angajat, nume FROM Angajati;
+vid angajati.id_angajat%TYPE;
+vnume VARCHAR2 (50);
+BEGIN
+OPEN cursor1;
+WHILE cursor1%FOUND LOOP
+FETCH cursor1 INTO vid,vnume;
+DBMS_OUTPUT.PUT_LINE('Angajatul '||vnume);
+END LOOP;
+END;
+/
+
+Care afirmație este corectă?
+
+VARIANTE:
+a) blocul se execută, dar nu afișează nimic
+b) blocul va afișa numele tuturor angajaților din tabela ANGAJATI
+c) blocul va afișa numele ultimului angajat din tabelă
+d) blocul conține o eroare deoarece variabila vnume nu este corect utilizată
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Eroarea logică: condiția `WHILE cursor1%FOUND` este evaluată ÎNAINTE de primul FETCH. Imediat după OPEN, atributul %FOUND este NULL (nu TRUE), deoarece nu s-a făcut încă niciun FETCH. O condiție NULL în WHILE este tratată ca falsă, deci bucla NU se execută nici măcar o dată și nu se afișează nimic. b) fals — nu afișează toți angajații tocmai din cauza verificării %FOUND înainte de primul FETCH. c) fals. d) fals — vnume este declarată și folosită corect.
+
+##### ÎNTREBAREA 29 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), id_departament NUMBER(3)) și blocul PL/SQL:
+
+SET SERVEROUTPUT ON
+DECLARE
+nr_angajati NUMBER;
+sal_mediu NUMBER;
+BEGIN
+SELECT COUNT(id_angajat), AVG(salariul) INTO nr_angajati, sal_mediu
+FROM Angajati WHERE id_departament=50;
+DBMS_OUTPUT.PUT_LINE(nr_angajati || ' ' || ROUND(sal_mediu,2));
+END;
+/
+
+Care afirmație este corecta?
+
+VARIANTE:
+a) blocul va afișa numărul de angajați și salariul mediu din departamentul 50
+b) blocul conține o eroare deoarece lipsește clauza GROUP BY
+c) blocul va afișa numărul mediu de angajați pe fiecare departament
+d) blocul conține o eroare deoarece funcțiile de grup nu pot fi utilizate în blocuri
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Interogarea folosește doar funcții de grup (COUNT, AVG) fără alte coloane neagregate în SELECT, deci returnează exact un rând (agregatul peste angajații din departamentul 50 filtrat prin WHERE). SELECT ... INTO funcționează corect când se returnează un singur rând, deci se afișează numărul de angajați și salariul mediu (rotunjit) din departamentul 50. b) fals — GROUP BY NU este necesar când se selectează doar agregate. c) fals. d) fals — funcțiile de grup se pot folosi în blocuri PL/SQL.
+
+##### ÎNTREBAREA 30 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), id_departament NUMBER(3)) și blocul PL/SQL:
+
+SET SERVEROUTPUT ON
+DECLARE
+id_dep angajati.id_departament%type;
+sal_tot NUMBER;
+BEGIN
+SELECT id_departament, SUM(salariul) INTO id_dep, sal_tot
+FROM Angajati GROUP BY id_departament;
+DBMS_OUTPUT.PUT_LINE(id_dep || ' ' || sal_tot);
+END;
+/
+
+Presupunând că tabela are mai mult de 100 de angajați repartizați în cel puțin 5 departamente, precizați care dintre afirmațiile următoare este corectă?
+
+VARIANTE:
+a) blocul declanșează o excepție deoarece interogarea returnează mai multe rânduri
+b) blocul rulează, dar nu afișează nimic deoarece variabila sal_tot nu este inițializată
+c) blocul rulează și afișează suma totală a salariilor pe fiecare departament
+d) blocul conține o eroare deoarece nu este corect declarată variabila id_dep
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Interogarea `SELECT ... INTO ... GROUP BY id_departament` returnează câte un rând pentru fiecare departament (cel puțin 5 rânduri). Însă SELECT ... INTO așteaptă EXACT un singur rând; când se returnează mai multe rânduri se declanșează excepția TOO_MANY_ROWS. Deci blocul aruncă o excepție. b) fals — nu e vorba de neinițializare, ci de excepție. c) fals — nu poate afișa fiecare departament fără un cursor/loop (INTO acceptă un singur rând). d) fals — id_dep este corect declarată cu %type.

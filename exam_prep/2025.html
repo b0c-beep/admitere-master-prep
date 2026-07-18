@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CSIE3 2025 — Test grilă admitere master</title>
+<meta name="description" content="Test grilă interactiv admitere master CSIE 2025 — C/C++, SQL, PL/SQL, baze de date">
+<style>
+:root{
+  --bg:#f5f6fa; --surface:#ffffff; --surface-2:#eef0f6; --border:#dde1ea;
+  --text:#1a2030; --text-dim:#5c6579; --accent:#4a55d6; --accent-ink:#ffffff;
+  --good:#177a4c; --good-bg:#e2f6ec; --good-bd:#a9e3c3;
+  --bad:#a8271f; --bad-bg:#fbeae8; --bad-bd:#f0b8b2;
+  --warn:#8a6100; --warn-bg:#fff3d6; --warn-bd:#f0d998;
+  --code-bg:#eef0f7; --code-text:#2a3040;
+  --radius:14px; --shadow:0 2px 14px rgba(20,25,45,.07);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#10131c; --surface:#171b28; --surface-2:#1e2332; --border:#2a3042;
+    --text:#e8eaf2; --text-dim:#9aa2b8; --accent:#8b93ff; --accent-ink:#0d0f18;
+    --good:#3ddb92; --good-bg:#123326; --good-bd:#1f5c3f;
+    --bad:#ff8a80; --bad-bg:#3a1614; --bad-bd:#6e2a25;
+    --warn:#ffce6b; --warn-bg:#382b0a; --warn-bd:#6b4f14;
+    --code-bg:#12151f; --code-text:#d7dbe8;
+    --shadow:0 2px 18px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="light"]{
+  --bg:#f5f6fa; --surface:#ffffff; --surface-2:#eef0f6; --border:#dde1ea;
+  --text:#1a2030; --text-dim:#5c6579; --accent:#4a55d6; --accent-ink:#ffffff;
+  --good:#177a4c; --good-bg:#e2f6ec; --good-bd:#a9e3c3;
+  --bad:#a8271f; --bad-bg:#fbeae8; --bad-bd:#f0b8b2;
+  --warn:#8a6100; --warn-bg:#fff3d6; --warn-bd:#f0d998;
+  --code-bg:#eef0f7; --code-text:#2a3040;
+}
+:root[data-theme="dark"]{
+  --bg:#10131c; --surface:#171b28; --surface-2:#1e2332; --border:#2a3042;
+  --text:#e8eaf2; --text-dim:#9aa2b8; --accent:#8b93ff; --accent-ink:#0d0f18;
+  --good:#3ddb92; --good-bg:#123326; --good-bd:#1f5c3f;
+  --bad:#ff8a80; --bad-bg:#3a1614; --bad-bd:#6e2a25;
+  --warn:#ffce6b; --warn-bg:#382b0a; --warn-bd:#6b4f14;
+  --code-bg:#12151f; --code-text:#d7dbe8;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.55; min-height:100vh;
+}
+.wrap{max-width:840px;margin:0 auto;padding:20px 16px 64px}
+header.top{
+  display:flex;align-items:center;gap:12px;justify-content:space-between;
+  padding:14px 0;margin-bottom:18px;border-bottom:1px solid var(--border);
+}
+.brand{display:flex;flex-direction:column;gap:2px;min-width:0}
+.brand a{color:var(--text-dim);text-decoration:none;font-size:13px}
+.brand a:hover{color:var(--accent)}
+.brand h1{font-size:19px;margin:0;font-weight:700;letter-spacing:.2px}
+.brand .sub{font-size:12.5px;color:var(--text-dim)}
+.iconbtn{
+  border:1px solid var(--border);background:var(--surface);color:var(--text);
+  width:38px;height:38px;border-radius:10px;cursor:pointer;font-size:16px;
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+}
+.iconbtn:hover{border-color:var(--accent)}
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:22px;margin-bottom:16px;
+}
+h2.section-title{font-size:16px;margin:0 0 12px;color:var(--text)}
+.muted{color:var(--text-dim)}
+.small{font-size:12.5px}
+
+/* setup screen */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 18px}
+.chip{
+  border:1px solid var(--border);background:var(--surface-2);color:var(--text);
+  padding:8px 14px;border-radius:999px;cursor:pointer;font-size:13.5px;user-select:none;
+  display:flex;align-items:center;gap:7px;transition:border-color .15s,background .15s;
+}
+.chip .count{color:var(--text-dim);font-size:12px}
+.chip.active{border-color:var(--accent);background:color-mix(in srgb, var(--accent) 14%, var(--surface-2));}
+.chip.active .count{color:var(--accent)}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border)}
+.toggle-row:last-of-type{border-bottom:none}
+.toggle-row .label{font-size:14px}
+.toggle-row .desc{font-size:12.5px;color:var(--text-dim);margin-top:2px}
+.switch{
+  position:relative;width:44px;height:26px;border-radius:999px;background:var(--surface-2);
+  border:1px solid var(--border);cursor:pointer;flex:0 0 auto;
+}
+.switch::after{
+  content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;
+  background:var(--text-dim);transition:transform .18s ease, background .18s ease;
+}
+.switch.on{background:color-mix(in srgb, var(--accent) 30%, var(--surface-2));border-color:var(--accent)}
+.switch.on::after{transform:translateX(18px);background:var(--accent)}
+.btn{
+  appearance:none;border:none;border-radius:11px;padding:13px 22px;font-size:15px;font-weight:600;
+  cursor:pointer;display:inline-flex;align-items:center;gap:8px;justify-content:center;
+}
+.btn-primary{background:var(--accent);color:var(--accent-ink);width:100%;margin-top:6px}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.btn-secondary{background:var(--surface-2);color:var(--text);border:1px solid var(--border)}
+.best-score{font-size:13px;color:var(--text-dim);margin-top:10px}
+
+/* quiz screen */
+.progress-outer{height:7px;border-radius:999px;background:var(--surface-2);overflow:hidden;margin-bottom:16px}
+.progress-inner{height:100%;background:var(--accent);transition:width .25s ease}
+.quiz-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:13px;color:var(--text-dim)}
+.badge{
+  display:inline-block;padding:3px 10px;border-radius:999px;background:var(--surface-2);
+  border:1px solid var(--border);font-size:12px;color:var(--text-dim);
+}
+.enunt p{margin:0 0 10px;font-size:15.5px}
+.enunt pre.code{
+  background:var(--code-bg);color:var(--code-text);border:1px solid var(--border);
+  border-radius:10px;padding:12px 14px;overflow-x:auto;font-size:13.5px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;margin:0 0 12px;
+  white-space:pre;line-height:1.5;
+}
+.options{display:flex;flex-direction:column;gap:9px;margin-top:14px}
+.opt{
+  text-align:left;border:1px solid var(--border);background:var(--surface-2);color:var(--text);
+  border-radius:11px;padding:12px 14px;cursor:pointer;font-size:14.5px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  display:flex;gap:10px;align-items:flex-start;transition:border-color .12s, background .12s;
+}
+.opt:hover:not(.locked){border-color:var(--accent)}
+.opt .letter{font-weight:700;flex:0 0 auto;color:var(--text-dim)}
+.opt .txt{white-space:pre-wrap;word-break:break-word}
+.opt .tag{margin-left:auto;font-size:11px;color:var(--text-dim);font-family:inherit;flex:0 0 auto;padding-left:8px}
+.opt.correct{background:var(--good-bg);border-color:var(--good-bd);color:var(--good)}
+.opt.correct .letter,.opt.correct .tag{color:var(--good)}
+.opt.incorrect{background:var(--bad-bg);border-color:var(--bad-bd);color:var(--bad)}
+.opt.incorrect .letter,.opt.incorrect .tag{color:var(--bad)}
+.opt.locked{cursor:default}
+.opt.dim{opacity:.55}
+
+.feedback{margin-top:16px;border-radius:12px;padding:14px 16px;font-size:14.5px;display:none}
+.feedback.show{display:block}
+.feedback.ok{background:var(--good-bg);border:1px solid var(--good-bd);color:var(--text)}
+.feedback.ko{background:var(--bad-bg);border:1px solid var(--bad-bd);color:var(--text)}
+.feedback .fb-title{font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.feedback .fb-title.ok-txt{color:var(--good)}
+.feedback .fb-title.ko-txt{color:var(--bad)}
+.barem-warn{
+  background:var(--warn-bg);border:1px solid var(--warn-bd);color:var(--warn);
+  border-radius:10px;padding:10px 12px;margin:10px 0;font-size:13.5px;font-weight:600;
+}
+.explic{margin-top:10px;white-space:pre-wrap;font-size:14px;color:var(--text)}
+.quiz-actions{display:flex;justify-content:flex-end;margin-top:18px;gap:10px}
+
+/* results screen */
+.score-hero{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.score-circle{
+  width:104px;height:104px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  flex-direction:column;border:6px solid var(--accent);flex:0 0 auto;
+}
+.score-circle .n{font-size:26px;font-weight:800}
+.score-circle .d{font-size:11px;color:var(--text-dim)}
+.cat-bar-row{margin:8px 0}
+.cat-bar-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}
+.cat-bar-outer{height:8px;border-radius:999px;background:var(--surface-2);overflow:hidden}
+.cat-bar-inner{height:100%;background:var(--accent)}
+table.review{width:100%;border-collapse:collapse;margin-top:8px;font-size:13.5px}
+table.review th, table.review td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--border)}
+table.review tr.miss td:first-child{color:var(--bad);font-weight:700}
+table.review tr.hit td:first-child{color:var(--good);font-weight:700}
+table.review tr{cursor:pointer}
+table.review tr:hover td{background:var(--surface-2)}
+.review-detail{display:none;padding:10px 6px 16px;font-size:13.5px;white-space:pre-wrap;border-bottom:1px solid var(--border)}
+.review-detail.show{display:table-row}
+.footer-note{font-size:12px;color:var(--text-dim);text-align:center;margin-top:26px}
+.view{display:none}
+.view.active{display:block}
+.hint{font-size:12.5px;color:var(--text-dim);margin-top:4px}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <a href="../index.html">&larr; Toate anii</a>
+      <h1>CSIE3 &middot; Admitere master &middot; 2025</h1>
+      <div class="sub">subiecte_ani_anteriori/CSIE3_2025.pdf &nbsp;&bull;&nbsp; conform barem oficial</div>
+    </div>
+    <button class="iconbtn" id="themeToggle" title="Comută tema">&#9788;</button>
+  </header>
+
+  <div id="view-setup" class="view active">
+    <div class="card">
+      <h2 class="section-title">Categorii incluse</h2>
+      <div class="chips" id="categoryChips"></div>
+
+      <h2 class="section-title">Opțiuni</h2>
+      <div class="toggle-row">
+        <div>
+          <div class="label">Amestecă ordinea întrebărilor</div>
+          <div class="desc">Întrebările apar într-o ordine aleatorie la fiecare start</div>
+        </div>
+        <div class="switch on" id="toggleShuffleQ"></div>
+      </div>
+      <div class="toggle-row">
+        <div>
+          <div class="label">Amestecă ordinea variantelor</div>
+          <div class="desc">Variantele a/b/c/d sunt reordonate aleator</div>
+        </div>
+        <div class="switch on" id="toggleShuffleA"></div>
+      </div>
+
+      <button class="btn btn-primary" id="startBtn">Începe testul (30 întrebări)</button>
+      <div class="best-score" id="bestScoreNote"></div>
+    </div>
+  </div>
+
+  <div id="view-quiz" class="view">
+    <div class="progress-outer"><div class="progress-inner" id="progressBar" style="width:0%"></div></div>
+    <div class="quiz-meta">
+      <span id="quizPos">Întrebarea 1 din 30</span>
+      <span class="badge" id="quizCat">—</span>
+      <span id="quizScore">Scor: 0</span>
+    </div>
+    <div class="card">
+      <div class="enunt" id="quizEnunt"></div>
+      <div class="options" id="quizOptions"></div>
+      <div class="feedback" id="quizFeedback">
+        <div class="fb-title" id="fbTitle"></div>
+        <div class="barem-warn" id="fbBaremWarn" style="display:none"></div>
+        <div class="explic" id="fbExplic"></div>
+      </div>
+      <div class="quiz-actions">
+        <button class="btn btn-secondary" id="quitBtn">Renunță</button>
+        <button class="btn btn-primary" id="nextBtn" style="display:none;width:auto">Următoarea &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="view-results" class="view">
+    <div class="card">
+      <h2 class="section-title">Rezultat final</h2>
+      <div class="score-hero">
+        <div class="score-circle"><div class="n" id="resScoreN">0/0</div><div class="d">corecte</div></div>
+        <div>
+          <div style="font-size:20px;font-weight:700" id="resPercent">0%</div>
+          <div class="muted small" id="resPunctaj">Punctaj estimat: 0 puncte</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Pe categorii</h2>
+      <div id="resCatBars"></div>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Recapitulare (click pe un rând pentru detalii)</h2>
+      <table class="review" id="resTable">
+        <thead><tr><th>#</th><th>Categorie</th><th>Răspunsul tău</th><th>Corect</th></tr></thead>
+        <tbody id="resTableBody"></tbody>
+      </table>
+    </div>
+    <button class="btn btn-primary" id="restartBtn">Înapoi la opțiuni</button>
+  </div>
+
+  <div class="footer-note">Grile extrase din subiectele oficiale de anii anteriori și verificate independent. Explicațiile marcate „barem oficial eronat” indică o discrepanță identificată față de baremul original — verifică și tu raționamentul.</div>
+</div>
+
+<script>
+const DATA = {"year": "2025", "sursa": "subiecte_ani_anteriori/CSIE3_2025.pdf", "punctaj": "conform barem oficial", "questions": [{"nr": 1, "categorie": "PL/SQL", "enunt": "Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30),\nprenume VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament\nNUMBER(3)) avand 200 de randuri (inregistrari).\nSe considera urmatoarea secventa PL/SQL:\nSET SERVEROUTPUT ON\nBEGIN\nFOR rang IN (SELECT * FROM angajati WHERE id_departament=50 AND salariul > (select\nAVG(salariul) FROM angajati)) LOOP\n  DBMS_OUTPUT.PUT_LINE('Angajatul '||rang.nume||' are salariul '||rang.salariul);\nEND LOOP;\nEND;\n/\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "se utilizeaza un cursor pentru afisarea angajatilor din departamentul 50 care au salariile mai mari decat salariul mediu", "b": "comanda este eronata deoarece nu este permisa utilizarea comenzii SELECT in FOR", "c": "cursorul nu este declarat corespunzator si se va afisa INVALID_CURSOR", "d": "lipseste DECLARE si blocul PL/SQL nu se va compila cu succes"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Constructia \"FOR rang IN (SELECT ...) LOOP\" este un cursor FOR implicit (cursor FOR loop bazat pe o subcerere). PL/SQL declara automat variabila de ciclu \"rang\" ca inregistrare de tip %ROWTYPE, deschide implicit cursorul, executa FETCH la fiecare iteratie si il inchide la final. Subcererea filtreaza angajatii cu id_departament=50 si salariul peste media generala (SELECT AVG(salariul) FROM angajati), deci afirmatia a descrie exact functionarea. b este falsa: SELECT este permis intr-un cursor FOR - de fapt este forma obisnuita. c este falsa: nu este necesara o declarare explicita a cursorului, cursorul implicit este corect, iar INVALID_CURSOR nu apare. d este falsa: sectiunea DECLARE nu este obligatorie deoarece nu se declara nicio variabila locala explicit (variabila de ciclu este declarata automat); blocul anonim BEGIN...END este valid."}, {"nr": 2, "categorie": "OOP (C++)", "enunt": "In C++, daca o clasa are cel putin o metoda virtual pura atunci ea devine:", "variante": {"a": "derivata", "b": "abstracta", "c": "virtuala", "d": "friend"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "O metoda virtuala pura (declarata cu \"= 0\", ex: virtual void f() = 0;) transforma clasa intr-o clasa abstracta. O clasa abstracta nu poate fi instantiata direct (nu se pot crea obiecte de acel tip), ea servind ca interfata/tip de baza pentru clasele derivate care trebuie sa implementeze metoda pura. a \"derivata\" este gresit: statutul de derivata tine de mostenire, nu de existenta unei metode pure. c \"virtuala\": nu exista notiunea de \"clasa virtuala\" in acest sens (exista mostenire virtuala, dar e alt concept). d \"friend\": friend este un mecanism de acordare a accesului la membri privati, fara legatura cu metodele pure."}, {"nr": 3, "categorie": "PL/SQL", "enunt": "Se considera urmatoarea secventa PL/SQL:\nSET SERVEROUTPUT ON\nDECLARE\npunctaj_examen NUMBER;\nBEGIN\nIF punctaj_examen < 60 THEN\ndbms_output.put_line('Respins');\nELSE\ndbms_output.put_line('Admis');\nEND IF;\nEND;\n/\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "blocul PL/SQL genereaza eroare din cauza utilizarii incorecte a structurii alternative", "b": "se afiseaza 'Respins'", "c": "se afiseaza 'Admis'", "d": "blocul PL/SQL ruleaza cu succes, dar nu se va afisa nimic"}, "raspuns_barem": "c", "raspuns_corect": "c", "status_verificare": "CONFIRMAT", "explicatie": "Variabila punctaj_examen este declarata dar neinitializata, deci are valoarea NULL. In PL/SQL, orice comparatie cu NULL (NULL < 60) produce rezultatul logic UNKNOWN, nu TRUE. La un IF, ramura THEN se executa doar cand conditia este TRUE; daca este UNKNOWN (sau FALSE), se executa ramura ELSE. Prin urmare se afiseaza 'Admis'. a este falsa: structura IF-THEN-ELSE-END IF este sintactic corecta. b este falsa: 'Respins' s-ar afisa doar daca NULL < 60 ar fi TRUE, ceea ce nu este cazul. d este falsa: ELSE garanteaza ca se afiseaza ceva. Aceasta este o capcana clasica legata de logica ternara cu NULL."}, {"nr": 4, "categorie": "SQL", "enunt": "Fie tabelele:\nPRODUSE (id_produs NUMBER(5), denumire_produs VARCHAR2(150), descriere\nVARCHAR2(150), categorie VARCHAR2(50), pret_lista NUMBER(8,2)) cu cel putin 100 de\nranduri (inregistrari).\nRAND_COMENZI (id_produs NUMBER(5), id_comanda NUMBER(5), pret NUMBER(8,2),\ncantitate NUMBER(8,2)) cu cel putin 200 de randuri (inregistrari).\nSe considera urmatoarea comanda SQL-Oracle:\nUPDATE produse p\nSET pret_lista=pret_lista*0.9\nWHERE pret_lista>(SELECT AVG(pret) FROM rand_comenzi WHERE id_produs=p.id_produs)\nAND categorie IN (SELECT categorie FROM produse\nWHERE LOWER(denumire_produs) LIKE '%router%');\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "se actualizeaza pretul produselor care au pret_lista mai mare decat pretul mediu de vanzare din tabela RAND_COMENZI si sunt in categorii similare cu produsele care contin in denumire cuvantul 'router'", "b": "nu se actualizeaza niciun produs deoarece subcererea (SELECT AVG(pret) FROM rand_comenzi WHERE id_produs=p.id_produs) nu returneaza nimic", "c": "se actualizeaza toate produsele indiferent de categorie deoarece subcererea (SELECT AVG(pret) FROM rand_comenzi WHERE id_produs=p.id_produs) returneaza intotdeauna aceeasi valoare", "d": "se afiseaza o eroare deoarece subcererea (SELECT categorie FROM produse WHERE LOWER(denumire_produs) LIKE '% router %') poate returna mai multe categorii de produse si operatorul IN nu este corect utilizat"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Comanda UPDATE aplica o reducere de 10% (pret_lista*0.9) produselor care indeplinesc simultan doua conditii: (1) pret_lista mai mare decat media preturilor de vanzare din RAND_COMENZI pentru acelasi produs (subcerere corelata prin p.id_produs) si (2) apartin unei categorii in care exista cel putin un produs ce contine 'router' in denumire (subcerere necorelata cu IN). Afirmatia a descrie exact acest comportament. b este falsa: subcererea corelata cu AVG returneaza o valoare (chiar NULL daca produsul nu are randuri in comenzi, dar in general returneaza medii). c este falsa: subcererea corelata depinde de p.id_produs, deci difera de la produs la produs, iar filtrul pe categorie chiar limiteaza randurile. d este falsa: operatorul IN accepta corect o subcerere care returneaza mai multe randuri - exact acesta este scopul lui IN; deci nu apare eroare."}, {"nr": 5, "categorie": "PL/SQL", "enunt": "Fie tabelele:\nRAND_COMENZI (id_produs NUMBER(5), id_comanda NUMBER(5), pret NUMBER(8,2),\ncantitate NUMBER(8,2)) cu cel putin 200 de randuri (inregistrari).\nCOMENZI (id_comanda NUMBER(5) PRIMARY KEY, id_client NUMBER(5), data DATE) cu\ncel putin 100 de randuri (inregistrari).\nSe considera functia PL/SQL:\nCREATE OR REPLACE FUNCTION f_valoare_comanda (p_nr_comanda\ncomenzi.id_comanda%type)\nRETURN NUMBER\nIS\nv_total NUMBER;\nBEGIN\nSELECT SUM(cantitate*pret) INTO v_total FROM rand_comenzi WHERE\nid_comanda=p_nr_comanda;\nRETURN v_total;\nEND;\n/\nFie comanda SQL-Oracle:\nSELECT id_comanda, data, f_valoare_comanda(id_comanda) total_comanda\nFROM comenzi\nWHERE f_valoare_comanda(id_comanda)>8000;\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "comanda SELECT este eronata deoarece nu se precizeaza jonctiunea dintre tabelele COMENZI si RAND_COMENZI", "b": "functia f_valoare_comanda nu poate fi apelata in comanda SELECT", "c": "functia f_valoare_comanda se compileaza cu succes, insa in comanda SELECT lipseste clauza GROUP BY necesara pentru functiile de grup", "d": "se vor afisa id-ul si data comenzilor si valoarea totala a cestora daca aceasta depaseste 8000 lei"}, "raspuns_barem": "d", "raspuns_corect": "d", "status_verificare": "CONFIRMAT", "explicatie": "Functia f_valoare_comanda primeste un id de comanda si returneaza SUM(cantitate*pret) din RAND_COMENZI pentru acea comanda. Functia contine doar un SELECT (interogare), fara DML, deci poate fi apelata liber dintr-o comanda SELECT. Interogarea selecteaza id_comanda, data si valoarea totala din COMENZI, filtrand cu WHERE valoarea > 8000. Afirmatia d este corecta. a este falsa: jonctiunea nu este necesara in comanda principala deoarece agregarea/legatura cu RAND_COMENZI se face in interiorul functiei. b este falsa: o functie care doar interogheaza (nu modifica) date poate fi apelata in SELECT. c este falsa: SUM se afla in interiorul functiei, nu in comanda SELECT principala; comanda principala nu foloseste functii de grup, deci nu are nevoie de GROUP BY."}, {"nr": 6, "categorie": "OOP (C++)", "enunt": "Programul C++:\n\n#include <iostream>\nusing namespace std;\nclass A\n{\npublic:\n   A(){cout << \"A\";}\n   ~A() { cout << \"A\"; }\n};\nclass B : public A\n{\npublic:\n   B(){cout << \"B\";}\n   ~B() { cout << \"B\"; }\n};\nclass C : public B\n{\npublic:\n   C(){cout<<\"C\";}\n   ~C() { cout << \"C\"; }\n};\nint main()\n{\n   C c;\n   return 0;\n}\n\nVa afisa:", "variante": {"a": "ABCCBA", "b": "ABCABC", "c": "CBAABC", "d": "CBACBA"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "La instantierea obiectului \"C c;\" constructorii se apeleaza de la baza spre derivata: intai A() -> \"A\", apoi B() -> \"B\", apoi C() -> \"C\", rezultand \"ABC\". La iesirea din main, obiectul se distruge, iar destructorii se apeleaza in ordine inversa constructorilor, de la derivata spre baza: ~C() -> \"C\", ~B() -> \"B\", ~A() -> \"A\", rezultand \"CBA\". Concatenand: \"ABCCBA\". Deci a. Celelalte variante inverseaza gresit ordinea constructorilor sau a destructorilor (b, c, d nu respecta regula \"constructori bottom-up, destructori top-down\")."}, {"nr": 7, "categorie": "SQL", "enunt": "Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume_angajat\nVARCHAR2(35), data_angajare DATE, functie VARCHAR2(15), salariu NUMBER(5),\nid_departament NUMBER(3)) cu cel putin 100 de randuri (inregistrari).\nSe considera secventa de comenzi SQL-Oracle:\nCREATE TABLE angajati_noi\nAS\nSELECT * FROM angajati WHERE 1=2;\nINSERT INTO angajati_noi\nSELECT * FROM angajati\nWHERE data_angajare > TRUNC(sysdate,'year');\nALTER TABLE angajati_noi\nADD PRIMARY KEY (id_angajat);\nROLLBACK;\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "dupa executia intregului set de comenzi, din cauza comenzii ROLLBACK, tabela nou creata nu va avea nicio inregistrare", "b": "comanda INSERT va genera eroare din cauza sintaxei incorect utilizate", "c": "dupa executia intregului set de comenzi, tabela nou creata va contine inregistrari aferente angajatilor din anul curent", "d": "se va genera eroare din cauza tentativei de duplicare a restrictiei de cheie primara"}, "raspuns_barem": "c", "raspuns_corect": "c", "status_verificare": "CONFIRMAT", "explicatie": "CREATE TABLE ... AS SELECT ... WHERE 1=2 creeaza o tabela cu structura identica cu ANGAJATI dar fara randuri (conditia 1=2 este mereu falsa). INSERT-ul adauga angajatii cu data_angajare > inceputul anului curent (TRUNC(sysdate,'year') = 1 ianuarie an curent). Punctul cheie: ALTER TABLE este o comanda DDL, iar in Oracle orice DDL provoaca un COMMIT implicit. Astfel, INSERT-ul este consolidat (commit) inainte de ALTER TABLE. Ca urmare, ROLLBACK-ul ulterior nu mai are ce anula (nu exista tranzactie DML nefinalizata), iar tabela pastreaza inregistrarile angajatilor din anul curent. Deci c. a este falsa tocmai din cauza commit-ului implicit generat de DDL. b este falsa: sintaxa INSERT INTO ... SELECT este corecta. d este falsa: nu exista duplicare de PRIMARY KEY - ADD PRIMARY KEY adauga o singura restrictie, iar tabela creata prin CTAS nu copiaza restrictiile de cheie primara."}, {"nr": 8, "categorie": "SQL", "enunt": "Fie tabelele:\nCLIENTI (id_client NUMBER(5) PRIMARY KEY, nume_client VARCHAR2(50), telefon\nVARCHAR2(10)) cu cel putin 10 randuri (inregistrari).\nRAND_COMENZI (id_produs NUMBER(5), id_comanda NUMBER(5), pret NUMBER(8,2),\ncantitate NUMBER(8,2)) cu cel putin 200 de randuri (inregistrari).\nCOMENZI (id_comanda NUMBER(5) PRIMARY KEY, id_client NUMBER(5), data DATE) cu\ncel putin 100 de randuri (inregistrari).\nPrecizati care este efectul comenzii SQL-Oracle:\nCREATE or REPLACE VIEW v_comenzi AS\nSELECT cl.nume_client,EXTRACT(MONTH FROM data) luna, c.id_comanda,\nROUND(SUM(rc.pret*rc.cantitate),2) valoare_comanda\nFROM clienti cl, rand_comenzi rc, comenzi c\nWHERE cl.id_client=c.id_client\nAND rc.id_comanda=c.id_comanda\nAND EXTRACT(MONTH FROM data)<=07\nGROUP BY cl.nume_client,EXTRACT(MONTH FROM data), c.id_comanda\nHAVING SUM(rc.pret*rc.cantitate) >=3000\nORDER BY 1, 2;", "variante": {"a": "clauza ORDER BY este incorect utilizata", "b": "crearea unei tabele virtuale prin care se vor selecta numele clientilor si comenzile realizate pana in luna iulie (inclusiv) doar din anul curent, indiferent de valoarea comandata", "c": "crearea unei tabele virtuale prin care se vor selecta numele clientilor care au realizat comenzi cu valoarea mai mare de 3000 pana in luna iulie (inclusiv) indiferent de an", "d": "se va afisa o eroare deoarece EXTRACT(MONTH FROM data) nu se poate utiliza in clauza GROUP BY"}, "raspuns_barem": "c", "raspuns_corect": "c", "status_verificare": "CONFIRMAT", "explicatie": "Comanda creeaza o vedere (tabela virtuala). Filtrul EXTRACT(MONTH FROM data)<=07 selecteaza doar comenzile din lunile 1-7 (pana in iulie inclusiv), dar EXTRACT(MONTH ...) extrage numai luna, fara a filtra si dupa an - deci sunt incluse comenzi din orice an. Clauza HAVING SUM(rc.pret*rc.cantitate) >= 3000 pastreaza doar comenzile cu valoare totala de cel putin 3000. Afirmatia c surprinde ambele aspecte esentiale: valoarea filtrata (aprox. peste 3000) si \"indiferent de an\". b este falsa deoarece afirma \"doar din anul curent\" (fals - nu exista filtru de an) si \"indiferent de valoarea comandata\" (fals - HAVING filtreaza valoarea). a este falsa: ORDER BY 1, 2 (dupa pozitia coloanelor) este permis in Oracle intr-o vedere. d este falsa: EXTRACT(MONTH FROM data) este o expresie valida in GROUP BY (se grupeaza chiar dupa expresia din SELECT). Observatie tehnica: HAVING foloseste \">=3000\", deci strict \"mai mare de 3000\" din varianta c este o mica imprecizie de formulare, insa c ramane singura varianta corecta."}, {"nr": 9, "categorie": "PL/SQL", "enunt": "Fie tabela: ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume_angajat\nVARCHAR2(35), data_angajare DATE, functie VARCHAR2(15), salariul NUMBER(5),\nid_departament NUMBER(3)) cu cel putin 100 de randuri (inregistrari).\nSe considera urmatoarea secventa PL/SQL:\nCREATE OR REPLACE PROCEDURE sal_mediu (p_sal_mediu OUT NUMBER)\nAS\nBEGIN\nSELECT AVG(salariul) INTO p_sal_mediu FROM angajati WHERE 1=2;\nEND;\n/\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "in cadrul comenzilor din corpul procedurii se utilizeaza o clauza de grupare", "b": "se genereaza eroare deoarece nicio inregistrare nu indeplineste conditia", "c": "se genereaza eroare deoarece lipseste comanda RETURN", "d": "dupa apelul procedurii, parametrul va primi valoarea NULL"}, "raspuns_barem": "d", "raspuns_corect": "d", "status_verificare": "CONFIRMAT", "explicatie": "SELECT-ul foloseste o functie de grup (AVG) fara GROUP BY, deci este o interogare de grup care returneaza intotdeauna exact un rand, chiar si atunci cand niciun rand-sursa nu indeplineste conditia (aici WHERE 1=2 este mereu fals, deci 0 randuri agregate). AVG peste multimea vida returneaza NULL, iar acel NULL este atribuit parametrului OUT p_sal_mediu. Prin urmare NU se declanseaza exceptia NO_DATA_FOUND (aceasta apare doar la SELECT INTO fara functii de grup). Deci d. b este falsa: functiile de grup nu genereaza NO_DATA_FOUND pe multime vida. c este falsa: RETURN nu este necesar intr-o procedura (doar functiile returneaza valoare). a este partial adevarata ca observatie (AVG este functie de agregare), dar nu exista o clauza GROUP BY explicita, iar afirmatia nu raspunde la ce se intampla la executie; d este raspunsul corect si complet."}, {"nr": 10, "categorie": "C/C++", "enunt": "Fiind dat programul:\n#include <stdio.h>\nvoid main()\n{\n        int a = 1, b = 3;\n        while (1)\n        {\n                 a *= --b;\n                 if (CONDITIE) break;\n        }\n        printf(\"%d\", a);\n}\nCare este expresia cu care trebuie sa se substituie CONDITIE astfel incat programul sa afiseze 0?", "variante": {"a": "b > 0", "b": "b == 0", "c": "b != 0", "d": "b >= 0"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Se urmareste evolutia lui b (pre-decrementat) si a lui a la fiecare iteratie: initial a=1, b=3. Iteratia 1: --b face b=2, a=1*2=2. Iteratia 2: --b face b=1, a=2*1=2. Iteratia 3: --b face b=0, a=2*0=0. Pentru a afisa 0, trebuie sa se iasa din bucla EXACT dupa iteratia in care a devine 0, adica atunci cand b a ajuns la 0. Doar conditia b==0 se indeplineste prima data la iteratia 3 (cand b=0, deci a=0), producand break si afisarea lui 0. Analizam celelalte: a) b>0 se indeplineste inca de la iteratia 1 (b=2>0), break cu a=2. c) b!=0 se indeplineste tot la iteratia 1 (b=2), a=2. d) b>=0 se indeplineste la iteratia 1 (b=2), a=2. Doar b==0 amana iesirea pana cand a devine 0."}, {"nr": 11, "categorie": "OOP (C++)", "enunt": "Care va fi rezultatul rularii urmatorului program C++ ?\n\n#include <iostream>\nusing namespace std;\nclass A\n{\npublic:\n   A() { }\n   A(int) { cout<<\"Copiere \";}\n   A(const A&) { cout << \"Copiere \"; }\n   A& operator=(A) { cout << \"Atribuire \"; return *this; }\n   A& operator=(int) { cout << \"Atribuire \"; return *this; }\n};\n\nint main()\n{\n   A ob1;\n   A ob2=ob1, ob3=7;\n   ob3 = ob1;\n   return 0;\n}", "variante": {"a": "Va afisa Copiere Atribuire Copiere Atribuire Copiere Atribuire", "b": "Va afisa Copiere Copiere Atribuire", "c": "Va afisa Copiere Copiere Copiere Atribuire", "d": "Va genera erori de compilare deoarece constructorii nu sunt corect definiti"}, "raspuns_barem": "c", "raspuns_corect": "c", "status_verificare": "CONFIRMAT", "explicatie": "Se analizeaza fiecare instructiune. \"A ob1;\" apeleaza constructorul implicit A() - nu afiseaza nimic. \"A ob2=ob1;\" este initializare prin copiere, apeleaza constructorul de copiere A(const A&) -> afiseaza \"Copiere \". \"A ob3=7;\" este initializare cu un int, apeleaza constructorul de conversie A(int) -> afiseaza \"Copiere \". \"ob3 = ob1;\" este o atribuire intre doua obiecte A, deci se selecteaza operator=(A); deoarece parametrul este primit PRIN VALOARE (A, nu A&), argumentul ob1 este copiat -> se apeleaza constructorul de copiere A(const A&) -> \"Copiere \", apoi corpul operatorului afiseaza \"Atribuire \". Rezultatul total: \"Copiere Copiere Copiere Atribuire\". Deci c. b omite copierea argumentului la operator=(A). a presupune un numar gresit de operatii. d este falsa: definitiile sunt corecte, programul compileaza."}, {"nr": 12, "categorie": "Baze de date (teorie)", "enunt": "Precizati care din urmatoarele afirmatii este corecta:", "variante": {"a": "in diagrama entitate-asociere, un atribut compus are valoarea calculata pe baza valorilor altor atribute", "b": "in diagrama entitate-asociere, asocierea recursiva se realizeaza intre o entitate si ea insasi", "c": "in modelul relational, restrictia entitatii se implementeaza prin UNIQUE", "d": "conceptul de tuplu din teoria relationala are corespondent conceptul de coloana la implementarea unei tabele"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Asocierea recursiva (unara) leaga o entitate de ea insasi - exemplu clasic: un ANGAJAT este sef pentru alt ANGAJAT. Deci b este corecta. a confunda atributul compus cu atributul derivat: atributul compus este cel care se descompune in subatribute (ex: adresa = strada+oras+cod), iar cel calculat pe baza altora este atributul DERIVAT. c este gresita: restrictia entitatii (integritatea entitatii - cheia primara nu poate fi NULL si trebuie sa fie unica) se implementeaza prin PRIMARY KEY, nu prin UNIQUE (UNIQUE permite valori NULL si implementeaza restrictia de cheie candidata/unicitate). d este gresita: tuplul din teoria relationala corespunde unui RAND (inregistrare) la implementare, nu unei coloane (coloana corespunde atributului)."}, {"nr": 13, "categorie": "PL/SQL", "enunt": "Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30),\nprenume VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament\nNUMBER(3)) avand 200 de randuri (inregistrari).\nSe considera urmatoarea secventa PL/SQL:\nSET SERVEROUTPUT ON\nDECLARE\nCURSOR cang (pid_dep NUMBER) is SELECT * FROM angajati WHERE\nid_departament=pid_dep;\nrang cang%ROWTYPE;\nBEGIN\nOPEN cang (20);\nDBMS_OUTPUT.PUT_LINE('______Departamentul 20');\nLOOP\n  FETCH cang INTO rang;\n  EXIT WHEN cang%NOTFOUND;\n  DBMS_OUTPUT.PUT_LINE('Angajatul '||rang.nume||' are salariul '||rang.salariul);\nEND LOOP;\nCLOSE cang;\nIF NOT cang%ISOPEN THEN\n  DBMS_OUTPUT.PUT_LINE('______Departamentul 30');\n  OPEN cang (30);\n  LOOP\n     FETCH cang INTO rang;\n     EXIT WHEN cang%ROWCOUNT>2 OR cang%NOTFOUND;\n     DBMS_OUTPUT.PUT_LINE('Angajatul '||rang.nume||' are salariul '||rang.salariul);\n  END LOOP;\n  CLOSE cang;\nEND IF;\nEND;\n/\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "se utilizeaza un cursor explicit cu parametru pentru afisarea angajatilor din 2 departamente", "b": "cursorul nu se poate deschide pentru parcurgerea angajatilor din departamentul 30 deoarece conditia 'NOT cang%ISOPEN' nu este indeplinita", "c": "conditiile 'EXIT WHEN cang%ROWCOUNT>2 OR cang%NOTFOUND' vor conduce la un ciclu infinit", "d": "conditiile 'EXIT WHEN cang%rowcount>2 OR cang%NOTFOUND' vor permite intotdeauna afisarea tuturor angajatilor din departamentul 30 indiferent de numarul lor"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Se declara un cursor explicit cu parametru: CURSOR cang(pid_dep NUMBER). Acesta este deschis intai cu OPEN cang(20) pentru afisarea angajatilor din departamentul 20, apoi, dupa inchidere, cu OPEN cang(30) pentru departamentul 30. Deci a este corecta - un cursor explicit parametrizat foloseste angajatii din 2 departamente. b este falsa: dupa CLOSE cang, atributul cang%ISOPEN devine FALSE, deci \"NOT cang%ISOPEN\" este TRUE, iar ramura IF se executa si cursorul se redeschide fara probleme. c este falsa: bucla nu este infinita - EXIT-ul se produce fie cand ROWCOUNT>2, fie cand NOTFOUND. d este falsa: conditia cang%ROWCOUNT>2 limiteaza afisarea la primii angajati (iese dupa ce s-au preluat mai mult de 2 randuri), deci NU se afiseaza intotdeauna toti angajatii din departamentul 30."}, {"nr": 14, "categorie": "PL/SQL", "enunt": "Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30),\nprenume VARCHAR2(30), email VARCHAR2(30), salariul NUMBER(10,2), data_angajare\nDATE, id_departament NUMBER(3)) avand 200 de randuri (inregistrari).\nSe considera urmatoarea functie PL/SQL:\nCREATE or REPLACE FUNCTION f_add_ang(sal NUMBER)\nRETURN NUMBER\nIS\nBEGIN\n  INSERT INTO angajati(id_angajat, nume, email, data_angajare, id_departament, salariul)\nVALUES (1, 'Frost', 'jfrost@company.com',SYSDATE, 30, sal);\n  RETURN (sal + 100);\nEND;\n/\nFie comanda SQL-Oracle:\nSELECT id_angajat, salariul, f_add_ang(salariul) FROM angajati;\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "comanda SELECT afiseaza id-ul, salariul actual si salariul majorat cu 100 in urma apelului functiei f_add_ang(salariul)", "b": "functia se compileaza cu succes dar nu poate fi apelata in comanda SELECT", "c": "comanda SELECT va realiza in paralel si adaugarea angajatului Frost", "d": "functia nu se va compila cu succes deoarece contine o comanda de manipulare a datelor"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Functia f_add_ang contine o comanda DML (INSERT). La CREARE functia se COMPILEAZA cu succes - Oracle permite includerea comenzilor DML in corpul unei functii. Insa APELAREA unei astfel de functii dintr-o comanda SELECT (care doar interogheaza) este interzisa: se declanseaza eroarea de executie ORA-14551 \"cannot perform a DML operation inside a query\". Prin urmare functia se compileaza, dar nu poate fi apelata din SELECT. Deci b. a este falsa: comanda SELECT nu afiseaza rezultatele, ci esueaza cu ORA-14551. c este falsa: INSERT-ul nu se executa in paralel, comanda esueaza. d este falsa: functia SE compileaza (compilarea nu verifica restrictia de purity DML - aceasta se manifesta la runtime cand functia e chemata din SQL)."}, {"nr": 15, "categorie": "OOP (C++)", "enunt": "Care va fi outputul generat la rularea programului C++ de mai jos?\n\n#include <iostream>\nusing namespace std;\n\nclass B {\nprotected:\n   double a = 10;\npublic:\n   virtual double f(double x) { return a*x*x; }\n};\n\nclass D : public B {\npublic:\n   double f(double x) { return a*x; }\n};\n\nint main() {\n   B* p = new D;\n   cout<<p->f(10)<<endl;\n   return 0;\n}", "variante": {"a": "1000", "b": "100", "c": "0", "d": "Va genera o eroare de compilare deoarece obiectul p nu este corect instantiat"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Metoda f este declarata \"virtual\" in clasa de baza B si este redefinita (override) in clasa derivata D. Pointerul p este de tip B* dar refera un obiect real de tip D (B* p = new D). Datorita legarii dinamice (polimorfism), apelul p->f(10) invoca versiunea din D: return a*x = 10*10 = 100. Membrul a=10 este mostenit din B (protected). Deci b (100). a=1000 ar fi rezultatul metodei din B (a*x*x=10*10*10), dar aceasta NU se apeleaza deoarece f este virtuala. c=0 este incorect. d este falsa: instantierea \"B* p = new D\" este perfect valida (upcasting - pointer de baza catre obiect derivat)."}, {"nr": 16, "categorie": "SQL", "enunt": "Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume_angajat\nVARCHAR2(35), data_angajare DATE, functie VARCHAR2(15), salariu NUMBER(5),\nid_departament NUMBER(3)) cu cel putin 100 de randuri (inregistrari).\nCare din urmatoarele interogari SQL-Oracle va returna o valoare numerica:", "variante": {"a": "SELECT TO_CHAR(ROUND(data_angajare, 'MONTH'),'MM') FROM angajati;", "b": "SELECT CASE WHEN id_angajat IS NULL THEN 1 ELSE NULL END valoare FROM angajati;", "c": "SELECT SUBSTR(nume_angajat,1,LENGTH(nume_angajat)-2) FROM angajati;", "d": "SELECT TRUNC(SYSDATE - 7,'MONTH') - data_angajare FROM angajati;"}, "raspuns_barem": "d", "raspuns_corect": "d", "status_verificare": "CONFIRMAT", "explicatie": "In Oracle, diferenta a doua valori de tip DATE produce un NUMBER (numarul de zile dintre ele). In varianta d, TRUNC(SYSDATE-7,'MONTH') este o data, iar scaderea din ea a lui data_angajare (tot data) returneaza un numar de zile - o valoare numerica. Deci d. a este falsa: TO_CHAR(...,'MM') returneaza un sir de caractere (VARCHAR2) reprezentand luna, nu o valoare numerica. c este falsa: SUBSTR returneaza un sir de caractere. b este discutabila ca tip declarat NUMBER, dar deoarece id_angajat este PRIMARY KEY (deci NEVER NULL), expresia CASE returneaza mereu NULL - nu produce o valoare numerica efectiva, ci NULL pe fiecare rand. Prin urmare singura interogare care returneaza cert o valoare numerica reala este d."}, {"nr": 17, "categorie": "OOP (C++)", "enunt": "In C++, atributul friend se poate asocia:", "variante": {"a": "numai functiilor", "b": "numai claselor", "c": "functiilor si claselor", "d": "numai claselor abstracte"}, "raspuns_barem": "c", "raspuns_corect": "c", "status_verificare": "CONFIRMAT", "explicatie": "In C++ cuvantul cheie friend poate fi aplicat atat functiilor (functii prietene individuale, care capata acces la membrii privati/protejati ai clasei), cat si claselor intregi (clase prietene - toate metodele clasei prietene au acces la membrii privati/protejati). Deci c. a si b sunt incomplete (friend nu se limiteaza doar la functii, respectiv doar la clase). d este gresita: nu exista restrictia ca prietenia sa se acorde numai claselor abstracte."}, {"nr": 18, "categorie": "OOP (C++)", "enunt": "Care dintre urmatorii opertori nu pot fi supraincarcati?", "variante": {"a": "+=", "b": ".", "c": ">>", "d": "!="}, "raspuns_barem": "c", "raspuns_corect": "b", "status_verificare": "EROARE_BAREM", "explicatie": "Baremul indica varianta c (>>), insa aceasta este GRESITA. Operatorul >> (extractie de flux / deplasare la dreapta) POATE fi supraincarcat - este chiar unul dintre cei mai des supraincarcati operatori (ex: istream& operator>>(istream&, T&)). Operatorul care NU poate fi supraincarcat este cel de la varianta b: \".\" (operatorul de acces la membru / punct). Lista completa a operatorilor NEsupraincarcabili in C++ este: \".\" (acces membru), \".*\" (pointer la membru), \"::\" (rezolutie de domeniu), \"?:\" (operator conditional ternar), plus sizeof, typeid, alignof. Operatorii += (a), >> (c) si != (d) sunt toti supraincarcabili. Prin urmare raspunsul corect real este b, nu c. Recomandare pentru studiu: retineti mnemonica \".\", \".*\", \"::\", \"?:\" - \"cei patru care nu se supraincarca\"."}, {"nr": 19, "categorie": "Baze de date (teorie)", "enunt": "Manipularea datelor presupune, printre altele:", "variante": {"a": "modificarea proprietatilor tabelelor", "b": "definirea restrictiilor de integritate", "c": "crearea tabelelor", "d": "stergerea randurilor dintr-o tabela"}, "raspuns_barem": "d", "raspuns_corect": "d", "status_verificare": "CONFIRMAT", "explicatie": "Manipularea datelor (LMD/DML - Data Manipulation Language) cuprinde operatiile asupra continutului (randurilor) tabelelor: INSERT (adaugare), UPDATE (modificare), DELETE (stergere randuri) si SELECT (interogare). Stergerea randurilor dintr-o tabela (DELETE) este o operatie DML, deci d este corecta. Celelalte trei apartin limbajului de definire a datelor (LDD/DDL): a) modificarea proprietatilor tabelelor = ALTER TABLE (DDL), b) definirea restrictiilor de integritate = tot DDL (constrangeri la CREATE/ALTER), c) crearea tabelelor = CREATE TABLE (DDL). Distinctia DDL (structura) vs DML (continut) este cheia."}, {"nr": 20, "categorie": "SQL", "enunt": "Pentru stergerea unei coloane dintr-o tabela se poate utiliza comanda SQL-Oracle:", "variante": {"a": "DROP column_name FROM table_name;", "b": "ALTER TABLE table_name DELETE column_name;", "c": "ALTER TABLE table_name DROP column_name PURGE CONSTRAINTS;", "d": "ALTER TABLE table_name DROP COLUMN column_name CASCADE CONSTRAINTS;"}, "raspuns_barem": "d", "raspuns_corect": "d", "status_verificare": "CONFIRMAT", "explicatie": "Sintaxa corecta in Oracle pentru stergerea unei coloane este ALTER TABLE nume_tabela DROP COLUMN nume_coloana [CASCADE CONSTRAINTS]. Optiunea CASCADE CONSTRAINTS elimina si constrangerile care depind de acea coloana (ex: chei referentiale), deci d este valida. a este gresita: nu exista comanda \"DROP column FROM table\" (DROP se aplica obiectelor precum tabele/vederi, nu coloanelor izolat). b este gresita: ALTER TABLE nu suporta clauza DELETE pentru coloane. c este gresita: sintaxa \"DROP column_name\" fara cuvantul cheie COLUMN nu este valida in aceasta forma, iar \"PURGE CONSTRAINTS\" nu este o optiune valida (optiunea corecta este CASCADE CONSTRAINTS)."}, {"nr": 21, "categorie": "C/C++", "enunt": "Care va fi outputul generat de urmatorul program C?\n\n#include <stdio.h>\nint main(){\n   for(int i=0;i<50;i+=10){\n      switch(i)\n      {\n      case 0:\n         i+=10;\n      case 10:\n         i+=10;\n         continue;\n      case 20:\n         i+=10;\n      case 30:\n         i+=10;\n         break;\n      default :\n         i+=10;\n      }\n      printf(\"%d \",i);\n   }\n}", "variante": {"a": "10 30 50", "b": "50", "c": "40", "d": "20 40"}, "raspuns_barem": "c", "raspuns_corect": "c", "status_verificare": "CONFIRMAT", "explicatie": "Se urmareste executia pas cu pas, atentie la lipsa unor break-uri (fall-through) si la continue. i=0: intra in switch pe case 0 -> i+=10 (i=10), fara break cade in case 10 -> i+=10 (i=20) si continue -> sare peste printf si merge la incrementarea for i+=10 (i=30). i=30 (<50): switch pe case 30 -> i+=10 (i=40), break -> se executa printf(\"%d \",40) => afiseaza \"40 \", apoi for i+=10 (i=50). i=50: conditia 50<50 este falsa, se iese din for. Output final: \"40 \". Deci c. Variantele a, b, d rezulta din interpretari gresite ale fall-through-ului sau ale efectului lui continue asupra incrementarii buclei."}, {"nr": 22, "categorie": "C/C++", "enunt": "Ce va afisa urmatorul program C?\n#include <stdio.h>\nstatic int x = 10;\nint main() {\n   printf(\"%d\", x++);\n   for (int i = 0; i < 5; i++) {\n      static int x = 30;\n      printf(\" %d\", x++);\n   }\n   static int x = 20;\n   printf(\" %d\\n\", x);\n   return 0;\n}", "variante": {"a": "10 30 31 32 33 34 35", "b": "10 30 31 32 33 34 11", "c": "10 11 12 13 14 15 16", "d": "10 30 31 32 33 34 20"}, "raspuns_barem": "d", "raspuns_corect": "d", "status_verificare": "CONFIRMAT", "explicatie": "Cheia este regula de vizibilitate a variabilelor si initializarea unica a variabilelor static. Primul printf(\"%d\", x++) se afla INAINTE de declararea variabilei locale \"static int x = 20;\" din main, deci se refera la x-ul global (=10): afiseaza 10, iar globalul devine 11. In bucla for exista \"static int x = 30;\" - variabila static locala buclei, initializata O SINGURA data; x++ afiseaza 30, 31, 32, 33, 34 pe cele 5 iteratii (post-incrementare). Dupa bucla, declaratia \"static int x = 20;\" (locala lui main, care umbreste globalul de aici incolo) are valoarea 20, iar ultimul printf afiseaza 20. Output: \"10 30 31 32 33 34 20\". Deci d. a presupune gresit continuarea numararii dupa bucla; b presupune ca ultimul x este globalul (11) - gresit, fiindca dupa declaratie x-ul local umbreste globalul; c ignora variabila static din bucla."}, {"nr": 23, "categorie": "C/C++", "enunt": "Fie expresia: x = (-b + sqrt(d)) / (2a) avand toate variabilele reale, ea va fi scrisa in C astfel:\n1. x= (-b+sqrt(d))/(2*a);\n2. x= -b+sqrt(d)/(2*a);\n3. x= (-b+sqrt(d))/2*a;\n4. x= (-b + pow(d,0.5)) / (2 * a);\nCare variante furnizeaza rezultatul corect pentru x:", "variante": {"a": "3 si 4", "b": "1 si 2", "c": "1 si 4", "d": "Nici una din cele patru"}, "raspuns_barem": "c", "raspuns_corect": "c", "status_verificare": "CONFIRMAT", "explicatie": "Expresia matematica este x = (-b + radical(d)) / (2*a). Analizam fiecare varianta tinand cont de prioritatea operatorilor si de asociativitate. Varianta 1: (-b+sqrt(d))/(2*a) - parantezele grupeaza corect numaratorul si numitorul; corecta. Varianta 2: -b+sqrt(d)/(2*a) - fara paranteze la numarator, se calculeaza -b + [sqrt(d)/(2*a)], gresit (adaugarea lui -b nu este in radical/numarator impartit). Varianta 3: (-b+sqrt(d))/2*a - impartirea si inmultirea au aceeasi prioritate si se evalueaza de la stanga la dreapta, deci se obtine ((-b+sqrt(d))/2)*a, adica se inmulteste cu a in loc sa se imparta la a; gresit. Varianta 4: (-b + pow(d,0.5)) / (2 * a) - pow(d,0.5) este echivalent cu sqrt(d), iar parantezarea este corecta; corecta. Prin urmare corecte sunt 1 si 4, deci raspunsul c."}, {"nr": 24, "categorie": "OOP (C++)", "enunt": "Analizati urmatorul program C++:\n\n#include <iostream>\nusing namespace std;\n\nclass Test {\npublic:\n   Test() { cout << \"Constructor \"; }\n};\n\nint main() {\n   Test v[3];\n   return 0;\n}\n\nCe va afisa programul?", "variante": {"a": "Eroare de compilare deoarece obiectele claselor nu pot fi stocate in vectori", "b": "Constructor", "c": "Nu va afisa nimic", "d": "Constructor Constructor Constructor"}, "raspuns_barem": "d", "raspuns_corect": "d", "status_verificare": "CONFIRMAT", "explicatie": "Declararea \"Test v[3];\" creeaza un vector (tablou) de 3 obiecte de tip Test. Pentru fiecare element al tabloului se apeleaza constructorul implicit al clasei Test, deci constructorul se executa de 3 ori, afisand \"Constructor Constructor Constructor\". Deci d. a este falsa: obiectele pot fi stocate in tablouri, este perfect legal. b este falsa: constructorul nu se apeleaza o singura data, ci pentru fiecare element. c este falsa: constructorul afiseaza text, deci se afiseaza ceva."}, {"nr": 25, "categorie": "C/C++", "enunt": "Ce va afisa urmatorul program C?\n\n#include <stdio.h>\nint f1(int n);\nint f2(int n) {\n   if (n == 0)\n      return 0;\n   else\n      return f1(n - 1);\n}\nint f1(int n) {\n   if (n == 0)\n      return 1;\n   else\n      return f2(n - 1);\n}\n\nint main() {\n   int x[] = {10,19,24,36,11},s=0;\n   for(int i=0;i<5;i++){\n      s+=f1(x[i]);\n   }\n   printf(\"%d\",s);\n   return 0;\n}", "variante": {"a": "3", "b": "70", "c": "30", "d": "100"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "f1 si f2 se apeleaza reciproc, scazand n cu 1 la fiecare pas si alternand functia. Pornind de la f1(n), lantul este f1(n) -> f2(n-1) -> f1(n-2) -> ... , scazand 1 de fiecare data. Cand argumentul ajunge la 0, valoarea returnata depinde de ce functie este apelata cu 0: f1(0) returneaza 1, iar f2(0) returneaza 0. Deoarece se pleaca de la f1 si paritatea se pastreaza, f1(n) returneaza 1 daca n este PAR (se ajunge la f1(0)=1) si 0 daca n este IMPAR (se ajunge la f2(0)=0). Evaluam: f1(10)=1 (par), f1(19)=0 (impar), f1(24)=1 (par), f1(36)=1 (par), f1(11)=0 (impar). Suma = 1+0+1+1+0 = 3. Deci a. Celelalte valori (70, 30, 100) nu corespund niciunei interpretari corecte a recursivitatii mutuale."}, {"nr": 26, "categorie": "SQL", "enunt": "Functia ROUND() in SQL-Oracle:", "variante": {"a": "accepta doar parametri de tip NUMBER", "b": "poate fi utilizata pe parametri de tip NUMBER si DATE", "c": "accepta parametri de tip DATE si returneaza intotdeauna luna curenta", "d": "comanda SELECT ROUND(sysdate, 'day') FROM dual va returna intotdeauna prima zi din anul curent"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "In Oracle exista doua forme ale functiei ROUND: ROUND(numar [, zecimale]) pentru rotunjirea valorilor numerice si ROUND(data [, format]) pentru rotunjirea datelor calendaristice la unitatea specificata (an, luna, zi etc.). Deci ROUND se poate aplica atat pe NUMBER cat si pe DATE - varianta b. a este falsa: ROUND accepta si DATE. c este falsa: ROUND pe DATE rotunjeste data conform formatului dat, nu returneaza \"intotdeauna luna curenta\". d este falsa: ROUND(sysdate,'day') rotunjeste la cea mai apropiata zi de inceput de saptamana (duminica), nu la \"prima zi din anul curent\" (aceea ar fi ROUND/TRUNC cu formatul 'YEAR')."}, {"nr": 27, "categorie": "PL/SQL", "enunt": "Precizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "parametrii unei proceduri PL/SQL trebuie sa fie intotdeauna de tip scalar", "b": "o functie PL/SQL trebuie sa contina cel putin o instructiune RETURN", "c": "o functie PL/SQL poate fi intotdeauna apelata intr-o expresie SQL", "d": "o functie PL/SQL nu poate primi decat parametri de intrare (de tipul IN)"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "O functie PL/SQL are obligatia de a returna o valoare, deci corpul ei trebuie sa contina cel putin o instructiune RETURN care furnizeaza valoarea de intoarcere (altfel apare eroarea \"function returned without value\" la executie). Deci b. a este falsa: parametrii unei proceduri pot fi si de tipuri compuse (record, %ROWTYPE, tablouri, colectii), nu doar scalari. c este falsa: o functie poate fi apelata in SQL DOAR daca respecta regulile de \"purity\" (ex: nu executa DML asupra tabelelor interogate, nu modifica variabile de pachet interzise); o functie cu INSERT/UPDATE/DELETE nu poate fi apelata in SELECT (vezi si intrebarea 14). d este falsa: o functie PL/SQL poate avea si parametri OUT sau IN OUT (desi practica recomandata este sa foloseasca doar IN)."}, {"nr": 28, "categorie": "C/C++", "enunt": "Fiind data secventa de cod:\n#include <stdio.h>\nstruct s\n{\n         int x[2];\n};\n\nunion u\n{\n          int x;\n          int y;\n};\n\nvoid main()\n{\n        struct s a;\n        union u b;\n}\nCare afirmatie este adevarata:", "variante": {"a": "Marimea in baiti a variabilei b este de trei ori mai mare decat marimea in baiti a variabilei a", "b": "Marimea in baiti a variabilei b este dublul marimii in baiti a variabilei a", "c": "Marimea in baiti a variabilei a este egala cu marimea in baiti a variabilei b", "d": "Marimea in baiti a variabilei a este dublul marimii in baiti a variabilei b"}, "raspuns_barem": "d", "raspuns_corect": "d", "status_verificare": "CONFIRMAT", "explicatie": "Variabila a este de tip struct s, care contine un tablou int x[2]. Dimensiunea unei structuri este suma dimensiunilor membrilor (aici, 2 * sizeof(int) = 2*4 = 8 baiti pe o platforma tipica cu int pe 4 baiti). Variabila b este de tip union u, care contine doi membri int (x si y) suprapusi in aceeasi zona de memorie; dimensiunea unei uniuni este maximul dimensiunilor membrilor = sizeof(int) = 4 baiti. Astfel sizeof(a)=8, sizeof(b)=4, deci marimea lui a este dublul marimii lui b (8 = 2*4). Raspunsul corect este d. a (b de trei ori mai mare) si b (b dublul lui a) inverseaza raportul. c (egale) este gresit deoarece dimensiunile difera. Diferenta fundamentala: struct insumeaza campurile, union le suprapune (retine maximul)."}, {"nr": 29, "categorie": "OOP (C++)", "enunt": "In C++, o clasa poate contine toate sectiunile (private, protected si public), in acelasi timp?", "variante": {"a": "da", "b": "da, numai daca este clasa abstracta", "c": "da, numai daca este o clasa de baza intr-o relatie de derivare", "d": "nu, acest lucru nu este permis"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "In C++ o clasa poate contine simultan oricate sectiuni de acces, in orice ordine si de oricate ori: private, protected si public pot coexista in aceeasi clasa. Nu exista nicio restrictie care sa lege prezenta tuturor celor trei sectiuni de statutul de clasa abstracta sau de baza. Deci a (da). b si c introduc conditii inexistente (abstracta / clasa de baza). d este falsa: combinarea sectiunilor este perfect permisa si frecvent folosita."}, {"nr": 30, "categorie": "C/C++", "enunt": "#include <stdio.h>\nvoid main()\n{\n        int a[][2] = { {1,2},{1,0} };\n        int v[] = { 10,20,30 };\n        printf(\"\\n%d\", v[a[1][1]] + v[**a+1]);\n}\nProgramul:", "variante": {"a": "Afiseaza 30", "b": "Afiseaza 40", "c": "Afiseaza 10", "d": "Genereaza o eroare datorita expresiei incorecte"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Matricea a are randurile a[0]={1,2} si a[1]={1,0}, iar v={10,20,30}. Se evalueaza expresia v[a[1][1]] + v[**a+1]. Primul termen: a[1][1] = 0, deci v[0] = 10. Al doilea termen: **a inseamna *(*a); *a este a[0] (adica adresa primului element al primului rand), iar *(*a) = a[0][0] = 1; deci **a+1 = 1+1 = 2, iar v[2] = 30. Suma = 10 + 30 = 40. Deci b. a (30) si c (10) iau in calcul doar un termen. d este falsa: expresia este perfect valida sintactic si semantic, nu genereaza eroare (indexii sunt in limitele tablourilor)."}]};
+
+/* ---------- theme ---------- */
+(function(){
+  const saved = localStorage.getItem('csie3-theme');
+  if(saved) document.documentElement.setAttribute('data-theme', saved);
+  document.getElementById('themeToggle').addEventListener('click', function(){
+    const cur = document.documentElement.getAttribute('data-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light');
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('csie3-theme', next);
+  });
+})();
+
+/* ---------- helpers ---------- */
+function escapeHtml(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+const CODE_RE = /[;{}]|^(SELECT|FROM|WHERE|GROUP BY|ORDER BY|HAVING|UPDATE|INSERT|DELETE|CREATE|DROP|ALTER|BEGIN|END|DECLARE|EXCEPTION|LOOP|EXIT|IF |IF\(|ELSIF|ELSE|RETURN|SET SERVEROUTPUT|DBMS_OUTPUT|#include|int |void |char |float |double |struct |class |public:|private:|protected:|printf|scanf|namespace |using |for\s*\(|while\s*\(|switch\s*\()/i;
+function isCodeLine(line){
+  if(line === '/') return true;
+  return CODE_RE.test(line);
+}
+function formatEnunt(text){
+  const rawLines = text.split('\n');
+  const groups = [];
+  let cur = null;
+  for(const raw of rawLines){
+    const line = raw.trim();
+    if(line === ''){ cur = null; continue; }
+    const type = isCodeLine(line) ? 'code' : 'text';
+    if(cur && cur.type === type){ cur.lines.push(line); }
+    else { cur = {type, lines:[line]}; groups.push(cur); }
+  }
+  return groups.map(g => g.type === 'code'
+    ? '<pre class="code">'+escapeHtml(g.lines.join('\n'))+'</pre>'
+    : '<p>'+escapeHtml(g.lines.join(' '))+'</p>'
+  ).join('');
+}
+function letters(str){
+  return str.split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);
+}
+
+/* ---------- state ---------- */
+const state = {
+  pool: [],
+  shuffleQ: true,
+  shuffleA: true,
+  selectedCats: new Set(DATA.questions.map(q=>q.categorie)),
+  index: 0,
+  score: 0,
+  order: [],
+  results: []
+};
+
+const categories = Array.from(new Set(DATA.questions.map(q=>q.categorie)));
+
+function catCount(cat){ return DATA.questions.filter(q=>q.categorie===cat).length; }
+
+function renderChips(){
+  const el = document.getElementById('categoryChips');
+  el.innerHTML = '';
+  categories.forEach(cat=>{
+    const chip = document.createElement('div');
+    chip.className = 'chip active';
+    chip.innerHTML = escapeHtml(cat)+' <span class="count">'+catCount(cat)+'</span>';
+    chip.addEventListener('click', ()=>{
+      if(state.selectedCats.has(cat)){
+        if(state.selectedCats.size>1){ state.selectedCats.delete(cat); chip.classList.remove('active'); }
+      } else {
+        state.selectedCats.add(cat); chip.classList.add('active');
+      }
+      updateStartBtn();
+    });
+    el.appendChild(chip);
+  });
+}
+
+function updateStartBtn(){
+  const n = DATA.questions.filter(q=>state.selectedCats.has(q.categorie)).length;
+  document.getElementById('startBtn').textContent = 'Începe testul ('+n+' întrebări)';
+  document.getElementById('startBtn').disabled = n===0;
+}
+
+document.getElementById('toggleShuffleQ').addEventListener('click', function(){
+  state.shuffleQ = !state.shuffleQ; this.classList.toggle('on', state.shuffleQ);
+});
+document.getElementById('toggleShuffleA').addEventListener('click', function(){
+  state.shuffleA = !state.shuffleA; this.classList.toggle('on', state.shuffleA);
+});
+
+function showView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+}
+
+function bestScoreKey(){ return 'csie3-best-'+DATA.year; }
+function loadBest(){
+  const raw = localStorage.getItem(bestScoreKey());
+  return raw ? JSON.parse(raw) : null;
+}
+function renderBestNote(){
+  const b = loadBest();
+  const el = document.getElementById('bestScoreNote');
+  el.textContent = b ? ('Cel mai bun scor anterior: '+b.score+'/'+b.total+' ('+b.pct+'%)') : '';
+}
+
+document.getElementById('startBtn').addEventListener('click', startQuiz);
+document.getElementById('quitBtn').addEventListener('click', ()=>{ showView('setup'); renderBestNote(); });
+document.getElementById('restartBtn').addEventListener('click', ()=>{ showView('setup'); renderBestNote(); });
+document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+
+function startQuiz(){
+  let pool = DATA.questions.filter(q=>state.selectedCats.has(q.categorie));
+  if(state.shuffleQ) pool = shuffle(pool);
+  state.pool = pool;
+  state.index = 0;
+  state.score = 0;
+  state.results = [];
+  state.order = pool.map(q=>{
+    const opts = ['a','b','c','d'];
+    return state.shuffleA ? shuffle(opts) : opts;
+  });
+  showView('quiz');
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const q = state.pool[state.index];
+  const dispOrder = state.order[state.index];
+  document.getElementById('progressBar').style.width = Math.round(100*state.index/state.pool.length)+'%';
+  document.getElementById('quizPos').textContent = 'Întrebarea '+(state.index+1)+' din '+state.pool.length;
+  document.getElementById('quizCat').textContent = q.categorie;
+  document.getElementById('quizScore').textContent = 'Scor: '+state.score;
+  document.getElementById('quizEnunt').innerHTML = formatEnunt(q.enunt);
+  document.getElementById('nextBtn').style.display = 'none';
+  const fb = document.getElementById('quizFeedback');
+  fb.classList.remove('show','ok','ko');
+  document.getElementById('fbBaremWarn').style.display = 'none';
+
+  const optsEl = document.getElementById('quizOptions');
+  optsEl.innerHTML = '';
+  optsEl.dataset.locked = '0';
+  const displayLetters = ['A','B','C','D'];
+  dispOrder.forEach((origLetter, i)=>{
+    const btn = document.createElement('div');
+    btn.className = 'opt';
+    btn.dataset.orig = origLetter;
+    btn.innerHTML = '<span class="letter">'+displayLetters[i]+')</span><span class="txt">'+escapeHtml(q.variante[origLetter])+'</span>';
+    btn.addEventListener('click', ()=>selectOption(origLetter));
+    optsEl.appendChild(btn);
+  });
+}
+
+function selectOption(chosenLetter){
+  const q = state.pool[state.index];
+  const optsEl = document.getElementById('quizOptions');
+  if(optsEl.dataset.locked === '1') return;
+  optsEl.dataset.locked = '1';
+
+  const correctSet = letters(q.raspuns_corect);
+  const baremSet = letters(q.raspuns_barem);
+  const isCorrect = correctSet.includes(chosenLetter);
+  if(isCorrect) state.score++;
+
+  Array.from(optsEl.children).forEach(btn=>{
+    btn.classList.add('locked');
+    const l = btn.dataset.orig;
+    if(correctSet.includes(l)) btn.classList.add('correct');
+    else if(l === chosenLetter) btn.classList.add('incorrect');
+    else btn.classList.add('dim');
+    let tag = 'sursă: '+l.toUpperCase();
+    if(q.status_verificare === 'EROARE_BAREM' && baremSet.includes(l) && !correctSet.includes(l)){
+      tag += ' · alegerea baremului oficial';
+    }
+    const span = document.createElement('span');
+    span.className = 'tag';
+    span.textContent = tag;
+    btn.appendChild(span);
+  });
+
+  const fb = document.getElementById('quizFeedback');
+  fb.classList.add('show', isCorrect ? 'ok':'ko');
+  const title = document.getElementById('fbTitle');
+  title.className = 'fb-title '+(isCorrect?'ok-txt':'ko-txt');
+  title.textContent = isCorrect ? '✓ Corect' : ('✗ Greșit — răspunsul corect: '+correctSet.join(', ').toUpperCase());
+
+  const warnEl = document.getElementById('fbBaremWarn');
+  if(q.status_verificare === 'EROARE_BAREM'){
+    warnEl.style.display = 'block';
+    warnEl.textContent = '⚠ Barem oficial eronat: documentul original indică "'+baremSet.join(', ').toUpperCase()+'", dar răspunsul corect verificat este "'+correctSet.join(', ').toUpperCase()+'". Detalii mai jos.';
+  } else {
+    warnEl.style.display = 'none';
+  }
+  document.getElementById('fbExplic').textContent = q.explicatie;
+  document.getElementById('nextBtn').style.display = 'inline-flex';
+  document.getElementById('quizScore').textContent = 'Scor: '+state.score;
+
+  state.results.push({
+    nr: q.nr, categorie: q.categorie, chosen: chosenLetter, correctSet, isCorrect,
+    variante: q.variante, explicatie: q.explicatie, status_verificare: q.status_verificare,
+    baremSet
+  });
+}
+
+function nextQuestion(){
+  state.index++;
+  if(state.index >= state.pool.length){ renderResults(); showView('results'); }
+  else renderQuestion();
+}
+
+function renderResults(){
+  const total = state.results.length;
+  const score = state.results.filter(r=>r.isCorrect).length;
+  const pct = total ? Math.round(100*score/total) : 0;
+  document.getElementById('resScoreN').textContent = score+'/'+total;
+  document.getElementById('resPercent').textContent = pct+'%';
+  document.getElementById('resPunctaj').textContent = 'Punctaj estimat: '+(score*3)+' puncte (din '+(total*3)+')';
+
+  const best = loadBest();
+  if(!best || score/total > best.score/best.total){
+    localStorage.setItem(bestScoreKey(), JSON.stringify({score, total, pct}));
+  }
+
+  const catStats = {};
+  state.results.forEach(r=>{
+    catStats[r.categorie] = catStats[r.categorie] || {ok:0,total:0};
+    catStats[r.categorie].total++;
+    if(r.isCorrect) catStats[r.categorie].ok++;
+  });
+  const catBarsEl = document.getElementById('resCatBars');
+  catBarsEl.innerHTML = '';
+  Object.keys(catStats).forEach(cat=>{
+    const s = catStats[cat];
+    const p = Math.round(100*s.ok/s.total);
+    const row = document.createElement('div');
+    row.className = 'cat-bar-row';
+    row.innerHTML = '<div class="cat-bar-label"><span>'+escapeHtml(cat)+'</span><span>'+s.ok+'/'+s.total+'</span></div>'+
+      '<div class="cat-bar-outer"><div class="cat-bar-inner" style="width:'+p+'%"></div></div>';
+    catBarsEl.appendChild(row);
+  });
+
+  const tbody = document.getElementById('resTableBody');
+  tbody.innerHTML = '';
+  state.results.forEach((r, idx)=>{
+    const tr = document.createElement('tr');
+    tr.className = r.isCorrect ? 'hit':'miss';
+    tr.innerHTML = '<td>'+(r.isCorrect?'✓':'✗')+' '+r.nr+'</td><td>'+escapeHtml(r.categorie)+'</td><td>'+r.chosen.toUpperCase()+'</td><td>'+r.correctSet.join(',').toUpperCase()+'</td>';
+    const detail = document.createElement('tr');
+    detail.className = 'review-detail';
+    const td = document.createElement('td');
+    td.colSpan = 4;
+    let warnHtml = '';
+    if(r.status_verificare === 'EROARE_BAREM'){
+      warnHtml = '<div class="barem-warn" style="display:block;margin-bottom:8px">⚠ Barem oficial eronat (indica '+r.baremSet.join(',').toUpperCase()+')</div>';
+    }
+    td.innerHTML = warnHtml + escapeHtml(r.explicatie).replace(/\n/g,'<br>');
+    detail.appendChild(td);
+    tr.addEventListener('click', ()=>{ detail.classList.toggle('show'); });
+    tbody.appendChild(tr);
+    tbody.appendChild(detail);
+  });
+}
+
+renderChips();
+updateStartBtn();
+renderBestNote();
+</script>
+</body>
+</html>

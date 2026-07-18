@@ -1,0 +1,809 @@
+=== ADMITERE MASTER CSIE3 - TEST SIMULARE 3 ===
+Sursă: generat original, pe baza tiparelor din subiectele 2024-2025
+Format sursă original: intrebari noi, verificate prin compilare (C/C++, OOP) si
+  rationament riguros (SQL, PL/SQL)
+Număr total întrebări: 30
+Punctaj: 3 puncte/întrebare corectă, punctaj maxim 90 puncte
+
+##### ÎNTREBAREA 1 #####
+CATEGORIE: C/C++
+ENUNT:
+Fiind dat programul:
+#include <stdio.h>
+#include <string.h>
+int main() {
+    char s[] = "Ma1nStrinG";
+    int c = 0;
+    for (int i = 0; i < (int)strlen(s); i++) {
+        if (s[i] >= 'a' && s[i] <= 'z') c++;
+    }
+    printf("%d", c);
+    return 0;
+}
+Ce se afiseaza la executie?
+
+VARIANTE:
+a) 4
+b) 5
+c) 6
+d) 10
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Programul parcurge sirul "Ma1nStrinG" caracter cu caracter si numara doar literele mici (cuprinse intre 'a' si 'z' in codul ASCII). Caracterele sirului sunt: 'M' (majuscula, nu), 'a' (da), '1' (cifra, nu), 'n' (da), 'S' (majuscula, nu), 't' (da), 'r' (da), 'i' (da), 'n' (da), 'G' (majuscula, nu). Literele mici sunt: a, n, t, r, i, n = 6. Deci se afiseaza 6, varianta c. Variantele a (4) si b (5) rezulta dintr-o numarare incompleta. Varianta d (10) ar fi lungimea totala a sirului (strlen), nu numarul de litere mici. Programul a fost compilat cu gcc si rulat, output real: 6.
+
+##### ÎNTREBAREA 2 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Fiind dat programul C++:
+#include <iostream>
+using namespace std;
+class Vector2 {
+    int x, y;
+public:
+    Vector2(int a, int b) : x(a), y(b) {}
+    Vector2 operator+(const Vector2& v) {
+        return Vector2(x + v.x, y + v.y);
+    }
+    void afis() { cout << x << " " << y; }
+};
+int main() {
+    Vector2 a(1, 2), b(3, 4);
+    Vector2 c = a + b;
+    c.afis();
+    return 0;
+}
+Ce se afiseaza la executie?
+
+VARIANTE:
+a) 1 2
+b) 3 4
+c) 4 6
+d) 4 5
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: operator+ este supraincarcat ca metoda membru: la evaluarea "a + b", obiectul a este receptorul (this), iar b este argumentul v. Metoda returneaza un nou Vector2 cu componentele x+v.x = 1+3 = 4 si y+v.y = 2+4 = 6. Obiectul c primeste aceste valori, iar afis() tipareste "4 6", deci varianta c. Variantele a si b reproduc doar componentele obiectelor initiale a, respectiv b, ignorand adunarea. Varianta d contine un rezultat gresit pentru a doua componenta. Programul a fost compilat cu g++ -std=c++11 si rulat, output real: 4 6.
+
+##### ÎNTREBAREA 3 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela:
+ANGAJATI(id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), salariul NUMBER(10,2),
+comision NUMBER(10,2), id_departament NUMBER(3)) avand 200 de randuri (inregistrari),
+in care coloana salariul este completata pentru toti angajatii, iar coloana comision
+are valoarea NULL pentru 60 dintre angajati.
+Se considera comanda SQL-Oracle:
+SELECT COUNT(*), COUNT(salariul), COUNT(comision) FROM angajati;
+Ce valori returneaza, in aceasta ordine, comanda?
+
+VARIANTE:
+a) 200, 200, 200
+b) 200, 200, 140
+c) 200, 140, 140
+d) 140, 140, 140
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: COUNT(*) numara toate randurile tabelei, indiferent de valorile NULL, deci returneaza 200. COUNT(nume_coloana) numara doar valorile care NU sunt NULL din coloana respectiva. Deoarece salariul este completat pentru toti cei 200 de angajati, COUNT(salariul) = 200. Deoarece comision este NULL pentru 60 de angajati, COUNT(comision) numara doar cele 200-60 = 140 valori nenule. Rezultatul este 200, 200, 140, varianta b. Aceasta este capcana clasica a diferentei dintre COUNT(*) si COUNT(coloana): doar COUNT(coloana) exclude valorile NULL, in timp ce COUNT(*) le include. Variantele a, c, d rezulta din aplicarea gresita a acestei reguli.
+
+##### ÎNTREBAREA 4 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera urmatoarea procedura PL/SQL:
+CREATE OR REPLACE PROCEDURE p_maresc (x IN NUMBER)
+IS
+BEGIN
+  x := x + 1;
+  DBMS_OUTPUT.PUT_LINE(x);
+END;
+/
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) procedura se compileaza cu succes si, la apel cu p_maresc(10), afiseaza 11
+b) procedura genereaza eroare la compilare, deoarece unui parametru de tip IN nu i se poate atribui o valoare in corpul procedurii
+c) procedura se compileaza cu succes, dar la apel arunca exceptia VALUE_ERROR
+d) procedura se compileaza cu succes si afiseaza 10, deoarece parametrul IN nu poate fi modificat
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: In PL/SQL, un parametru declarat IN (modul implicit, folosit pentru transmiterea de valori catre subprogram) este tratat ca o constanta in interiorul subprogramului: are valoare doar in citire (read-only) si nu i se poate atribui nimic. Instructiunea "x := x + 1;" incearca sa modifice parametrul IN, ceea ce produce o eroare la compilare (PLS-00363: expression 'X' cannot be used as an assignment target). Prin urmare procedura nici nu se compileaza, varianta b este corecta. a este falsa: atribuirea catre x impiedica compilarea, deci nu se ajunge la afisare. c este falsa: nu este o eroare de executie (VALUE_ERROR), ci o eroare de compilare. d este falsa: procedura nu se compileaza deloc, deci nu afiseaza nimic. Pentru a permite modificarea, parametrul ar trebui declarat IN OUT sau OUT.
+
+##### ÎNTREBAREA 5 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Fiind dat programul C++:
+#include <iostream>
+using namespace std;
+class Punct {
+    int x, y;
+public:
+    Punct(int a, int b) : x(a), y(b) {}
+    bool operator==(const Punct& p) const {
+        return x == p.x && y == p.y;
+    }
+};
+int main() {
+    Punct a(2, 3), b(2, 3), c(2, 4);
+    cout << (a == b) << (a == c);
+    return 0;
+}
+Ce se afiseaza la executie?
+
+VARIANTE:
+a) 11
+b) 10
+c) 01
+d) 00
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: operator== este supraincarcat pentru a compara doua obiecte Punct pe baza ambelor componente. Expresia (a == b) compara a(2,3) cu b(2,3): ambele componente sunt egale, deci returneaza true, care se afiseaza ca 1. Expresia (a == c) compara a(2,3) cu c(2,4): componenta y difera (3 vs 4), deci returneaza false, care se afiseaza ca 0. In C++, valorile bool sunt convertite implicit la 1 (true) si 0 (false) la afisarea cu cout. Rezultatul concatenat este "10", varianta b. Variantele a, c, d corespund unor rezultate gresite ale comparatiilor. Programul a fost compilat cu g++ -std=c++11 si rulat, output real: 10.
+
+##### ÎNTREBAREA 6 #####
+CATEGORIE: C/C++
+ENUNT:
+Fiind dat programul:
+#include <stdio.h>
+int main() {
+    int x = 5, y = 3;
+    printf("%d", (x << 1) | y);
+    return 0;
+}
+Ce se afiseaza la executie?
+
+VARIANTE:
+a) 11
+b) 13
+c) 8
+d) 10
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Se evalueaza intai (x << 1): deplasarea la stanga cu o pozitie inmulteste cu 2, deci 5 << 1 = 10 (binar 0101 devine 1010). Apoi se aplica SAU pe biti (|) intre 10 si y = 3: 1010 | 0011 = 1011, care in zecimal este 11. Operatorul de deplasare << are prioritate mai mare decat |, deci parantezele doar confirma ordinea fireasca. Rezultatul este 11, varianta a. Varianta d (10) ignora aplicarea lui | cu y. Varianta c (8) ar rezulta dintr-un SI pe biti (1010 & ... ) gresit. Varianta b (13) nu corespunde niciunui calcul corect. Programul a fost compilat cu gcc si rulat, output real: 11.
+
+##### ÎNTREBAREA 7 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela:
+PRODUSE(id_produs NUMBER(5), denumire_produs VARCHAR2(32), pret_lista NUMBER(8,2))
+avand 10 randuri (inregistrari), dintre care doar 6 au coloana pret_lista completata
+(la celelalte 4, pret_lista este NULL). Suma preturilor celor 6 produse cu pret
+completat este 1200.
+Se considera comanda SQL-Oracle:
+SELECT AVG(pret_lista) FROM produse;
+Ce valoare returneaza comanda?
+
+VARIANTE:
+a) 120
+b) 200
+c) 0
+d) NULL
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia de grup AVG ignora complet valorile NULL: ea calculeaza SUM(pret_lista) / COUNT(pret_lista), adica suma valorilor nenule impartita la numarul de valori nenule, NU la numarul total de randuri. Astfel, AVG(pret_lista) = 1200 / 6 = 200 (imparte la 6, nu la 10), varianta b. Varianta a (120) rezulta din impartirea gresita la numarul total de randuri (1200 / 10), tratand implicit NULL ca 0, ceea ce Oracle NU face pentru AVG. Varianta c (0) este gresita: NULL nu este echivalent cu 0. Varianta d (NULL) ar fi rezultatul doar daca TOATE valorile ar fi NULL (multime vida de valori). Aceasta este capcana clasica: pentru a media considerand NULL ca 0, ar fi fost nevoie de AVG(NVL(pret_lista, 0)).
+
+##### ÎNTREBAREA 8 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera procedura PL/SQL:
+CREATE OR REPLACE PROCEDURE p_dublu (n IN NUMBER, rez OUT NUMBER)
+IS
+BEGIN
+  rez := n * 2;
+END;
+/
+si blocul anonim:
+SET SERVEROUTPUT ON
+DECLARE
+  v NUMBER;
+BEGIN
+  p_dublu(10, v);
+  DBMS_OUTPUT.PUT_LINE(v);
+END;
+/
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) blocul afiseaza 20
+b) blocul afiseaza 10
+c) blocul genereaza eroare, deoarece parametrul OUT nu poate fi transmis unei variabile locale
+d) blocul afiseaza NULL (linie goala), deoarece parametrul OUT nu returneaza valoarea in blocul apelant
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Un parametru OUT este folosit pentru a returna o valoare din subprogram catre programul apelant. In procedura, "rez := n * 2" calculeaza 10 * 2 = 20 si atribuie rezultatul parametrului OUT rez. La revenirea din procedura, valoarea 20 este copiata inapoi in variabila reala v din blocul apelant. Prin urmare DBMS_OUTPUT.PUT_LINE(v) afiseaza 20, varianta a. b este falsa: v nu ramane necompletat, primeste valoarea calculata. c este falsa: transmiterea unei variabile locale ca argument pentru un parametru OUT este corecta (chiar necesara - argumentul pentru OUT trebuie sa fie o variabila care sa poata primi valoarea). d este falsa: exact rolul lui OUT este sa returneze valoarea in blocul apelant.
+
+##### ÎNTREBAREA 9 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Fiind dat programul C++:
+#include <iostream>
+using namespace std;
+class Fractie {
+    int num, den;
+public:
+    Fractie(int n, int d) : num(n), den(d) {}
+    friend ostream& operator<<(ostream& os, const Fractie& f) {
+        os << f.num << "/" << f.den;
+        return os;
+    }
+};
+int main() {
+    Fractie f(3, 4);
+    cout << f;
+    return 0;
+}
+Ce se afiseaza la executie?
+
+VARIANTE:
+a) 3/4
+b) 4/3
+c) 34
+d) eroare de compilare, deoarece operatorul << nu poate accesa membrii privati num si den
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: operator<< este supraincarcat ca functie friend (prietena), forma standard pentru afisarea obiectelor cu cout. Trebuie sa fie functie friend (nu metoda membru) deoarece operandul din stanga este obiectul ostream (cout), nu obiectul Fractie. Fiind declarata friend, functia are acces la membrii privati num si den. La "cout << f", functia primeste os = cout si f = fractia, si afiseaza f.num, apoi "/", apoi f.den, adica "3/4", varianta a. Functia returneaza referinta la ostream pentru a permite inlantuirea (chaining). b (4/3) inverseaza ordinea. c (34) omite separatorul. d este falsa: tocmai pentru ca functia este declarata friend, ea are acces legal la membrii privati - fara friend ar fi fost eroare, dar aici este corect. Programul a fost compilat cu g++ -std=c++11 si rulat, output real: 3/4.
+
+##### ÎNTREBAREA 10 #####
+CATEGORIE: Baze de date (teorie)
+ENUNT:
+Precizati care dintre urmatoarele afirmatii despre proprietatile ACID ale tranzactiilor
+intr-un sistem de gestiune a bazelor de date este corecta:
+
+VARIANTE:
+a) Atomicitatea (Atomicity) garanteaza ca datele raman valide fata de constrangerile de integritate dupa incheierea tranzactiei
+b) Izolarea (Isolation) garanteaza ca o tranzactie se executa complet sau deloc, ca o unitate indivizibila
+c) Durabilitatea (Durability) garanteaza ca efectele unei tranzactii confirmate prin COMMIT persista permanent, chiar si in cazul unei caderi ulterioare a sistemului
+d) Consistenta (Consistency) garanteaza ca tranzactiile concurente nu se influenteaza reciproc, ca si cum s-ar executa secvential
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Proprietatile ACID sunt: Atomicity (Atomicitate), Consistency (Consistenta), Isolation (Izolare), Durability (Durabilitate). Varianta c descrie corect Durabilitatea: dupa COMMIT, modificarile devin permanente si supravietuiesc unei eventuale caderi a sistemului (fiind persistate pe suport nevolatil). Celelalte trei variante descriu corect cate o proprietate, dar ii atribuie o denumire GRESITA (capcana clasica de asociere denumire-definitie): a) descrie de fapt Consistenta (nu Atomicitatea) - pastrarea validitatii fata de constrangeri; b) descrie de fapt Atomicitatea (nu Izolarea) - executia "tot sau nimic", indivizibila; d) descrie de fapt Izolarea (nu Consistenta) - independenta tranzactiilor concurente. Deci singura afirmatie in care denumirea corespunde definitiei este c.
+
+##### ÎNTREBAREA 11 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela:
+ANGAJATI(id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), salariul NUMBER(10,2),
+id_departament NUMBER(3)) avand 200 de randuri (inregistrari). Se stie ca nu exista
+niciun angajat cu id_departament = 999.
+Se considera comanda SQL-Oracle:
+SELECT SUM(salariul) FROM angajati WHERE id_departament = 999;
+Ce returneaza comanda?
+
+VARIANTE:
+a) un rand continand valoarea 0
+b) un rand continand valoarea NULL
+c) niciun rand (multime de rezultate vida, 0 randuri)
+d) genereaza eroare, deoarece nu exista randuri care sa respecte conditia
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: O functie de grup (SUM, AVG, MIN, MAX) aplicata fara clauza GROUP BY returneaza intotdeauna exact un rand, chiar daca multimea de randuri filtrate de WHERE este vida. Cand nu exista niciun rand care sa satisfaca conditia (niciun angajat in departamentul 999), SUM nu are nicio valoare de adunat, iar rezultatul pe multimea vida este NULL (nu 0). Deci comanda returneaza un singur rand continand NULL, varianta b. a este falsa: SUM pe multime vida da NULL, nu 0 (spre deosebire de COUNT, care ar da 0). c este falsa: fara GROUP BY, functia de grup produce mereu un rand rezultat. d este falsa: nu se genereaza nicio eroare. Pentru a obtine 0 in loc de NULL, s-ar folosi NVL(SUM(salariul), 0).
+
+##### ÎNTREBAREA 12 #####
+CATEGORIE: C/C++
+ENUNT:
+Fiind dat programul:
+#include <stdio.h>
+#include <string.h>
+int main() {
+    char a[] = "master";
+    char b[] = "mastel";
+    int r = strcmp(a, b);
+    printf("%d", r < 0 ? -1 : (r > 0 ? 1 : 0));
+    return 0;
+}
+Ce se afiseaza la executie?
+
+VARIANTE:
+a) -1
+b) 0
+c) 1
+d) 6
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia strcmp compara lexicografic (in ordine ASCII) cele doua siruri caracter cu caracter. Sirurile "master" si "mastel" coincid pe primele 5 caractere (m, a, s, t, e), iar la pozitia 5 difera: 'r' (cod ASCII 114) in primul sir fata de 'l' (cod ASCII 108) in al doilea. Deoarece 'r' > 'l', strcmp returneaza o valoare pozitiva (diferenta caracterelor sau, in general, un numar > 0). Expresia ternara transforma orice valoare pozitiva in 1. Deci se afiseaza 1, varianta c. Varianta a (-1) ar corespunde cazului in care a < b lexicografic. Varianta b (0) ar corespunde sirurilor identice. Varianta d (6) confunda rezultatul strcmp cu lungimea sirului. Programul a fost compilat cu gcc si rulat, output real: 1.
+
+##### ÎNTREBAREA 13 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Fiind dat programul C++:
+#include <iostream>
+using namespace std;
+class Cont {
+    double sold;
+public:
+    Cont(double s) : sold(s) {}
+    friend double dublu(const Cont& c);
+};
+double dublu(const Cont& c) {
+    return c.sold * 2;
+}
+int main() {
+    Cont c(50.0);
+    cout << dublu(c);
+    return 0;
+}
+Ce se afiseaza la executie?
+
+VARIANTE:
+a) 50
+b) 100
+c) 0
+d) eroare de compilare, deoarece functia dublu nu poate accesa membrul privat sold
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia libera (globala) dublu este declarata prietena (friend) a clasei Cont prin linia "friend double dublu(const Cont& c);" din interiorul clasei. Aceasta declaratie friend ii acorda functiei dublu dreptul de a accesa membrii privati ai clasei, inclusiv sold, chiar daca functia nu este metoda membru. Astfel, dublu(c) returneaza c.sold * 2 = 50.0 * 2 = 100, care se afiseaza, varianta b. d este falsa tocmai pentru ca functia este declarata friend - fara aceasta declaratie ar fi fost eroare, dar aici accesul la sold este legal. a (50) ar ignora inmultirea. c (0) este incorect. Aceasta ilustreaza mecanismul functiilor friend: acorda acces la membrii privati/protejati unei functii externe, fara ca aceasta sa devina membru al clasei. Programul a fost compilat cu g++ -std=c++11 si rulat, output real: 100.
+
+##### ÎNTREBAREA 14 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera procedura PL/SQL:
+CREATE OR REPLACE PROCEDURE p_incr (n IN OUT NUMBER)
+IS
+BEGIN
+  n := n + 5;
+END;
+/
+si blocul anonim:
+SET SERVEROUTPUT ON
+DECLARE
+  v NUMBER := 10;
+BEGIN
+  p_incr(v);
+  DBMS_OUTPUT.PUT_LINE(v);
+END;
+/
+Ce se afiseaza la executie?
+
+VARIANTE:
+a) 10
+b) 5
+c) 15
+d) NULL (linie goala)
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Un parametru IN OUT combina cele doua moduri: la intrarea in procedura, valoarea variabilei reale este transmisa (citita) in parametru, iar la iesire valoarea (eventual modificata) este copiata inapoi in variabila reala. Aici v are valoarea initiala 10. La apelul p_incr(v), parametrul n primeste 10, apoi "n := n + 5" il face 15, iar la revenire valoarea 15 este scrisa inapoi in v. Prin urmare se afiseaza 15, varianta c. a (10) ar corespunde unui parametru IN pur, care nu propaga modificarile inapoi (dar cu IN atribuirea ar fi eroare). d (NULL) ar corespunde unui parametru OUT pur, care ignora valoarea de intrare (v ar deveni NULL la intrare, apoi NULL + 5 = NULL). b (5) este incorect. IN OUT este necesar cand vrem sa citim SI sa modificam valoarea transmisa.
+
+##### ÎNTREBAREA 15 #####
+CATEGORIE: SQL
+ENUNT:
+Se considera comanda SQL-Oracle:
+SELECT ADD_MONTHS(TO_DATE('31-01-2025', 'DD-MM-YYYY'), 1) FROM dual;
+Ce valoare returneaza comanda?
+
+VARIANTE:
+a) 31-02-2025
+b) 28-02-2025
+c) 03-03-2025
+d) genereaza eroare, deoarece luna februarie nu are ziua 31
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia ADD_MONTHS(data, n) adauga n luni la data specificata. Adaugand 1 luna la 31 ianuarie 2025 s-ar obtine teoretic 31 februarie, dar aceasta data nu exista. Regula speciala a functiei ADD_MONTHS in Oracle: daca data de intrare este ultima zi a lunii, sau daca ziua rezultata ar depasi numarul de zile al lunii destinatie, rezultatul este ajustat automat la ULTIMA zi a lunii destinatie. Cum 31 ianuarie este ultima zi a lunii ianuarie, iar februarie 2025 are 28 de zile (2025 nu este an bisect), rezultatul este 28 februarie 2025, varianta b. a (31-02-2025) este o data inexistenta si nu poate fi returnata. c (03-03-2025) ar rezulta dintr-o "revarsare" a zilelor, dar ADD_MONTHS nu functioneaza asa - ajusteaza la ultima zi. d este falsa: ADD_MONTHS nu genereaza eroare, ci ajusteaza automat.
+
+##### ÎNTREBAREA 16 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Fiind dat programul C++:
+#include <iostream>
+using namespace std;
+class A {
+public:
+    A() { cout << "A"; }
+};
+class B {
+public:
+    B() { cout << "B"; }
+};
+class C : public A, public B {
+public:
+    C() { cout << "C"; }
+};
+int main() {
+    C obj;
+    return 0;
+}
+Ce se afiseaza la executie?
+
+VARIANTE:
+a) ABC
+b) CBA
+c) BAC
+d) CAB
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Clasa C mosteneste multiplu doua clase de baza: A si B (in aceasta ordine in lista de mostenire "public A, public B"). La construirea unui obiect de tip C, constructorii claselor de baza se apeleaza INAINTEA constructorului clasei derivate, in ORDINEA in care bazele apar in lista de mostenire (NU in ordinea din lista de initializare a constructorului). Deci se apeleaza intai A() (afiseaza "A"), apoi B() (afiseaza "B"), apoi corpul constructorului C() (afiseaza "C"). Rezultatul este "ABC", varianta a. b (CBA) inverseaza complet ordinea. c si d dau ordini gresite ale constructorilor bazelor sau ale derivatei. Regula: la mostenire multipla, bazele se construiesc in ordinea declararii lor in lista de mostenire, iar derivata ultima. Programul a fost compilat cu g++ -std=c++11 si rulat, output real: ABC.
+
+##### ÎNTREBAREA 17 #####
+CATEGORIE: C/C++
+ENUNT:
+Fiind dat programul:
+#include <stdio.h>
+int main() {
+    int n = 29;
+    int count = 0;
+    while (n) {
+        count += n & 1;
+        n >>= 1;
+    }
+    printf("%d", count);
+    return 0;
+}
+Ce se afiseaza la executie?
+
+VARIANTE:
+a) 3
+b) 4
+c) 5
+d) 29
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Programul numara bitii de 1 din reprezentarea binara a lui n. La fiecare iteratie, "n & 1" extrage bitul cel mai putin semnificativ (0 sau 1) si il adauga la count, apoi "n >>= 1" deplaseaza n la dreapta cu o pozitie (echivalent cu impartirea intreaga la 2), eliminand bitul examinat. Bucla continua pana cand n devine 0. Numarul 29 in binar este 11101 (16 + 8 + 4 + 0 + 1 = 29). Bitii de 1 sunt: pozitiile 0, 2, 3, 4, adica 4 biti setati. Deci se afiseaza 4, varianta b. a (3) si c (5) rezulta dintr-o numarare gresita a bitilor. d (29) ar fi valoarea initiala, nu numarul de biti. Programul a fost compilat cu gcc si rulat, output real: 4.
+
+##### ÎNTREBAREA 18 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Fie tabela JURNAL(mesaj VARCHAR2(100)) si tabela ANGAJATI(id_angajat NUMBER(5)
+PRIMARY KEY, nume VARCHAR2(30), salariul NUMBER(10,2)) cu 200 de randuri.
+Se considera functia PL/SQL:
+CREATE OR REPLACE FUNCTION f_log (p_nume VARCHAR2)
+RETURN NUMBER
+IS
+BEGIN
+  INSERT INTO jurnal VALUES (p_nume);
+  RETURN 1;
+END;
+/
+Fie apoi comanda SQL-Oracle:
+SELECT nume, f_log(nume) FROM angajati;
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) comanda SELECT se executa corect si insereaza cate un rand in JURNAL pentru fiecare angajat
+b) comanda SELECT genereaza eroare (ORA-14551), deoarece functia executa o comanda DML (INSERT) si nu poate fi apelata dintr-o interogare
+c) functia f_log nu se compileaza, deoarece o functie nu poate contine comenzi INSERT
+d) comanda SELECT afiseaza doar coloana nume, ignorand apelul functiei
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia f_log contine o comanda DML (INSERT INTO jurnal). O functie care executa comenzi DML (INSERT/UPDATE/DELETE) asupra tabelelor NU poate fi apelata din interiorul unei comenzi SELECT (a unei interogari): Oracle arunca eroarea ORA-14551 "cannot perform a DML operation inside a query". Aceasta este o regula fundamentala: interogarile trebuie sa fie lipsite de efecte secundare de tip DML. Deci comanda SELECT nume, f_log(nume) FROM angajati genereaza eroare, varianta b. a este falsa: interogarea nu ruleaza, este blocata de restrictia mentionata. c este falsa: functia in sine se compileaza fara probleme (INSERT este permis in corpul unei functii); restrictia apare doar la APELUL functiei dintr-un SELECT. d este falsa: Oracle nu ignora apelul, ci arunca eroare. (O astfel de functie ar putea fi totusi apelata dintr-un bloc PL/SQL sau dintr-un INSERT/UPDATE, dar nu dintr-un SELECT.)
+
+##### ÎNTREBAREA 19 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Fiind dat programul C++:
+#include <iostream>
+using namespace std;
+class Bani {
+    int suma;
+public:
+    Bani(int s) : suma(s) {}
+    friend Bani operator+(int x, const Bani& b) {
+        return Bani(x + b.suma);
+    }
+    void afis() { cout << suma; }
+};
+int main() {
+    Bani b(100);
+    Bani r = 50 + b;
+    r.afis();
+    return 0;
+}
+Ce se afiseaza la executie?
+
+VARIANTE:
+a) 100
+b) 50
+c) 150
+d) eroare de compilare, deoarece 50 este de tip int, nu Bani
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Aici operator+ este supraincarcat ca functie friend cu semnatura (int x, const Bani& b), avand operandul din STANGA de tip int si cel din dreapta de tip Bani. Acesta este motivul principal pentru care se foloseste o functie friend in loc de o metoda membru: o metoda membru operator+ ar avea intotdeauna obiectul clasei ca operand stang (this), deci nu ar putea trata expresia "50 + b" unde stanga este un int. Fiind functie friend, ea are acces la membrul privat suma. La "50 + b", se apeleaza operator+(50, b), care returneaza Bani(50 + 100) = Bani(150). Obiectul r afiseaza 150, varianta c. d este falsa: tocmai functia friend cu primul parametru int permite aceasta expresie (fara ea, ar fi fost eroare). a si b afiseaza doar cate un operand, ignorand adunarea. Programul a fost compilat cu g++ -std=c++11 si rulat, output real: 150.
+
+##### ÎNTREBAREA 20 #####
+CATEGORIE: SQL
+ENUNT:
+Se considera comanda SQL-Oracle:
+SELECT MONTHS_BETWEEN(TO_DATE('01-01-2025', 'DD-MM-YYYY'),
+                      TO_DATE('01-04-2025', 'DD-MM-YYYY')) FROM dual;
+Ce valoare returneaza comanda?
+
+VARIANTE:
+a) 3
+b) -3
+c) 90
+d) -90
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia MONTHS_BETWEEN(data1, data2) returneaza numarul de luni dintre cele doua date, calculat ca data1 - data2 (primul argument minus al doilea). Daca data1 este ANTERIOARA lui data2, rezultatul este NEGATIV. Aici data1 = 01-01-2025 este anterioara lui data2 = 01-04-2025, iar diferenta este de 3 luni, deci rezultatul este -3, varianta b. Cand ambele date au aceeasi zi din luna (aici ziua 1), rezultatul este un numar intreg de luni. a (3) ar fi rezultatul daca argumentele erau in ordine inversa (data mai recenta prima). c si d (90, -90) confunda rezultatul cu un numar de zile - MONTHS_BETWEEN returneaza luni, nu zile. Capcana consta in ordinea argumentelor si semnul rezultatului.
+
+##### ÎNTREBAREA 21 #####
+CATEGORIE: C/C++
+ENUNT:
+Fiind dat programul:
+#include <stdio.h>
+#include <string.h>
+int main() {
+    char s[30] = "inform";
+    strcat(s, "atica");
+    printf("%c%d", s[6], (int)strlen(s));
+    return 0;
+}
+Ce se afiseaza la executie?
+
+VARIANTE:
+a) a11
+b) t10
+c) a6
+d) m11
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Initial s contine "inform" (6 caractere). Functia strcat(s, "atica") concateneaza "atica" la finalul sirului s, obtinandu-se "informatica". Tabloul s are dimensiune 30, suficienta pentru cele 11 caractere plus terminatorul '\0'. Sirul "informatica" are caracterele pe indici: i(0) n(1) f(2) o(3) r(4) m(5) a(6) t(7) i(8) c(9) a(10). Deci s[6] = 'a' (prima litera adusa de concatenare), iar strlen(s) = 11. Se afiseaza "a11", varianta a. b (t10) da un indice si o lungime gresite. c (a6) foloseste lungimea sirului initial, inainte de concatenare. d (m11) confunda caracterul de pe pozitia 6. Programul a fost compilat cu gcc si rulat, output real: a11.
+
+##### ÎNTREBAREA 22 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Fie tabela ANGAJATI(id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30),
+salariul NUMBER(10,2)) cu 200 de randuri.
+Se considera functia PL/SQL:
+CREATE OR REPLACE FUNCTION f_bonus (p_salariu NUMBER)
+RETURN NUMBER
+IS
+BEGIN
+  RETURN p_salariu * 0.1;
+END;
+/
+Fie apoi comanda SQL-Oracle:
+SELECT nume, f_bonus(salariul) bonus FROM angajati WHERE f_bonus(salariul) > 500;
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) comanda genereaza eroare, deoarece o functie definita de utilizator nu poate fi folosita in clauza WHERE
+b) comanda genereaza eroare (ORA-14551), deoarece orice functie PL/SQL este interzisa in comenzi SELECT
+c) comanda se executa corect si afiseaza numele si bonusul (10% din salariu) pentru angajatii al caror bonus depaseste 500
+d) comanda se executa, dar clauza WHERE este ignorata, afisandu-se toti angajatii
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia f_bonus NU contine nicio comanda DML (doar calculeaza si returneaza o valoare: p_salariu * 0.1). O astfel de functie "pura" poate fi apelata liber intr-o comanda SELECT, atat in lista de selectie (SELECT), cat si in clauza WHERE. Comanda calculeaza bonusul (10% din salariu) pentru fiecare angajat, il afiseaza in lista de selectie si il foloseste in WHERE pentru a filtra angajatii al caror bonus depaseste 500 (echivalent cu salariul > 5000). Deci varianta c este corecta. a este falsa: functiile definite de utilizator POT fi folosite in WHERE, cat timp nu executa DML. b este falsa: eroarea ORA-14551 apare doar pentru functiile care executa DML, nu pentru orice functie. d este falsa: clauza WHERE se aplica normal. Contrastul fata de intrebarea despre functia cu INSERT este esential: doar functiile fara DML pot fi folosite in interogari.
+
+##### ÎNTREBAREA 23 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Fiind dat programul C++:
+#include <iostream>
+using namespace std;
+class Contor {
+    int val;
+public:
+    Contor(int v) : val(v) {}
+    Contor& operator++() { ++val; return *this; }
+    int get() { return val; }
+};
+int main() {
+    Contor c(5);
+    ++c;
+    ++c;
+    cout << c.get();
+    return 0;
+}
+Ce se afiseaza la executie?
+
+VARIANTE:
+a) 5
+b) 6
+c) 7
+d) 10
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: operator++ este supraincarcat in forma PREFIXATA (fara parametru), care incrementeaza membrul val si returneaza o referinta la obiectul curent (*this). Obiectul c porneste cu val = 5. Prima aplicare "++c" face val = 6; a doua aplicare "++c" face val = 7. Apoi c.get() returneaza 7, care se afiseaza, varianta c. a (5) ignora ambele incrementari. b (6) contorizeaza doar o incrementare. d (10) nu corespunde niciunui calcul. Observatie: forma prefixata "operator++()" nu are parametru, spre deosebire de forma postfixata "operator++(int)" care primeste un parametru int fictiv pentru a le distinge. Programul a fost compilat cu g++ -std=c++11 si rulat, output real: 7.
+
+##### ÎNTREBAREA 24 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela ANGAJATI(id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30),
+salariul NUMBER(10,2), data_angajare DATE) cu 200 de randuri.
+Se considera comanda SQL-Oracle:
+SELECT COUNT(*) FROM angajati WHERE EXTRACT(YEAR FROM data_angajare) = 2020;
+Ce realizeaza aceasta comanda?
+
+VARIANTE:
+a) numara angajatii angajati in anul 2020
+b) numara angajatii angajati in luna a 2020-a de la o data de referinta
+c) genereaza eroare, deoarece EXTRACT nu poate fi aplicat unei coloane de tip DATE
+d) numara toti angajatii, deoarece EXTRACT returneaza intotdeauna anul curent
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia EXTRACT(YEAR FROM data) extrage componenta an (ca numar intreg) dintr-o valoare de tip DATE sau TIMESTAMP. Conditia "EXTRACT(YEAR FROM data_angajare) = 2020" este adevarata pentru angajatii a caror data de angajare cade in anul 2020. COUNT(*) numara randurile care satisfac aceasta conditie. Deci comanda numara angajatii angajati in cursul anului 2020, varianta a. b este falsa: EXTRACT YEAR extrage anul, nu are legatura cu vreo "luna a 2020-a". c este falsa: EXTRACT se aplica perfect coloanelor DATE (poate extrage YEAR, MONTH, DAY etc.). d este falsa: EXTRACT extrage componenta reala din data stocata, nu anul curent. EXTRACT este o alternativa la TO_CHAR(data, 'YYYY') pentru obtinerea unor componente ale datei ca valori numerice.
+
+##### ÎNTREBAREA 25 #####
+CATEGORIE: C/C++
+ENUNT:
+Fiind dat programul:
+#include <stdio.h>
+int main() {
+    int a = 12, b = 10;
+    printf("%d", a ^ b);
+    return 0;
+}
+Ce se afiseaza la executie?
+
+VARIANTE:
+a) 6
+b) 8
+c) 14
+d) 2
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Operatorul ^ este SAU-EXCLUSIV (XOR) pe biti: pentru fiecare pozitie, rezultatul este 1 daca cei doi biti difera si 0 daca sunt egali. Reprezentarile binare sunt: 12 = 1100, 10 = 1010. Aplicand XOR bit cu bit: pozitia 3: 1 xor 1 = 0; pozitia 2: 1 xor 0 = 1; pozitia 1: 0 xor 1 = 1; pozitia 0: 0 xor 0 = 0. Rezultatul este 0110 in binar, adica 6 in zecimal, varianta a. b (8) ar fi 12 & 10 (SI pe biti: 1000). c (14) ar fi 12 | 10 (SAU pe biti: 1110). d (2) nu corespunde niciunei operatii uzuale intre 12 si 10. Programul a fost compilat cu gcc si rulat, output real: 6.
+
+##### ÎNTREBAREA 26 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Fiind dat programul C++:
+#include <iostream>
+using namespace std;
+class Motor {
+public:
+    void info() { cout << "M"; }
+};
+class Radio {
+public:
+    void info() { cout << "R"; }
+};
+class Masina : public Motor, public Radio {
+};
+int main() {
+    Masina m;
+    m.info();
+    return 0;
+}
+Ce se intampla la compilarea/executia acestui program?
+
+VARIANTE:
+a) se afiseaza M
+b) se afiseaza R
+c) se afiseaza MR
+d) programul nu se compileaza: apelul m.info() este ambiguu
+
+RASPUNS_BAREM: d
+RASPUNS_CORECT: d
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Clasa Masina mosteneste multiplu clasele Motor si Radio, iar AMBELE clase de baza contin o metoda cu aceeasi semnatura, info(). Cand se scrie "m.info()", compilatorul nu poate decide care dintre cele doua metode mostenite sa fie apelata (Motor::info sau Radio::info), deci apelul este AMBIGUU. Aceasta produce o eroare de compilare (in g++: "request for member 'info' is ambiguous"), deci varianta d. a, b, c presupun ca programul se compileaza si ruleaza, ceea ce nu este cazul. Pentru a rezolva ambiguitatea, ar trebui folosit operatorul de rezolvare a domeniului: m.Motor::info() sau m.Radio::info(). Aceasta este o capcana clasica a mostenirii multiple: coliziunea de nume intre bazele multiple. Programul a fost compilat cu g++ -std=c++11 si a generat, conform asteptarilor, eroarea de ambiguitate (nu s-a produs niciun executabil).
+
+##### ÎNTREBAREA 27 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera procedura PL/SQL:
+CREATE OR REPLACE PROCEDURE p_test (rez OUT NUMBER)
+IS
+BEGIN
+  NULL; -- corpul nu atribuie nimic lui rez
+END;
+/
+si blocul anonim:
+SET SERVEROUTPUT ON
+DECLARE
+  v NUMBER := 99;
+BEGIN
+  p_test(v);
+  DBMS_OUTPUT.PUT_LINE(NVL(TO_CHAR(v), 'necunoscut'));
+END;
+/
+Ce se afiseaza la executie?
+
+VARIANTE:
+a) 99
+b) 0
+c) necunoscut
+d) blocul genereaza eroare, deoarece parametrul OUT nu a fost atribuit in procedura
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Un parametru de tip OUT este INITIALIZAT AUTOMAT cu NULL la intrarea in procedura, INDIFERENT de valoarea variabilei reale transmise ca argument. Astfel, chiar daca v avea valoarea 99 inainte de apel, la intrarea in p_test parametrul rez devine NULL, iar valoarea 99 se pierde. Deoarece corpul procedurii nu atribuie nimic lui rez (doar instructiunea NULL, care nu face nimic), rez ramane NULL. La revenire, aceasta valoare NULL este copiata inapoi in v, deci v devine NULL. In bloc, TO_CHAR(v) da NULL, iar NVL(..., 'necunoscut') afiseaza 'necunoscut', varianta c. a (99) este gresit: valoarea initiala se pierde deoarece OUT reseteaza parametrul la NULL. b (0) este gresit: NULL nu inseamna 0. d este falsa: nu se genereaza eroare daca un parametru OUT ramane neatribuit - el pastreaza pur si simplu valoarea NULL. Aceasta ilustreaza diferenta cheie fata de IN OUT (care ar fi pastrat valoarea de intrare).
+
+##### ÎNTREBAREA 28 #####
+CATEGORIE: SQL
+ENUNT:
+Se considera comanda SQL-Oracle:
+SELECT TRUNC(TO_DATE('18-07-2026', 'DD-MM-YYYY'), 'MM') FROM dual;
+Ce valoare returneaza comanda?
+
+VARIANTE:
+a) 18-07-2026
+b) 01-07-2026
+c) 01-01-2026
+d) 31-07-2026
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia TRUNC(data, format) trunchiaza o data la unitatea specificata de al doilea argument. Modelul de format 'MM' (sau 'MONTH') trunchiaza data la INCEPUTUL lunii, adica returneaza prima zi a lunii din care face parte data. Pentru 18-07-2026, TRUNC cu 'MM' returneaza 01-07-2026 (prima zi a lunii iulie 2026), varianta b. a (18-07-2026) ar fi data nemodificata (ce s-ar obtine cu TRUNC fara al doilea argument sau cu format zi). c (01-01-2026) ar fi rezultatul trunchierii la inceputul anului, folosind formatul 'YYYY' sau 'YEAR', nu 'MM'. d (31-07-2026) ar fi ultima zi a lunii (obtinuta cu LAST_DAY), nu prima. Capcana consta in distinctia dintre formatele de trunchiere: 'MM' -> prima zi a lunii, 'YYYY' -> prima zi a anului.
+
+##### ÎNTREBAREA 29 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+In C++, care dintre urmatorii operatori NU poate fi supraincarcat (redefinit) pentru
+tipuri definite de utilizator?
+
+VARIANTE:
+a) operatorul + (adunare)
+b) operatorul [] (indexare)
+c) operatorul :: (rezolvarea domeniului / scope resolution)
+d) operatorul == (egalitate)
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: In C++, majoritatea operatorilor pot fi supraincarcati pentru tipuri definite de utilizator (clase), inclusiv +, [], ==, <<, (), -> etc. Exista insa un set restrans de operatori care NU pot fi supraincarcati niciodata: :: (rezolvarea domeniului / scope resolution), . (accesul la membru), .* (accesul la membru prin pointer), ?: (operatorul conditional ternar) si sizeof. Operatorul :: face parte din aceasta lista, deci varianta c este raspunsul corect. a (+): poate fi supraincarcat (foarte frecvent). b ([]): poate fi supraincarcat, tipic ca metoda membru (ex. pentru clase container). d (==): poate fi supraincarcat (comparatii intre obiecte). Motivul pentru care :: , . si :: nu pot fi redefiniti este ca semnificatia lor este fixata la nivelul limbajului (rezolvarea numelor si accesul la membri), iar redefinirea ar face codul imposibil de interpretat consecvent.
+
+##### ÎNTREBAREA 30 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera procedura PL/SQL:
+CREATE OR REPLACE PROCEDURE p_incr (n IN OUT NUMBER)
+IS
+BEGIN
+  n := n + 1;
+END;
+/
+si blocul anonim:
+BEGIN
+  p_incr(10);
+END;
+/
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) blocul se executa corect si valoarea 11 este returnata apelantului
+b) blocul genereaza eroare, deoarece un argument transmis unui parametru IN OUT trebuie sa fie o variabila, nu o valoare literala (constanta)
+c) blocul se executa corect, dar valoarea 11 se pierde deoarece nu exista o variabila care sa o primeasca
+d) blocul afiseaza automat 11 pe ecran
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Un parametru de tip IN OUT (sau OUT) trebuie sa primeasca la apel un argument care sa poata fi si SCRIS (o tinta de atribuire), deoarece la revenirea din procedura valoarea (posibil modificata) este copiata inapoi in argument. O valoare literala/constanta precum 10 nu este o variabila - nu i se poate atribui nimic - deci nu poate fi folosita ca argument pentru un parametru IN OUT. La compilarea/apelul blocului, Oracle genereaza eroarea PLS-00363: expression '10' cannot be used as an assignment target. Prin urmare varianta b este corecta. a si c presupun ca apelul reuseste, ceea ce nu este cazul - eroarea apare inainte de executie. d este falsa: procedura oricum nu afiseaza nimic (nu contine DBMS_OUTPUT). Pentru un apel corect ar trebui declarata o variabila (ex. v NUMBER := 10;) si transmisa aceasta: p_incr(v). Un parametru IN pur, in schimb, ar fi acceptat o valoare literala.

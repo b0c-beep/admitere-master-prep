@@ -1,0 +1,743 @@
+=== ADMITERE MASTER CSIE3 - TEST GRILĂ 2024 ===
+Sursă: subiecte_ani_anteriori/CSIE3_2024.pdf
+Format sursă original: scanat, transcris manual din imagini (nu OCR)
+Număr total întrebări: 30
+Punctaj: 3 puncte/întrebare corectă, punctaj maxim 90 puncte
+
+##### ÎNTREBAREA 1 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabelele:
+ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3)) avand cel putin 200 de randuri (inregistrari).
+DEPARTAMENTE (id_departament NUMBER(5) PRIMARY KEY, denumire_departament VARCHAR2(30)) cu cel putin 20 de randuri (inregistrari).
+Se considera urmatoarea comanda SQL-Oracle:
+SELECT DISTINCT d.*
+FROM departamente d JOIN angajati a ON a.id_departament=d.id_departament
+WHERE d.id_departament NOT IN
+(SELECT b.id_departament
+FROM angajati b
+WHERE b.salariul>=10000 AND b.id_departament IS NOT NULL);
+Precizati care dintre urmatoarele afirmatii este adevarata:
+
+VARIANTE:
+a) afiseaza departamentele in care cel putin un angajat are salariul sub 10000
+b) afiseaza departamentele in care toti angajatii au salarii sub 10000
+c) genereaza eroare din cauza folosirii incorecte a operatorului NOT IN
+d) genereaza eroare din cauza faptului ca subcererea poate returna mai multe randuri
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Subcererea returneaza id-urile departamentelor care au CEL PUTIN UN angajat cu salariul >= 10000 (si id_departament ne-nul). Cererea externa selecteaza (prin JOIN cu angajati) departamentele care NU se afla in aceasta lista, adica departamentele in care niciun angajat nu castiga >= 10000 - deci toti angajatii au salarii sub 10000. Varianta a) e gresita: excluderea se face pentru departamentele care au macar un salariat >=10000, nu invers. Varianta c) e gresita: NOT IN este folosit corect - clauza "b.id_departament IS NOT NULL" din subcerere elimina exact capcana NOT IN cu valori NULL. Varianta d) e gresita: NOT IN accepta subcereri care returneaza mai multe randuri (ar fi eroare doar la un operator scalar precum =).
+
+##### ÎNTREBAREA 2 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Care dintre următoarele concepte implementeaza o relație de tip IS-A (ESTE UN/O) intre clase?
+
+VARIANTE:
+a) încapsularea
+b) polimorfismul
+c) compunerea
+d) derivarea (moștenirea)
+
+RASPUNS_BAREM: d
+RASPUNS_CORECT: d
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Relatia IS-A ("este un/o") se modeleaza prin mostenire (derivare): o clasa derivata ESTE o specializare a clasei de baza (ex.: un Caine ESTE un Animal). Incapsularea (a) ascunde datele in spatele metodelor - nu exprima o relatie intre clase. Polimorfismul (b) permite tratarea uniforma a obiectelor din ierarhie, dar este o consecinta a mostenirii, nu relatia insasi. Compunerea (c) modeleaza relatia HAS-A ("are un"), adica un obiect contine alt obiect ca membru, nu IS-A.
+
+##### ÎNTREBAREA 3 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Precizati care dintre urmatoarele declarari de variabile PL/SQL nu este corecta:
+
+VARIANTE:
+a) v_test BOOLEAN NOT NULL:= LENGTH(SUBSTR('ORACLE',1,3)) > 1;
+b) v_data DATE:= SYSDATE - TO_DATE('10-07-2024','DD-MM-YYYY');
+c) v_text VARCHAR2(20) DEFAULT SUBSTR('ORACLE',1,3);
+d) v_nr NUMBER:= TO_CHAR(SYSDATE, 'MM');
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: In PL/SQL, DATE - DATE returneaza un NUMBER (numarul de zile dintre cele doua date), nu o valoare de tip DATE. Deci "v_data DATE := SYSDATE - TO_DATE(...)" incearca sa atribuie un NUMBER unei variabile DATE, iar conversia implicita NUMBER->DATE nu exista - eroare (declarare incorecta). Varianta a) e corecta: BOOLEAN NOT NULL este initializat (obligatoriu), iar LENGTH(SUBSTR('ORACLE',1,3))=LENGTH('ORA')=3, 3>1 = TRUE. Varianta c) e corecta: DEFAULT cu o expresie VARCHAR2 ('ORA') este valid. Varianta d) e corecta: TO_CHAR(SYSDATE,'MM') returneaza un sir gen '07', convertit implicit la NUMBER (7).
+
+##### ÎNTREBAREA 4 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Care dintre urmatoarele variante de specificare a parametrului unei proceduri PL/SQL este corecta:
+
+VARIANTE:
+a) (p_param NUMBER(4,2))
+b) (p_param IN VARCHAR2(50))
+c) (p_param OUT VARCHAR2 := 'anonim')
+d) (p_param VARCHAR2)
+
+RASPUNS_BAREM: d
+RASPUNS_CORECT: d
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: In antetul (declararea parametrilor) unei proceduri/functii PL/SQL nu se specifica dimensiuni/precizii pentru tipuri; se scrie doar tipul (VARCHAR2, NUMBER etc.). Deci (p_param VARCHAR2) este corect (modul implicit este IN). Varianta a) e gresita: NUMBER(4,2) - nu se pot da precizie/scala la parametru. Varianta b) e gresita: VARCHAR2(50) - nu se poate da lungime la parametru. Varianta c) e gresita: un parametru OUT nu poate avea valoare implicita (DEFAULT / :=); doar parametrii IN pot avea valori implicite.
+
+##### ÎNTREBAREA 5 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Fie clasa C++, C_mea si in partea publica prototipurile:
+C_mea operator-(C_mea&);
+friend C_mea operator-(C_mea&, C_mea&);
+Ce se poate spune despre cele doua prototipuri?
+
+VARIANTE:
+a) Sunt echivalente si supraincarca operatorul - pentru scaderea a doua obiecte de tip C_mea
+b) Primul prototip este eronat deoarece operatorul - se supraincarca doar prin functie friend
+c) Al doilea prototip este eronat deoarece operatorul - nu se supraincarca prin functie friend
+d) Primul prototip supraincarca operatorul unar - (de semn) in timp ce al doilea supraincarca operatorul - pentru scaderea a doua obiecte de tip C_mea
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Un operator- membru cu UN parametru supraincarca operatorul BINAR de scadere (this - parametru). Un operator- friend cu DOI parametri supraincarca tot operatorul binar de scadere (op1 - op2). Ambele definesc deci scaderea a doua obiecte C_mea - sunt echivalente ca semnificatie (a). Varianta d) e gresita: operatorul unar - (de semn) s-ar supraincarca printr-o functie MEMBRU FARA parametri (sau friend cu UN parametru); aici primul prototip are UN parametru, deci este binar, nu unar. Variantele b) si c) sunt gresite: operatorul - se poate supraincarca ATAT ca membru CAT si ca friend. (In practica, avand ambele simultan ar aparea ambiguitate la apel, dar afirmatia corecta despre semnificatia lor este a.)
+
+##### ÎNTREBAREA 6 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Fie tabela COMENZI (id_comanda NUMBER(5) PRIMARY KEY, id_angajat NUMBER(5), id_client NUMBER(5), data DATE) cu cel putin 200 de randuri (inregistrari).
+Se considera urmatoarea functie PL/SQL:
+CREATE OR REPLACE FUNCTION f_check_data (p_data comenzi.data%TYPE)
+RETURN BOOLEAN
+IS
+BEGIN
+  IF p_data>SYSDATE-90 THEN
+    RETURN TRUE;
+  ELSE
+    RETURN FALSE;
+  END IF;
+END;
+/
+Se considera urmatoarea comanda SQL-Oracle:
+SELECT id_comanda, f_check_data(data) FROM comenzi;
+Care afirmatie este corecta?
+
+VARIANTE:
+a) functia PL/SQL nu se compileaza cu succes deoarece este utilizat gresit operatorul de comparatie
+b) comanda SQL va afisa id-ul comenzilor si TRUE daca acestea au fost plasate in mai putin de 90 de zile de la data curenta
+c) functia PL/SQL se compileaza cu succes, iar comanda SQL va afisa doar comenzile recent incheiate (in mai putin de 90 de zile de la data curenta)
+d) functia PL/SQL nu se poate apela in comanda SQL deoarece tipul de date returnat nu este compatibil cu SQL
+
+RASPUNS_BAREM: d
+RASPUNS_CORECT: d
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia se compileaza corect (comparatia p_data > SYSDATE-90 este valida), dar returneaza BOOLEAN. Tipul BOOLEAN din PL/SQL NU este un tip de date SQL - de aceea o functie care returneaza BOOLEAN nu poate fi apelata direct intr-o comanda SELECT/SQL. Comanda va da eroare (ORA-06552/ORA-00902: tip de date nevalid). Deci d) este corecta. Variantele b) si c) sunt gresite pentru ca instructiunea SQL nici nu se poate executa. Varianta a) e gresita: functia in sine se compileaza fara probleme.
+
+##### ÎNTREBAREA 7 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+In C++ o clasa este abstracta daca:
+
+VARIANTE:
+a) Se afla in relatie de mostenire cu cel putin doua clase
+b) Contine cel putin o functie friend
+c) Contine cel putin o metoda virtual pura
+d) Contine cel putin o metoda virtuala
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: O clasa este abstracta in C++ daca are cel putin o metoda virtuala pura (declarata cu = 0), care o face neinstantiabila direct. Varianta d) e gresita: o metoda pur si simplu virtuala (nu pura) NU face clasa abstracta - clasa ramane instantiabila. Variantele a) si b) sunt irelevante pentru caracterul abstract: relatia de mostenire (a) sau prezenta unei functii friend (b) nu au legatura cu abstractizarea.
+
+##### ÎNTREBAREA 8 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Care este rezultatul rularii urmatorului program C++?
+#include<iostream>
+using namespace std;
+class A {
+private:
+  int v;
+  A(int v) { this->v = v; }
+  static A* instance;
+
+public:
+  static A* getInstance(int v) {
+    if (instance == NULL) {
+      instance = new A(v);
+    }
+    return instance;
+  }
+  void print() {
+    cout << v;
+  }
+};
+
+A* A::instance = NULL;
+
+int main() {
+  A* a = A::getInstance(10);
+  a->print();
+  A* b = A::getInstance(5);
+  b->print();
+  return 0;
+}
+
+VARIANTE:
+a) 1010
+b) 105
+c) Va genera o eroare de compilare deoarece constructorul clasei A este privat
+d) 00
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Este pattern-ul Singleton. Constructorul privat este apelat din metoda statica getInstance a ACELEIASI clase - deci nu genereaza eroare de compilare (accesul la membrii privati este permis din interiorul clasei). Primul apel getInstance(10): instance==NULL => se creeaza instanta cu v=10; a->print() afiseaza 10. Al doilea apel getInstance(5): instance NU mai este NULL, deci se returneaza aceeasi instanta (v ramane 10); b->print() afiseaza tot 10. Rezultat: 1010. Varianta c) e gresita (constructorul privat e accesibil intern). Variantele b) si d) sunt gresite pentru ca a doua instanta nu se mai creeaza.
+
+##### ÎNTREBAREA 9 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Fie urmatoarea clasa C++ :
+class A {
+public:
+  virtual void f() = 0;
+};
+Care dintre urmatoarele declaratii sunt corecte?
+  A a;         //Declaratia 1
+  A *b;        //Declaratia 2
+  A v[5];      //Declaratia 3
+  A *pv[5];    //Declaratia 4
+  A *p=new A[5]; //Declaratia 5
+
+VARIANTE:
+a) Declaratiile 1 si 3
+b) Declaratiile 2 si 4
+c) Declaratiile 2,4 si 5
+d) Declaratiile 1 si 2
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Clasa A este abstracta (are metoda virtual pura f()=0), deci NU se pot crea obiecte de tip A. Declaratia 1 (A a;) - eroare, instantiere directa. Declaratia 3 (A v[5];) - eroare, tablou de obiecte A. Declaratia 5 (A *p=new A[5];) - eroare, alocare de obiecte A. Sunt corecte doar declaratiile care folosesc POINTERI la A (nu instantiaza obiecte): Declaratia 2 (A *b;) - pointer valid; Declaratia 4 (A *pv[5];) - tablou de pointeri la A, valid. Deci raspunsul este b) (Declaratiile 2 si 4). Varianta c) include gresit Declaratia 5. Variantele a) si d) includ gresit Declaratia 1 (si 3).
+
+##### ÎNTREBAREA 10 #####
+CATEGORIE: SQL
+ENUNT:
+Se considera urmatoarea secventa de comenzi SQL-Oracle:
+CREATE TABLE angajati
+(marca NUMBER(7) PRIMARY KEY,
+nume VARCHAR2(20),
+email VARCHAR2(20) UNIQUE,
+localitate VARCHAR2(20));
+INSERT INTO angajati VALUES (117, 'Toma', NULL, 'Bucuresti');
+CREATE VIEW angajati_Buc AS
+SELECT * FROM angajati
+WHERE UPPER(localitate)='BUCURESTI';
+DROP VIEW angajati_Buc;
+ROLLBACK;
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) comanda ROLLBACK va anula efectul comenzii de adaugare a inregistrarii in tabela
+b) efectul comenzii INSERT va fi automat salvat
+c) comanda INSERT va genera eroare deoarece valoarea coloanei email nu poate fi NULL
+d) comanda ROLLBACK va anula efectul comenzii de stergere a tabelei virtuale
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Comenzile DDL (CREATE TABLE, CREATE VIEW, DROP VIEW) declanseaza un COMMIT implicit. Dupa INSERT (DML) urmeaza CREATE VIEW (DDL), care comite automat inregistrarea inserata. Deci efectul INSERT este salvat automat (b), iar ROLLBACK-ul de la final nu mai are ce anula. Varianta a) e gresita: INSERT-ul e deja comis de DDL-ul urmator. Varianta c) e gresita: coloana email are constrangere UNIQUE, nu NOT NULL - valorile NULL sunt permise (si multiple, UNIQUE nu blocheaza NULL). Varianta d) e gresita: DROP VIEW (DDL) este auto-comis si nu poate fi anulat prin ROLLBACK.
+
+##### ÎNTREBAREA 11 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Fie tabelele:
+ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3)) avand 200 de randuri (inregistrari).
+DEPARTAMENTE (id_departament NUMBER(3) PRIMARY KEY, denumire_departament VARCHAR2(30)) cu cel putin 200 de randuri (inregistrari).
+Se considera urmatoarea functie PL/SQL:
+CREATE OR REPLACE FUNCTION calcul_salariu (v_id departamente.id_departament%TYPE)
+RETURN NUMBER
+IS
+v_sal NUMBER(8,2);
+BEGIN
+SELECT AVG(salariul) INTO v_sal FROM angajati WHERE id_departament=v_id;
+RETURN v_sal;
+END;
+/
+Comanda SQL-Oracle:
+SELECT id_departament,denumire_departament,calcul_salariu(id_departament) salariul
+FROM departamente
+WHERE calcul_salariu(id_departament)>10000;
+
+VARIANTE:
+a) functia PL/SQL nu se va compila cu succes deoarece in comanda SELECT lipseste clauza GROUP BY
+b) este eronata deoarece functia PL/SQL utilizeaza inregistrari din tabela ANGAJATI si nu este realizata jonctiunea dintre tabele
+c) functia PL/SQL nu poate fi apelata in clauza WHERE deoarece utilizeaza o functie de grup
+d) va apela functia PL/SQL si va afisa departamentele in care salariul mediu depaseste 10000
+
+RASPUNS_BAREM: d
+RASPUNS_CORECT: d
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia calcul_salariu returneaza NUMBER (salariul mediu al unui departament) si se compileaza corect. Comanda SQL apeleaza functia atat in SELECT cat si in WHERE, afisand departamentele pentru care media salariilor > 10000 (d). Varianta a) e gresita: SELECT AVG(...) INTO v_sal returneaza o singura valoare agregata, nu necesita GROUP BY (nu exista alte coloane ne-agregate in select). Varianta b) e gresita: functia interogheaza tabela angajati filtrand dupa id_departament=v_id, ceea ce este echivalent cu o corelare corecta - nu e nevoie de jonctiune explicita. Varianta c) e gresita: functia PL/SQL returneaza un NUMBER simplu si poate fi folosita in WHERE; faptul ca intern foloseste AVG nu o face "functie de grup".
+
+##### ÎNTREBAREA 12 #####
+CATEGORIE: C/C++
+ENUNT:
+Care va fi rezultatul rularii programului C de mai jos?
+#include <stdio.h>
+int main() {
+   int a[5] = {1, 2, 3, 4, 5};
+   for (int i = 0; i < 5; i++)
+      if ((char) a[i] == '5')
+         printf("%d\n", a[i]);
+      else
+         printf("FAIL\n");
+   return 0;
+}
+
+VARIANTE:
+a) Programul va afisa codul ASCII al caracterului '5'
+b) Programul va genera o eroare la initializarea masivului
+c) Programul va afisa 5
+d) Programul va afisa de 5 ori "FAIL"
+
+RASPUNS_BAREM: d
+RASPUNS_CORECT: d
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Caracterul '5' are codul ASCII 53. Expresia (char)a[i] converteste valoarea intreaga a[i] (1,2,3,4,5) la char, dar valoarea numerica ramane 1..5, NU 53. Deci (char)a[i] == '5' compara 1..5 cu 53 - niciodata adevarat. La fiecare din cele 5 iteratii se executa ramura else, tiparind "FAIL". Rezultat: "FAIL" de 5 ori (d). Varianta c) ar fi corecta doar daca s-ar compara valoarea 5 cu 5, dar comparatia e cu caracterul '5' (=53). Varianta a) e gresita: nu se afiseaza codul ASCII. Varianta b) e gresita: initializarea int a[5]={1,2,3,4,5} este perfect valida.
+
+##### ÎNTREBAREA 13 #####
+CATEGORIE: SQL
+ENUNT:
+Precizati care dintre urmatoarele comenzi SQL-Oracle nu este corecta:
+
+VARIANTE:
+a) SELECT EXTRACT(SYSDATE,'DD.MM.YYYY') data FROM dual;
+b) SELECT TRUNC(TO_DATE('26-JUL-2024', 'DD-MON-YYYY'),'YEAR') an FROM dual;
+c) SELECT DECODE(1+2,3,'DA','NU') test FROM dual;
+d) SELECT SUM(DECODE(LENGTH('ORACLE'),6,1,0)) suma FROM dual;
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Sintaxa corecta a functiei EXTRACT este EXTRACT(componenta FROM data), de exemplu EXTRACT(YEAR FROM SYSDATE). Forma EXTRACT(SYSDATE,'DD.MM.YYYY') este invalida (EXTRACT nu primeste un format ca al doilea argument, ci foloseste cuvantul cheie FROM) - deci a) nu este corecta. Varianta b) e corecta: TRUNC(data,'YEAR') trunchiaza data la inceputul anului. Varianta c) e corecta: DECODE(3,3,'DA','NU') returneaza 'DA'. Varianta d) e corecta: LENGTH('ORACLE')=6, DECODE(6,6,1,0)=1, SUM(1)=1.
+
+##### ÎNTREBAREA 14 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa urmatorul program C?
+#include<stdio.h>
+union s
+{
+   int x;
+   int y;
+};
+
+void inc(union s t)
+{
+   t.x++;
+   t.y++;
+}
+
+int main()
+{
+   union s t;
+   t.y = 3;
+   t.x = 2;
+   inc(t);
+   printf("%d %d", t.x, t.y);
+}
+
+VARIANTE:
+a) 3 3
+b) 4 4
+c) 3 4
+d) 2 2
+
+RASPUNS_BAREM: d
+RASPUNS_CORECT: d
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Intr-un union, campurile x si y ocupa ACEEASI zona de memorie. Dupa t.y=3 apoi t.x=2, memoria comuna contine valoarea 2, deci atat t.x cat si t.y "citesc" 2. Functia inc primeste parametrul PRIN VALOARE (union s t), deci modifica doar copia locala; obiectul t din main ramane neschimbat. Astfel dupa apel t.x si t.y valoreaza in continuare 2. printf afiseaza "2 2" (d). Variantele a), b), c) presupun gresit fie ca modificarea din inc se propaga in main (transmitere prin referinta), fie ca x si y sunt independente (nu partajeaza memoria).
+
+##### ÎNTREBAREA 15 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Programul C++:
+#include <iostream>
+using namespace std;
+class A
+{
+public:
+   A(){ cout << "A"; }
+};
+class B: public A
+{
+public:
+   B(){cout << "B";}
+};
+class C: public B
+{
+public:
+   C(){ cout <<"C";}
+};
+int main()
+{
+   C *pc = new C;
+   return 0;
+}
+va afisa:
+
+VARIANTE:
+a) C
+b) CBA
+c) A
+d) ABC
+
+RASPUNS_BAREM: d
+RASPUNS_CORECT: d
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: La crearea unui obiect de tip C (new C), constructorii se executa de la baza spre derivata, in ordinea ierarhiei de mostenire: mai intai A() ("A"), apoi B() ("B"), apoi C() ("C"). Rezultat: "ABC" (d). Varianta b) CBA este ordinea inversa (aceea a DESTRUCTORILOR, nu a constructorilor). Variantele a) si c) afiseaza un singur constructor, ignorand apelurile constructorilor claselor de baza.
+
+##### ÎNTREBAREA 16 #####
+CATEGORIE: C/C++
+ENUNT:
+Care este rezultatul rularii urmatoarei secvente de cod C?
+#include<stdio.h>
+int main()
+{
+        for (;;)printf("Examen");
+        return 0;
+}
+
+VARIANTE:
+a) Genereaza eroare de compilare deoarece sintaxa instructiunii for este gresita
+b) Tipareste o singura data "Examen"
+c) Ruleaza fara sa tipareasca nimic
+d) Tipareste "Examen" la infinit
+
+RASPUNS_BAREM: d
+RASPUNS_CORECT: d
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Constructia for(;;) este perfect valida in C si reprezinta o bucla infinita: lipsa conditiei este echivalenta cu o conditie mereu adevarata. In interior se executa la nesfarsit printf("Examen"), deci se tipareste "Examen" la infinit (d). Varianta a) e gresita: for(;;) este sintaxa corecta. Variantele b) si c) sunt gresite: bucla nu se opreste dupa o iteratie si nici nu este goala.
+
+##### ÎNTREBAREA 17 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Care dintre urmatorii operatori nu pot fi supraincarcati?
+
+VARIANTE:
+a) =
+b) ::
+c) >
+d) !
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: In C++ exista un set restrans de operatori care NU pot fi supraincarcati: :: (rezolutie de domeniu), .* (pointer la membru), . (acces membru), ?: (conditional ternar) si sizeof. Deci "::" (b) nu poate fi supraincarcat. Ceilalti pot fi supraincarcati: = (a, operatorul de atribuire), > (c, comparatie), ! (d, negatie logica).
+
+##### ÎNTREBAREA 18 #####
+CATEGORIE: SQL
+ENUNT:
+Se considera tabelele:
+PRODUSE (id_produs NUMBER(5) PRIMARY KEY, denumire_produs VARCHAR2(30), descriere VARCHAR2(50)) cu cel putin 10 randuri (inregistrari).
+RAND_COMENZI (id_produs NUMBER(5), id_comanda NUMBER(5), pret NUMBER(8,2), cantitate NUMBER(8,2)) cu cel putin 200 de randuri (inregistrari).
+COMENZI (id_comanda NUMBER(5) PRIMARY KEY, id_client NUMBER(5), data DATE) cu cel putin 100 de randuri (inregistrari).
+Precizati care este efectul comenzii SQL-Oracle:
+CREATE VIEW v_PRODUSE AS
+SELECT denumire_produs, descriere, COUNT(c.id_comanda) numar_comenzi, ROUND(AVG(rc.pret),2) pretm
+FROM produse p, rand_comenzi rc, comenzi c
+WHERE p.id_produs=rc.id_produs
+and rc.id_comanda=c.id_comanda
+and EXTRACT(YEAR FROM data)<=2024
+GROUP BY denumire_produs, descriere
+HAVING COUNT(c.id_comanda) >=3;
+
+VARIANTE:
+a) jonctiunea dintre tabele nu se poate realiza deoarece tabela RAND_COMENZI nu are PRIMARY KEY
+b) crearea unei tabele virtuale pe baza celor trei tabele prin care se vor selecta produsele care au fost comandate pe cel putin 3 comenzi pana in 2024 (inclusiv)
+c) se va afisa o eroare deoarece functia AVG este incorect utilizata
+d) se va afisa o eroare deoarece functia COUNT utilizeaza coloana id_comanda din tabela COMENZI
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Comanda creeaza un view (tabela virtuala) prin jonctiunea celor trei tabele. Se grupeaza pe (denumire_produs, descriere), se numara comenzile si se calculeaza pretul mediu, filtrand pe anul <= 2024 si pastrand doar produsele cu cel putin 3 comenzi (HAVING COUNT >= 3). Deci b) descrie corect efectul. Varianta a) e gresita: jonctiunea nu necesita PRIMARY KEY pe tabelele implicate. Varianta c) e gresita: AVG(rc.pret) este folosit corect intr-un query cu GROUP BY. Varianta d) e gresita: COUNT(c.id_comanda) este valid - o functie de grup poate opera pe orice coloana, inclusiv pe cheia din COMENZI.
+
+##### ÎNTREBAREA 19 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Care dintre urmatoarele afirmatii este corecta?
+
+VARIANTE:
+a) Un obiect este un pointer al tipului de date al clasei
+b) O clasă este o instanță a obiectelor sale
+c) O clasă este o instanță a tipului de date struct
+d) Un obiect este o instanță din clasa sa
+
+RASPUNS_BAREM: d
+RASPUNS_CORECT: d
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Clasa este tipul (sablonul), iar obiectul este o instanta concreta a clasei. Deci "un obiect este o instanta a clasei sale" (d) este afirmatia corecta. Varianta a) e gresita: un obiect nu este un pointer, ci o valoare/instanta (un pointer catre obiect este alt concept). Varianta b) e gresita: relatia este inversa - obiectele sunt instante ale clasei, nu clasa instanta a obiectelor. Varianta c) e gresita: clasa nu este o instanta a lui struct; clasa si struct sunt ambele constructii pentru definirea de tipuri (in C++ difera doar prin accesul implicit).
+
+##### ÎNTREBAREA 20 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa urmatorul cod C?
+#include<stdio.h>
+int main() {
+   printf("%d", 11 >> 2);
+   return 0;
+}
+
+VARIANTE:
+a) 44
+b) 22
+c) 2
+d) 121
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Operatorul >> este deplasare pe biti la dreapta. 11 in binar este 1011; deplasat cu 2 pozitii la dreapta devine 10 (binar) = 2. Echivalent, 11 >> 2 = 11 / 2^2 = 11 / 4 = 2 (impartire intreaga). Deci se afiseaza 2 (c). Varianta a) 44 ar corespunde unei deplasari la stanga cu 2 (11<<2). Variantele b) 22 (11<<1) si d) 121 (11*11) nu au legatura cu operatia efectuata.
+
+##### ÎNTREBAREA 21 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume_angajat VARCHAR2(30), prenume_angajat VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_functie VARCHAR2(30)) avand 100 de randuri (inregistrari).
+Se considera urmatoarea secventa PL/SQL:
+SET SERVEROUTPUT ON
+DECLARE
+nr NUMBER;
+rez BOOLEAN;
+BEGIN
+UPDATE angajati SET salariul=salariul*0.1;
+SELECT AVG(salariul) INTO nr FROM angajati WHERE 1=2;
+rez:=SQL%FOUND;
+IF rez THEN DBMS_OUTPUT.PUT_LINE('A');
+ELSIF rez=FALSE THEN DBMS_OUTPUT.PUT_LINE('B');
+ELSE DBMS_OUTPUT.PUT_LINE('C');
+END IF;
+END;
+/
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) blocul PL/SQL ruleaza cu succes si afiseaza C
+b) blocul PL/SQL ruleaza cu succes si afiseaza B
+c) blocul PL/SQL ruleaza cu succes si afiseaza A
+d) blocul utilizeaza incorect o variabila de tip boolean
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Instructiunea SELECT AVG(salariul) INTO nr ... WHERE 1=2 foloseste o functie de grup (AVG). O interogare agregata FARA GROUP BY returneaza INTOTDEAUNA exact un rand (cu valoarea NULL cand nu exista randuri care sa satisfaca conditia). Deci SELECT INTO reuseste (nr=NULL), NU se declanseaza NO_DATA_FOUND. Atributul SQL%FOUND dupa un SELECT INTO care a returnat un rand este TRUE, deci rez=TRUE. Prima ramura IF rez THEN se executa si afiseaza 'A' (c). Variantele a) si b) sunt gresite pentru ca rez este TRUE (nu FALSE si nu NULL). Varianta d) e gresita: variabila boolean este folosita corect (atat direct in IF, cat si comparata cu FALSE).
+
+##### ÎNTREBAREA 22 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce afiseaza programul C++:
+#include <iostream>
+using namespace std;
+class A
+{
+public:
+   A() { }
+   A(const A&) { cout << "Copiere "; }
+   A& operator=(A x) { cout << "Atribuire "; return *this; }
+};
+
+void main()
+{
+   A ob1;
+   A ob2 = ob1, ob3(ob1);
+}
+
+VARIANTE:
+a) Atribuire Copiere Copiere
+b) Atribuire Copiere
+c) Copiere Copiere Copiere
+d) Copiere Copiere
+
+RASPUNS_BAREM: d
+RASPUNS_CORECT: d
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: A ob1; apeleaza constructorul implicit A() - nu afiseaza nimic. Linia "A ob2 = ob1, ob3(ob1);" declara doua obiecte, ambele INITIALIZATE din ob1: "A ob2 = ob1" este initializare prin copiere (constructor de copiere -> "Copiere "), iar "ob3(ob1)" este tot initializare prin copiere (constructor de copiere -> "Copiere "). Operatorul de ATRIBUIRE (operator=) NU se apeleaza - "=" din declararea cu initializare inseamna copy-initialization, nu atribuire. Rezultat: "Copiere Copiere" (d). Variantele a) si b) presupun gresit apelul operatorului de atribuire. Varianta c) presupune gresit trei apeluri de copiere.
+
+##### ÎNTREBAREA 23 #####
+CATEGORIE: SQL
+ENUNT:
+Functia TO_CHAR in SQL-Oracle:
+
+VARIANTE:
+a) poate fi utilizata pe parametri de tip NUMBER si DATE
+b) accepta doar parametri de tip VARCHAR2 si face conversia la tipul de date CHAR
+c) poate fi utilizata doar pe parametri de tip NUMBER
+d) accepta parametri de tip TIMESTAMP si va returna intotdeauna anul curent
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: TO_CHAR converteste in sir de caractere atat valori numerice (TO_CHAR(numar[,format])) cat si valori calendaristice (TO_CHAR(data[,format])) - deci se poate aplica pe NUMBER si DATE (a). Varianta b) e gresita: TO_CHAR nu se aplica pe VARCHAR2 pentru a produce CHAR - scopul ei este conversia catre sir din NUMBER/DATE. Varianta c) e gresita: nu este limitata doar la NUMBER. Varianta d) e gresita: pe TIMESTAMP se poate aplica, dar rezultatul depinde de formatul specificat, nu returneaza "intotdeauna anul curent".
+
+##### ÎNTREBAREA 24 #####
+CATEGORIE: SQL
+ENUNT:
+Se considera tabelele:
+PRODUSE (id_produs NUMBER(5) PRIMARY KEY, denumire_produs VARCHAR2(150), descriere VARCHAR2(150), categorie VARCHAR2(50), pret_min NUMBER(8,2)) cu cel putin 100 de randuri (inregistrari).
+RAND_COMENZI (id_produs NUMBER(5), id_comanda NUMBER(5), pret NUMBER(8,2), cantitate NUMBER(8,2)) cu cel putin 200 de randuri (inregistrari).
+Precizati care este efectul comenzii SQL-Oracle:
+UPDATE produse
+SET pret_min=pret_min*0.9
+WHERE pret_min>(SELECT min(pret) from rand_comenzi)
+AND categorie IN
+(SELECT categorie FROM produse
+WHERE LOWER(denumire_produs) LIKE '%monitor%');
+Alegeti varianta corecta:
+
+VARIANTE:
+a) afiseaza o eroare deoarce subcererea (SELECT min(pret) from rand_comenzi) nu se poate utiliza in clauza WHERE
+b) actualizeaza doar produsele care contin in denumire cuvantul 'monitor'
+c) actualizeaza produsele care au pret_min mai mare decat pretul minim din tabela RAND_COMENZI si sunt in categorii similare cu produsele care contin in denumire cuvantul 'monitor'
+d) afiseaza o eroare deoarece subcererea (SELECT categorie FROM produse WHERE LOWER(denumire_produs) LIKE '%monitor%') poate returna mai multe categorii de produse si operatorul IN nu este corect utilizat
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Comanda UPDATE reduce cu 10% pret_min (pret_min*0.9) pentru produsele care indeplinesc AMBELE conditii: (1) pret_min > pretul minim din RAND_COMENZI (subcerere scalara, valida in WHERE) si (2) categorie IN lista categoriilor produselor a caror denumire contine 'monitor'. Deci c) descrie corect efectul. Varianta a) e gresita: o subcerere scalara (min returneaza o singura valoare) este valida in WHERE. Varianta b) e gresita: nu se actualizeaza produsele care contin 'monitor', ci cele din ACELEASI CATEGORII cu produsele "monitor". Varianta d) e gresita: operatorul IN accepta exact subcereri care returneaza mai multe valori.
+
+##### ÎNTREBAREA 25 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), id_departament NUMBER(3)) avand 100 de randuri (inregistrari).
+Fie urmatoarea procedura PL/SQL:
+CREATE OR REPLACE PROCEDURE P_CURSOR(p_id angajati.id_departament%TYPE)
+IS
+var NUMBER:=0;
+CURSOR cursor1 IS SELECT * FROM angajati WHERE id_departament=p_id
+AND salariul >(SELECT AVG(salariul) FROM angajati) ORDER BY salariul DESC;
+BEGIN
+FOR var IN cursor1 LOOP
+DBMS_OUTPUT.PUT_LINE('Angajatul '||var.nume ||' are salariul: '||var.salariul);
+EXIT WHEN cursor1%rowcount>=3;
+END LOOP;
+END;
+/
+Procedura este apelata in blocul PL/SQL de mai jos:
+SET SERVEROUTPUT ON
+BEGIN
+P_CURSOR(90);
+END;
+/
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) blocul PL/SQL ruleaza cu succes si afiseaza un top al primilor 3 angajati din departamentul 90 cu salariul mai mare decat salariul mediu
+b) procedura PL/SQL va genera o eroare deoarece nu se poate iesi cu EXIT dintr-un ciclu FOR
+c) procedura PL/SQL genereaza o eroare deoarece variabila var nu este definita si utilizata corect
+d) blocul PL/SQL ruleaza cu succes si afiseaza toti angajatii care au salariul mai mare decat salariul mediu al angajatilor din departamentul 90
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Cursorul selecteaza angajatii din departamentul 90 (p_id=90) cu salariul mai mare decat media salariilor (SELECT AVG(salariul) FROM angajati - media pe TOATA tabela), ordonati descrescator dupa salariu. Bucla FOR parcurge cursorul, iar EXIT WHEN cursor1%rowcount>=3 opreste dupa cel mult 3 randuri afisate - deci un "top 3". Blocul ruleaza corect si afiseaza primii 3 (a). Varianta b) e gresita: EXIT WHEN este perfect valid intr-o bucla FOR de cursor. Varianta c) e gresita: in "FOR var IN cursor1" variabila de ciclu var este declarata implicit ca inregistrare (o noua variabila care ecraneaza var-ul NUMBER din declaratii); nu e eroare. Varianta d) e gresita din doua motive: media este calculata pe TOTI angajatii (nu doar pe departamentul 90) si nu se afiseaza "toti" ci maxim 3 (datorita EXIT).
+
+##### ÎNTREBAREA 26 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Fiind date doua clase intr-o relatie de tip derivare (mostenire), la definirea unui obiect de clasa derivata, constructorii se apeleaza in ordinea:
+
+VARIANTE:
+a) mai intai se apeleaza constructorul clasei derivate, apoi cel al bazei
+b) mai intai se executa constructorul clasei in care au fost definiti cei mai multi constructori
+c) mai intai se apeleaza constructorul clasei de baza, apoi cel al derivatei
+d) aleatoare
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: La construirea unui obiect din clasa derivata, se apeleaza intai constructorul clasei de BAZA (pentru a initializa subobiectul mostenit), apoi constructorul clasei DERIVATE (c). Varianta a) inverseaza ordinea - aceea este ordinea DESTRUCTORILOR. Varianta b) e gresita: ordinea nu depinde de numarul de constructori. Varianta d) e gresita: ordinea este deterministă, nu aleatoare.
+
+##### ÎNTREBAREA 27 #####
+CATEGORIE: SQL
+ENUNT:
+Se considera urmatoarea comanda SQL-Oracle:
+SELECT CONCAT ('Ion', UPPER((SUBSTR('Ionescu',1)))) || LENGTH ('Ionescu') parola
+FROM DUAL;
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) se afiseaza IonIONESCU7
+b) functia SUBSTR este o functie de grup
+c) se afiseaza IonI7
+d) functia CONCAT nu se poate utiliza in combinatie cu operatorul ||
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Se evalueaza de la interior: SUBSTR('Ionescu',1) - fara argument de lungime, returneaza subsirul de la pozitia 1 pana la sfarsit = 'Ionescu'. UPPER('Ionescu') = 'IONESCU'. CONCAT('Ion','IONESCU') = 'IonIONESCU'. LENGTH('Ionescu') = 7. Concatenat cu || rezulta 'IonIONESCU7' (a). Varianta c) IonI7 ar presupune gresit ca SUBSTR('Ionescu',1) returneaza doar primul caracter (ar trebui SUBSTR('Ionescu',1,1)). Varianta b) e gresita: SUBSTR este functie pe siruri (single-row), nu functie de grup. Varianta d) e gresita: CONCAT si || pot fi combinate liber.
+
+##### ÎNTREBAREA 28 #####
+CATEGORIE: Baze de date (teorie)
+ENUNT:
+Avand doua relatii R1 si R2, operatorul care permite crearea unei relatii R3 formata din inregistrarile din R1 si R2, fara a elimina duplicatele este:
+
+VARIANTE:
+a) JOIN
+b) UNION
+c) UNION ALL
+d) INTERSECT
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Reuniunea care PASTREAZA duplicatele este UNION ALL (c) - combina toate inregistrarile din ambele relatii fara deduplicare. UNION (b) realizeaza tot reuniunea, dar ELIMINA duplicatele. JOIN (a) combina coloane pe baza unei conditii de asociere, nu inregistrari pe verticala. INTERSECT (d) returneaza doar inregistrarile COMUNE ambelor relatii (intersectia), nu reuniunea.
+
+##### ÎNTREBAREA 29 #####
+CATEGORIE: SQL
+ENUNT:
+Care dintre urmatoarele optiuni poate fi utilizata pentru adaugarea unei noi coloane intr-o tabela in SQL-Oracle:
+
+VARIANTE:
+a) UPDATE TABLE ADD COLUMN column_name ();
+b) ALTER TABLE table_name ADD COLUMN column_name ();
+c) ALTER TABLE table_name ADD column_name column_definition;
+d) MODIFY TABLE ADD column_name;
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Sintaxa Oracle pentru adaugarea unei coloane este: ALTER TABLE nume_tabela ADD nume_coloana tip_de_date; - deci varianta c) (ALTER TABLE table_name ADD column_name column_definition) este corecta. Varianta a) e gresita: UPDATE modifica date (DML), nu structura; nu exista "UPDATE TABLE ADD COLUMN". Varianta b) e gresita: in Oracle nu se foloseste cuvantul cheie COLUMN dupa ADD (acela este stilul MySQL/SQL Server, iar aici lipseste si tipul de date). Varianta d) e gresita: nu exista comanda "MODIFY TABLE"; MODIFY se foloseste in Oracle doar pentru a schimba definitia unei coloane existente (ALTER TABLE ... MODIFY ...).
+
+##### ÎNTREBAREA 30 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Programul C++:
+#include <iostream>
+using namespace std;
+class A {
+   int a;
+public:
+   A(int v = 0) : a(v) {
+   }
+   friend int get_a(A p) {
+      return p.a;
+   }
+};
+class B : public A {
+   float b;
+public:
+   B(int v = 0, float m = 0.0) : A(v), b(m) {
+   }
+};
+int main() {
+   B s(10, 3.14);
+   cout << get_a(s);
+   return 0;
+}
+
+VARIANTE:
+a) Va genera eroare, membrii private in clasa de baza fiind intotdeauna inaccesibili in clasa derivata
+b) Va afisa 0
+c) Va genera eroare, campul a nefiind accesibil printr-o functie friend in clasa A
+d) Va afisa 10
+
+RASPUNS_BAREM: d
+RASPUNS_CORECT: d
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: B s(10, 3.14) apeleaza constructorul B, care apeleaza A(10), deci subobiectul A al lui s are a=10. Functia get_a este declarata friend in clasa A si primeste un parametru de tip A (prin valoare). La apelul get_a(s), obiectul B s este convertit implicit la A (slicing) - se copiaza subobiectul A cu a=10. Fiind functie friend a lui A, get_a poate accesa membrul privat a, deci returneaza 10. Se afiseaza 10 (d). Varianta a) e gresita: aici nu se acceseaza a din clasa derivata, ci printr-o functie friend a bazei. Varianta c) e gresita: o functie friend ARE acces la membrii privati ai clasei. Varianta b) e gresita: a a fost initializat cu 10, nu cu 0.
