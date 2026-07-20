@@ -1,0 +1,908 @@
+=== ADMITERE MASTER CSIE3 - TEST SIMULARE 10 ===
+Sursă: generat original, pe baza tiparelor din subiectele 2024-2025
+Format sursă original: intrebari noi, verificate prin compilare (C/C++, OOP) si
+  rationament riguros (SQL, PL/SQL)
+Număr total întrebări: 30
+Punctaj: 3 puncte/întrebare corectă, punctaj maxim 90 puncte
+
+##### ÎNTREBAREA 1 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa urmatorul program C?
+#include <stdio.h>
+int numarPare(int v[], int n) {
+    if (n == 0) return 0;
+    if (v[n - 1] % 2 == 0) return 1 + numarPare(v, n - 1);
+    return numarPare(v, n - 1);
+}
+int main() {
+    int v[] = {4, 7, 2, 9, 6, 3};
+    printf("%d", numarPare(v, 6));
+    return 0;
+}
+
+VARIANTE:
+a) 3
+b) 4
+c) 2
+d) 6
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia numarPare parcurge recursiv vectorul de la ultimul element (v[n-1]) spre primul, numarand cate elemente sunt pare. La fiecare pas, daca elementul curent v[n-1] este par, se adauga 1 la rezultatul recursiv obtinut pentru restul vectorului (primele n-1 elemente); daca e impar, se ia direct rezultatul recursiv fara a adauga nimic. Cazul de baza n==0 returneaza 0 (vector gol, 0 numere pare). Desfasurare pentru {4,7,2,9,6,3}: elementele sunt 4(par), 7(impar), 2(par), 9(impar), 6(par), 3(impar) -> exact 3 numere pare (4, 2, 6). Deci numarPare(v,6) returneaza 3, varianta a. b=4 ar rezulta daca s-ar numara si un element impar suplimentar. c=2 ar rezulta daca s-ar omite unul dintre cele 3 elemente pare (de exemplu daca bucla s-ar opri prematur). d=6 este numarul total de elemente din vector, nu numarul celor pare. Verificat prin compilare si rulare (gcc): programul afiseaza 3.
+
+##### ÎNTREBAREA 2 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce va afisa la rulare urmatorul program C++?
+
+#include <iostream>
+using namespace std;
+class Forma {
+public:
+   virtual void arata() { cout << "F"; }
+};
+class Cerc : public Forma {
+public:
+   void arata() { cout << "C"; }
+};
+class Patrat : public Forma {
+public:
+   void arata() { cout << "P"; }
+};
+int main() {
+   Forma* v[3];
+   v[0] = new Cerc();
+   v[1] = new Patrat();
+   v[2] = new Forma();
+   for (int i = 0; i < 3; i++)
+      v[i]->arata();
+   return 0;
+}
+
+VARIANTE:
+a) FFF
+b) CPF
+c) CP
+d) FFFCPF
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Vectorul v contine pointeri catre clasa de baza Forma, dar fiecare element indica de fapt catre un obiect al unei clase (potential) diferite: v[0] este un Cerc, v[1] un Patrat, v[2] o Forma. Deoarece metoda arata() este declarata virtual in clasa de baza, apelul v[i]->arata() se rezolva prin legare tarzie (dynamic binding), in functie de tipul REAL al obiectului indicat, nu de tipul pointerului. Astfel: v[0]->arata() apeleaza Cerc::arata() -> "C", v[1]->arata() apeleaza Patrat::arata() -> "P", v[2]->arata() apeleaza Forma::arata() -> "F". Rezultat: "CPF", varianta b. a=FFF ar fi corect DOAR daca arata() nu ar fi virtual (legare statica dupa tipul pointerului Forma*). c omite ultimul element. d amesteca gresit. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza CPF.
+
+##### ÎNTREBAREA 3 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela:
+ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume
+VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3))
+cu cel putin 200 de randuri (inregistrari).
+Se considera comanda SQL-Oracle:
+SELECT x.id_departament, x.sal_mediu
+FROM (SELECT id_departament, AVG(salariul) AS sal_mediu
+      FROM angajati
+      GROUP BY id_departament) x
+WHERE x.sal_mediu > 5000;
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) foloseste o subcerere in clauza FROM (vedere inline) care calculeaza salariul mediu pe fiecare departament, iar interogarea exterioara pastreaza departamentele cu media salariala peste 5000
+b) genereaza eroare deoarece o subcerere din clauza FROM nu poate contine functii de grup precum AVG
+c) genereaza eroare deoarece nu se poate face referire la aliasul sal_mediu in clauza WHERE a interogarii exterioare
+d) afiseaza toti angajatii al caror salariu individual depaseste 5000
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Subcererea din clauza FROM este o vedere inline (inline view): ea produce un tabel temporar x cu doua coloane, id_departament si sal_mediu (media salariilor grupata pe departament). Interogarea exterioara selecteaza din acest tabel intermediar si aplica filtrul WHERE x.sal_mediu > 5000, pastrand doar departamentele a caror medie salariala depaseste 5000. Deci a. b este falsa: o vedere inline poate contine orice constructie valida de SELECT, inclusiv GROUP BY si functii de grup. c este falsa: exact acesta este avantajul vederii inline - aliasul sal_mediu devine o coloana reala a tabelului intermediar x si poate fi folosit in WHERE-ul exterior (spre deosebire de a incerca AVG(salariul)>5000 direct in WHERE, care ar fi eroare). d este falsa: filtrul se aplica pe MEDIA departamentului, nu pe salariul individual, iar rezultatul contine departamente, nu angajati.
+
+##### ÎNTREBAREA 4 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume
+VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3)).
+Se considera procedura:
+CREATE OR REPLACE PROCEDURE stat_dept(
+   p_id    IN  NUMBER,
+   p_nr    OUT NUMBER,
+   p_total OUT NUMBER) IS
+BEGIN
+   SELECT COUNT(*), SUM(salariul)
+   INTO p_nr, p_total
+   FROM angajati
+   WHERE id_departament = p_id;
+END;
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) procedura returneaza, prin cei doi parametri OUT, numarul de angajati si suma salariilor din departamentul primit prin p_id
+b) procedura genereaza eroare de compilare deoarece un subprogram nu poate avea doi parametri OUT
+c) procedura genereaza eroare deoarece SELECT ... INTO nu poate popula simultan doi parametri OUT
+d) procedura trebuie declarata ca FUNCTION, pentru ca returneaza valori catre apelant
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Procedura primeste departamentul prin parametrul IN p_id si transmite inapoi catre apelant doua rezultate prin cei doi parametri OUT: p_nr (numarul de angajati, COUNT(*)) si p_total (suma salariilor, SUM(salariul)) din acel departament. Instructiunea SELECT ... INTO p_nr, p_total ... completeaza ambele variabile OUT dintr-o singura interogare de grup (care returneaza exact o linie). Deci a. b este falsa: o procedura poate avea oricati parametri OUT - acesta este chiar mecanismul standard prin care o procedura "returneaza" mai multe valori. c este falsa: SELECT ... INTO poate popula o lista de variabile/parametri, iar aici cele doua functii de grup corespund celor doi parametri OUT. d este falsa: o FUNCTION returneaza o SINGURA valoare prin RETURN; pentru a intoarce mai multe valori se foloseste tocmai o procedura cu parametri OUT.
+
+##### ÎNTREBAREA 5 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce va afisa la rulare urmatorul program C++?
+
+#include <iostream>
+using namespace std;
+class Animal {
+public:
+   virtual int picioare() { return 4; }
+};
+class Pasare : public Animal {
+public:
+   int picioare() { return 2; }
+};
+class Paianjen : public Animal {
+public:
+   int picioare() { return 8; }
+};
+int main() {
+   Animal* a[3];
+   a[0] = new Pasare();
+   a[1] = new Paianjen();
+   a[2] = new Animal();
+   int s = 0;
+   for (int i = 0; i < 3; i++)
+      s += a[i]->picioare();
+   cout << s;
+   return 0;
+}
+
+VARIANTE:
+a) 12
+b) 14
+c) 16
+d) 6
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Se parcurge polimorfic un tablou de pointeri Animal*, iar metoda picioare() fiind virtual, fiecare apel a[i]->picioare() se rezolva dupa tipul real al obiectului: a[0] este Pasare -> 2, a[1] este Paianjen -> 8, a[2] este Animal -> 4. Suma acumulata este 2 + 8 + 4 = 14, varianta b. a=12 ar rezulta daca a[2] ar fi tot un obiect derivat; c=16 este eronat. d=6 (adica 2+4) ignora un element sau presupune ca metoda nu e virtual (caz in care s-ar apela mereu Animal::picioare()=4 si suma ar fi 12, tot nu 6). Deoarece picioare() este declarata virtual, legarea este dinamica si suma corecta este 14. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza 14.
+
+##### ÎNTREBAREA 6 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa urmatorul program C?
+#include <stdio.h>
+int nrPare(int v[], int n) {
+    if (n == 0) return 0;
+    return (v[n-1] % 2 == 0 ? 1 : 0) + nrPare(v, n-1);
+}
+int main() {
+    int v[] = {4, 7, 10, 3, 6, 9};
+    printf("%d", nrPare(v, 6));
+    return 0;
+}
+
+VARIANTE:
+a) 2
+b) 3
+c) 4
+d) 6
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia numara recursiv cate elemente pare exista in vector. La fiecare pas testeaza ultimul element neprocesat: daca v[n-1] este par (v[n-1]%2==0) adauga 1, altfel 0, apoi continua cu primele n-1 elemente. Cazul de baza n==0 returneaza 0. Analizand elementele {4,7,10,3,6,9}: 4 este par (+1), 7 impar (+0), 10 par (+1), 3 impar (+0), 6 par (+1), 9 impar (+0). Total elemente pare: 4, 10 si 6, adica 3, varianta b. a=2 numara gresit; c=4 este numarul de elemente impare + eroare; d=6 este numarul total de elemente. Verificat prin compilare si rulare (gcc): programul afiseaza 3.
+
+##### ÎNTREBAREA 7 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela:
+ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume
+VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3))
+cu cel putin 200 de randuri (inregistrari), din care unii angajati au id_departament = 20.
+Se considera comanda SQL-Oracle:
+SELECT a.nume, a.salariul,
+       (SELECT MAX(b.salariul) FROM angajati b) AS sal_max
+FROM angajati a
+WHERE a.id_departament = 20;
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) pentru fiecare angajat din departamentul 20 se afiseaza numele, salariul sau si salariul maxim din intreaga tabela ANGAJATI (aceeasi valoare pe toate randurile)
+b) genereaza eroare deoarece o subcerere nu poate aparea in clauza SELECT
+c) afiseaza numai angajatul cu salariul maxim din departamentul 20
+d) genereaza eroare deoarece subcererea din SELECT nu contine clauza WHERE care sa o coreleze cu interogarea exterioara
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Subcererea (SELECT MAX(b.salariul) FROM angajati b) este o subcerere scalara plasata in clauza SELECT: ea returneaza o SINGURA valoare (salariul maxim din intreaga tabela ANGAJATI) care este atasata ca a treia coloana (sal_max) la fiecare rand produs de interogarea exterioara. Interogarea exterioara selecteaza angajatii din departamentul 20 (WHERE a.id_departament = 20), iar valoarea maxima globala se repeta identic pe fiecare rand. Deci a. b este falsa: o subcerere scalara este perfect permisa in clauza SELECT, atat timp cat returneaza o singura valoare. c este falsa: filtrul WHERE selecteaza TOTI angajatii din departamentul 20, nu doar pe cel cu salariul maxim - subcererea doar adauga o coloana informativa. d este falsa: o subcerere scalara NU trebuie sa fie corelata; aici este necorelata (necorelata inseamna ca da aceeasi valoare pe toate randurile), ceea ce este perfect valid.
+
+##### ÎNTREBAREA 8 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera procedura (deja creata):
+CREATE OR REPLACE PROCEDURE stat_dept(
+   p_id    IN  NUMBER,
+   p_nr    OUT NUMBER,
+   p_total OUT NUMBER) IS
+BEGIN
+   SELECT COUNT(*), SUM(salariul)
+   INTO p_nr, p_total
+   FROM angajati WHERE id_departament = p_id;
+END;
+Un bloc anonim contine apelul:
+DECLARE
+   v_n NUMBER;
+   v_t NUMBER;
+BEGIN
+   stat_dept(p_total => v_t, p_id => 10, p_nr => v_n);
+END;
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) apelul este valid; prin notatia cu parametri numiti ordinea argumentelor nu conteaza, deci p_id primeste 10, iar v_n si v_t primesc rezultatele, chiar daca parametrii sunt scrisi intr-o ordine diferita de cea din antet
+b) apelul genereaza eroare deoarece la apelarea unei proceduri parametrii trebuie transmisi obligatoriu in ordinea din antet
+c) apelul genereaza eroare deoarece p_id (parametru IN) nu poate fi transmis prin notatia cu nume (=>)
+d) apelul este valid, dar p_id va primi valoarea lui v_t, deoarece conteaza pozitia, nu numele
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Apelul foloseste notatia cu parametri numiti (named notation): fiecare argument este asociat explicit numelui formal prin operatorul de asociere =>. In aceasta notatie ordinea in care sunt scrisi parametrii in apel NU conteaza, deoarece potrivirea se face dupa nume, nu dupa pozitie. Astfel p_id => 10 transmite 10 la parametrul de intrare p_id, p_nr => v_n leaga variabila v_n de parametrul OUT p_nr, iar p_total => v_t leaga v_t de p_total. Apelul este perfect valid si corect. Deci a. b este falsa: ordinea obligatorie exista doar la notatia pozitionala; notatia cu nume elimina aceasta constrangere. c este falsa: orice parametru (IN, OUT sau IN OUT) poate fi transmis prin notatia cu nume. d este falsa: exact caracteristica notatiei cu nume este ca numele decide asocierea, nu pozitia - deci p_id primeste 10, nu v_t.
+
+##### ÎNTREBAREA 9 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce va afisa la rulare urmatorul program C++?
+
+#include <iostream>
+using namespace std;
+class Baza {
+public:
+   Baza() { cout << "B"; }
+   virtual ~Baza() { cout << "b"; }
+};
+class Derivata : public Baza {
+public:
+   Derivata() { cout << "D"; }
+   ~Derivata() { cout << "d"; }
+};
+int main() {
+   Baza* p = new Derivata();
+   delete p;
+   return 0;
+}
+
+VARIANTE:
+a) BDdb
+b) BDbd
+c) BDb
+d) DBbd
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: La new Derivata() se construieste obiectul in ordinea: constructorul bazei Baza() -> "B", apoi constructorul derivatei Derivata() -> "D", deci "BD". La delete p, unde p este un pointer Baza* care indica un obiect Derivata: deoarece destructorul bazei este declarat virtual (~Baza() virtual), apelul delete se rezolva prin legare dinamica si porneste de la destructorul clasei REALE (Derivata). Destructorii se executa in ordine inversa constructorilor: intai ~Derivata() -> "d", apoi ~Baza() -> "b", deci "db". Rezultat total: "BDdb", varianta a. Observatie esentiala: daca ~Baza() NU ar fi fost virtual, delete p (prin pointer de baza) ar fi apelat doar ~Baza(), producand comportament nedefinit / obiect derivat distrus incomplet ("BDb"), motiv pentru care destructorul bazei se declara virtual la clasele polimorfice. c=BDb corespunde tocmai cazului gresit (fara destructor virtual). b si d inverseaza ordinea destructorilor. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza BDdb.
+
+##### ÎNTREBAREA 10 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa urmatorul program C?
+#include <stdio.h>
+int cauta(int v[], int n, int x) {
+    if (n == 0) return -1;
+    if (v[n-1] == x) return n-1;
+    return cauta(v, n-1, x);
+}
+int main() {
+    int v[] = {5, 8, 12, 8, 3};
+    printf("%d", cauta(v, 5, 8));
+    return 0;
+}
+
+VARIANTE:
+a) 1
+b) 3
+c) 8
+d) -1
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia cauta valoarea x in vector, in mod recursiv, verificand elementele de la coada spre cap (de la indicele n-1 in jos). La fiecare pas: daca n==0 s-a epuizat vectorul si returneaza -1 (negasit); daca v[n-1]==x returneaza indicele curent n-1; altfel continua cu subvectorul de lungime n-1. Trace pentru x=8: n=5 -> v[4]=3, nu; n=4 -> v[3]=8, DA -> returneaza 3. Deci se opreste la primul 8 intalnit dinspre coada, care se afla pe pozitia 3. Rezultat: 3, varianta b. Atentie: desi valoarea 8 apare si pe pozitia 1, cautarea pornind de la coada gaseste INTAI aparitia de pe pozitia 3 si returneaza imediat, deci a=1 (prima aparitie de la cap) este gresit. c=8 este VALOAREA cautata, nu indicele. d=-1 ar fi rezultatul daca valoarea nu ar exista. Verificat prin compilare si rulare (gcc): programul afiseaza 3.
+
+##### ÎNTREBAREA 11 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela:
+ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume
+VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3))
+cu cel putin 200 de randuri (inregistrari).
+Se considera comanda SQL-Oracle:
+SELECT nume, salariul
+FROM (SELECT nume, salariul
+      FROM angajati
+      ORDER BY salariul DESC)
+WHERE ROWNUM <= 3;
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) afiseaza cei 3 angajati cu cele mai mari salarii, deoarece sortarea descrescatoare se face in vederea inline, iar ROWNUM se aplica pe rezultatul deja sortat
+b) afiseaza 3 angajati aleatori, deoarece ROWNUM ignora clauza ORDER BY din vederea inline
+c) genereaza eroare deoarece ROWNUM nu poate fi folosit impreuna cu o subcerere in FROM
+d) afiseaza cei 3 angajati cu cele mai mici salarii
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Aceasta este forma clasica Oracle de a obtine "top-N" corect. Cheia este ORDINEA de evaluare: in Oracle, pseudocoloana ROWNUM se atribuie randurilor INAINTE de aplicarea unui ORDER BY din acelasi bloc de interogare. De aceea, daca s-ar scrie direct SELECT ... FROM angajati WHERE ROWNUM<=3 ORDER BY salariul DESC, ROWNUM ar numerota 3 randuri OARECARE si abia apoi le-ar sorta - rezultat gresit. Solutia corecta este vederea inline: subcererea din FROM produce mai intai rezultatul complet SORTAT descrescator dupa salariu, iar interogarea exterioara aplica ROWNUM<=3 pe acest set deja ordonat, retinand primele 3 randuri, adica cele mai mari 3 salarii. Deci a. b este falsa tocmai pentru ca sortarea este "materializata" in vederea inline inaintea aplicarii ROWNUM. c este falsa: ROWNUM se poate folosi liber cu vederi inline (este chiar tehnica recomandata). d este falsa: sortarea este DESC (descrescatoare), deci se obtin salariile cele mai MARI.
+
+##### ÎNTREBAREA 12 #####
+CATEGORIE: Baze de date (teorie)
+ENUNT:
+In teoria modelului relational, se considera notiunile de supercheie (superkey) si cheie
+candidata (cheie minima). Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) orice cheie candidata este o supercheie, dar nu orice supercheie este cheie candidata
+b) orice supercheie este si cheie candidata, deoarece ambele identifica unic un tuplu
+c) o cheie candidata poate contine atribute redundante (care pot fi eliminate fara a pierde unicitatea)
+d) o relatie poate avea cel mult o supercheie
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: O supercheie este orice multime de atribute care identifica unic un tuplu (rand) intr-o relatie; ea poate contine si atribute "in plus", nenecesare pentru unicitate. O cheie candidata (numita si cheie minima) este o supercheie MINIMALA: identifica unic tuplul si, in plus, niciun subansamblu propriu al ei nu mai are aceasta proprietate (nu contine atribute redundante). Prin urmare, orice cheie candidata este in mod evident si supercheie (indeplineste conditia de unicitate), dar reciproca nu este adevarata: o supercheie care contine atribute in plus (ex. {id_angajat, nume}) nu este cheie candidata, deoarece nu este minimala. Deci a. b este falsa: o supercheie neminimala NU este cheie candidata. c este falsa: exact absenta atributelor redundante (minimalitatea) defineste cheia candidata; daca ar putea fi eliminate atribute, nu ar fi minimala. d este falsa: o relatie poate avea multiple superchei (si chiar mai multe chei candidate); dintre cheile candidate se alege una drept cheie primara.
+
+##### ÎNTREBAREA 13 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce va afisa la rulare urmatorul program C++?
+
+#include <iostream>
+using namespace std;
+class A {
+public:
+   void afiseaza() { cout << "A"; }
+};
+class B : public A {
+public:
+   void afiseaza() { cout << "B"; }
+};
+int main() {
+   A* p = new B();
+   p->afiseaza();
+   return 0;
+}
+
+VARIANTE:
+a) A
+b) B
+c) AB
+d) Eroare de compilare deoarece B nu poate redefini metoda afiseaza
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Metoda afiseaza() NU este declarata virtual in clasa de baza A. In lipsa cuvantului cheie virtual, apelul p->afiseaza() se rezolva prin legare STATICA (early binding), adica in functie de TIPUL POINTERULUI (A*), nu de tipul real al obiectului indicat (B). Prin urmare se apeleaza A::afiseaza() si se afiseaza "A", varianta a. Acesta este exact "capcana" polimorfismului: pentru ca apelul sa se rezolve dupa tipul real al obiectului (adica B::afiseaza() -> "B") ar fi fost necesar ca metoda sa fie declarata virtual in A. b=B ar fi corect DOAR daca afiseaza() ar fi virtual. c=AB nu corespunde (se apeleaza o singura metoda). d este falsa: o clasa derivata poate redefini (ascunde/suprascrie) o metoda a bazei fara nicio eroare. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza A.
+
+##### ÎNTREBAREA 14 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera procedura:
+CREATE OR REPLACE PROCEDURE incrementeaza(x OUT NUMBER) IS
+BEGIN
+   x := NVL(x, 0) + 1;
+END;
+Si blocul anonim:
+DECLARE
+   v NUMBER := 5;
+BEGIN
+   incrementeaza(v);
+   DBMS_OUTPUT.PUT_LINE(v);
+END;
+Ce valoare va afisa blocul pentru v?
+
+VARIANTE:
+a) 6
+b) 1
+c) 5
+d) NULL
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Regula esentiala: un parametru de tip OUT primeste valoarea NULL la INTRAREA in procedura, indiferent de valoarea variabilei actuale transmise. Cu alte cuvinte, un parametru OUT este de tip "doar de iesire": valoarea de 5 a variabilei v NU se transmite in interiorul procedurii prin parametrul x. Astfel, la intrarea in incrementeaza, x este NULL. Instructiunea x := NVL(x, 0) + 1 devine x := NVL(NULL, 0) + 1 = 0 + 1 = 1. La iesirea din procedura, valoarea 1 a parametrului OUT x este copiata inapoi in variabila actuala v. Deci v devine 1, varianta b. a=6 ar rezulta daca parametrul ar fi IN OUT (caz in care valoarea initiala 5 s-ar transmite si s-ar obtine 5+1=6). c=5 ar insemna ca procedura nu modifica v. d=NULL ar ignora NVL. Corect: cu parametru OUT si NVL, rezultatul este 1.
+
+##### ÎNTREBAREA 15 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa urmatorul program C?
+#include <stdio.h>
+int maxim(int v[], int n) {
+    if (n == 1) return v[0];
+    int m = maxim(v, n-1);
+    return v[n-1] > m ? v[n-1] : m;
+}
+int main() {
+    int v[] = {2, 9, 4, 15, 7, 15, 1};
+    printf("%d", maxim(v, 7));
+    return 0;
+}
+
+VARIANTE:
+a) 15
+b) 9
+c) 1
+d) 30
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia determina recursiv maximul dintr-un vector. Cazul de baza este n==1, cand singurul element v[0] este maximul. Pentru n>1, se calculeaza mai intai maximul primelor n-1 elemente (m = maxim(v, n-1)), apoi se compara cu ultimul element v[n-1] si se returneaza cel mai mare dintre ele (v[n-1] > m ? v[n-1] : m). Pentru vectorul {2,9,4,15,7,15,1}, maximul este 15 (valoare care apare de doua ori, dar acest lucru nu conteaza pentru maxim). Deci a. b=9 este un maxim partial gresit; c=1 este ultimul element; d=30 este eronat (functia nu aduna elemente). Verificat prin compilare si rulare (gcc): programul afiseaza 15.
+
+##### ÎNTREBAREA 16 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabelele:
+ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume
+VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3))
+cu cel putin 200 de randuri.
+DEPARTAMENTE (id_departament NUMBER(5) PRIMARY KEY, denumire_departament
+VARCHAR2(30)) cu cel putin 20 de randuri, unele departamente neavand niciun angajat.
+Se considera comanda SQL-Oracle:
+SELECT d.denumire_departament,
+       (SELECT COUNT(*) FROM angajati a
+        WHERE a.id_departament = d.id_departament) AS nr_ang
+FROM departamente d;
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) afiseaza toate departamentele (inclusiv cele fara angajati, care vor avea nr_ang = 0), impreuna cu numarul de angajati din fiecare, calculat printr-o subcerere scalara corelata
+b) afiseaza doar departamentele care au cel putin un angajat, la fel ca un INNER JOIN
+c) genereaza eroare deoarece subcererea din SELECT se refera la d.id_departament din interogarea exterioara
+d) afiseaza pentru fiecare departament numarul TOTAL de angajati din firma, aceeasi valoare pe toate randurile
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Subcererea din clauza SELECT este o subcerere scalara CORELATA: pentru fiecare rand (departament d) al interogarii exterioare, ea numara angajatii care au a.id_departament = d.id_departament, adica angajatii din acel departament. Deoarece interogarea exterioara parcurge toate randurile din DEPARTAMENTE (nu exista filtru care sa le elimine), se afiseaza TOATE departamentele. Pentru un departament fara angajati, COUNT(*) al subcererii returneaza 0 (COUNT nu returneaza NULL, ci 0 cand nu exista randuri). Deci a. b este falsa: spre deosebire de un INNER JOIN (care ar elimina departamentele fara angajati), aceasta forma pastreaza si departamentele cu 0 angajati - comportament similar unui LEFT JOIN. c este falsa: referirea la o coloana a interogarii exterioare (d.id_departament) in subcerere este exact definitia unei subcereri corelate, perfect valida. d este falsa: valoarea difera de la departament la departament (este numarul de angajati al FIECARUI departament), datorita corelarii prin d.id_departament.
+
+##### ÎNTREBAREA 17 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce va afisa la rulare urmatorul program C++?
+
+#include <iostream>
+using namespace std;
+class Plata {
+public:
+   virtual int suma() = 0;
+};
+class Cash : public Plata {
+   int s;
+public:
+   Cash(int s) { this->s = s; }
+   int suma() { return s; }
+};
+class Card : public Plata {
+   int s;
+public:
+   Card(int s) { this->s = s; }
+   int suma() { return s * 2; }
+};
+int main() {
+   Plata* p[2];
+   p[0] = new Cash(100);
+   p[1] = new Card(50);
+   int t = 0;
+   for (int i = 0; i < 2; i++)
+      t += p[i]->suma();
+   cout << t;
+   return 0;
+}
+
+VARIANTE:
+a) 150
+b) 200
+c) 300
+d) Eroare de compilare deoarece clasa Plata contine o metoda virtual pura
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Clasa Plata are metoda virtual pura suma() (= 0), deci este o clasa abstracta: nu poate fi instantiata direct, dar poate fi folosita ca tip de baza pentru pointeri. Tabloul p contine pointeri Plata* care indica obiecte concrete: p[0] un Cash(100) si p[1] un Card(50). Apelul polimorfic p[i]->suma() se rezolva dupa tipul real: Cash::suma() returneaza s = 100, iar Card::suma() returneaza s*2 = 50*2 = 100. Suma acumulata este 100 + 100 = 200, varianta b. a=150 ar rezulta daca Card ar returna doar s (50). c=300 este eronat. d este falsa: prezenta unei metode virtual pure NU produce eroare de compilare - ea doar face clasa abstracta; eroare ar aparea doar daca s-ar incerca instantierea directa a clasei abstracte (ex. Plata x;), ceea ce nu se intampla aici (se folosesc doar pointeri catre clase derivate concrete care implementeaza suma()). Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza 200.
+
+##### ÎNTREBAREA 18 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera procedura cu doi parametri OUT:
+CREATE OR REPLACE PROCEDURE stat_dept(
+   p_id    IN  NUMBER,
+   p_nr    OUT NUMBER,
+   p_total OUT NUMBER) IS
+BEGIN
+   SELECT COUNT(*), SUM(salariul)
+   INTO p_nr, p_total
+   FROM angajati WHERE id_departament = p_id;
+END;
+Intr-un bloc anonim s-au declarat variabilele v_n NUMBER; v_t NUMBER;.
+Precizati care dintre urmatoarele apeluri ale procedurii NU este corect (genereaza eroare):
+
+VARIANTE:
+a) stat_dept(10, v_n, v_t);
+b) stat_dept(p_id => 10, p_nr => v_n, p_total => v_t);
+c) stat_dept(10, p_nr => v_n, p_total => v_t);
+d) stat_dept(p_id => 10, v_n, v_t);
+
+RASPUNS_BAREM: d
+RASPUNS_CORECT: d
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Regula de combinare a notatiilor la apelul unui subprogram: se pot amesteca notatia pozitionala si notatia cu parametri numiti, DAR toti parametrii transmisi pozitional trebuie sa apara INAINTEA celor transmisi prin nume. Odata ce s-a folosit notatia cu nume (=>), toti parametrii urmatori trebuie transmisi tot prin nume. Analiza: a) toti pozitionali - corect (10->p_id, v_n->p_nr, v_t->p_total). b) toti prin nume - corect. c) primul pozitional (10->p_id), apoi cu nume - corect, deoarece pozitionalul precede numele. d) INCORECT: primul parametru este transmis prin nume (p_id => 10), iar urmatorii doi (v_n, v_t) sunt pozitionali - dupa ce s-a inceput notatia cu nume nu se mai poate reveni la cea pozitionala (eroare PLS-00312 / "a positional parameter association may not follow a named association"). Deci raspunsul (apelul incorect) este d.
+
+##### ÎNTREBAREA 19 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa urmatorul program C++?
+
+#include <iostream>
+using namespace std;
+int calc(int a, int b = 5, int c = 10) {
+   return a + b * c;
+}
+int main() {
+   cout << calc(2) << " " << calc(2, 3) << " " << calc(2, 3, 4);
+   return 0;
+}
+
+VARIANTE:
+a) 52 32 14
+b) 70 50 24
+c) 52 35 14
+d) 17 17 17
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia calc are doi parametri cu valori implicite (default arguments): b = 5 si c = 10. La un apel, parametrii lipsa (de la dreapta la stanga) primesc valorile implicite. Se calculeaza a + b * c (inmultirea are prioritate fata de adunare). Analiza: calc(2) -> a=2, b=5 (implicit), c=10 (implicit) -> 2 + 5*10 = 2 + 50 = 52. calc(2, 3) -> a=2, b=3, c=10 (implicit) -> 2 + 3*10 = 2 + 30 = 32. calc(2, 3, 4) -> a=2, b=3, c=4 -> 2 + 3*4 = 2 + 12 = 14. Rezultat: "52 32 14", varianta a. b calculeaza gresit (ca (a+b)*c). c greseste al doilea termen. d presupune gresit ca toti parametrii au aceeasi valoare. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza 52 32 14.
+
+##### ÎNTREBAREA 20 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabelele:
+ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume
+VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3))
+cu cel putin 200 de randuri.
+DEPARTAMENTE (id_departament NUMBER(5) PRIMARY KEY, denumire_departament
+VARCHAR2(30)) cu cel putin 20 de randuri.
+Se considera comanda SQL-Oracle:
+SELECT d.denumire_departament, m.sal_mediu
+FROM departamente d
+JOIN (SELECT id_departament, AVG(salariul) AS sal_mediu
+      FROM angajati
+      GROUP BY id_departament) m
+  ON m.id_departament = d.id_departament;
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) afiseaza denumirea departamentului si salariul mediu al angajatilor sai, doar pentru departamentele care au cel putin un angajat
+b) afiseaza toate departamentele, inclusiv cele fara angajati, care vor avea sal_mediu = 0
+c) genereaza eroare deoarece nu se poate face JOIN intre un tabel si o vedere inline
+d) genereaza eroare deoarece coloana sal_mediu din vederea inline nu poate fi folosita in clauza SELECT exterioara
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Vederea inline m calculeaza, pentru fiecare departament care are angajati, salariul mediu (AVG grupat pe id_departament). Aceasta este apoi unita prin JOIN (INNER JOIN) cu tabela DEPARTAMENTE dupa id_departament. Deoarece este un JOIN interior, se pastreaza doar departamentele care au corespondent in vederea inline m, adica cele care au cel putin un angajat (departamentele fara angajati nu apar in m, pentru ca GROUP BY nu genereaza grupuri pentru ele). Deci a. b este falsa: fiind INNER JOIN, departamentele fara angajati sunt eliminate (ar aparea doar cu un LEFT JOIN, si chiar si atunci sal_mediu ar fi NULL, nu 0). c este falsa: un tabel se poate uni fara probleme cu o vedere inline (subcerere in FROM). d este falsa: coloana sal_mediu, definita prin alias in vederea inline, devine o coloana reala a lui m si poate fi folosita in SELECT-ul exterior.
+
+##### ÎNTREBAREA 21 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce va afisa la rulare urmatorul program C++?
+
+#include <iostream>
+using namespace std;
+class Resursa {
+public:
+   ~Resursa() { cout << "R"; }
+};
+class Baza {
+public:
+   virtual ~Baza() { cout << "B"; }
+};
+class Derivata : public Baza {
+   Resursa r;
+public:
+   ~Derivata() { cout << "D"; }
+};
+int main() {
+   Baza* p = new Derivata();
+   delete p;
+   return 0;
+}
+
+VARIANTE:
+a) DRB
+b) BRD
+c) DB
+d) B
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Obiectul creat este de tip Derivata, care contine un membru r de tip Resursa si mosteneste public din Baza. Deoarece destructorul bazei este virtual (~Baza() virtual), delete p (prin pointer de baza catre un obiect derivat) porneste corect distrugerea de la clasa reala Derivata. Ordinea de distrugere a unui obiect derivat este: (1) corpul destructorului clasei derivate, (2) destructorii obiectelor membru (in ordine inversa declararii), (3) destructorul clasei de baza. Deci: intai ~Derivata() -> "D", apoi destructorul membrului r, ~Resursa() -> "R", apoi ~Baza() -> "B". Rezultat: "DRB", varianta a. b inverseaza ordinea. c=DB omite membrul (ceea ce s-ar intampla doar daca membrul nu ar avea destructor). d=B ar fi cazul GRESIT in care destructorul bazei NU ar fi virtual, iar delete p ar apela doar ~Baza(), lasand membrul r si partea Derivata nedistruse (comportament nedefinit); tocmai de aceea destructorul bazei este declarat virtual. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza DRB.
+
+##### ÎNTREBAREA 22 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera procedura:
+CREATE OR REPLACE PROCEDURE calc_bonus(
+   p_id      IN  NUMBER,
+   p_bonus   OUT NUMBER,
+   p_procent IN  NUMBER DEFAULT 10) IS
+   v_sal NUMBER;
+BEGIN
+   SELECT salariul INTO v_sal FROM angajati WHERE id_angajat = p_id;
+   p_bonus := v_sal * p_procent / 100;
+END;
+Un bloc anonim declara v_b NUMBER; si apeleaza:
+   calc_bonus(p_id => 100, p_bonus => v_b);
+Presupunand ca angajatul cu id 100 are salariul 4000, ce valoare va avea v_b dupa apel?
+
+VARIANTE:
+a) 400
+b) 4000
+c) NULL
+d) apelul genereaza eroare deoarece parametrul p_procent nu a fost transmis
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Procedura are trei parametri, dintre care p_procent are o valoare implicita (DEFAULT 10). La apel se foloseste notatia cu parametri numiti: p_id => 100 si p_bonus => v_b. Parametrul p_procent nu este transmis, deci ia valoarea sa implicita 10 - notatia cu nume permite tocmai omiterea unui parametru cu valoare implicita, chiar daca acesta nu este ultimul din lista, fara ambiguitate. In corp: v_sal preia salariul angajatului 100, adica 4000, iar p_bonus := 4000 * 10 / 100 = 400. La iesire, valoarea 400 este copiata in v_b. Deci a. b=4000 ar fi salariul netransformat. c=NULL este gresit. d este falsa: p_procent avand DEFAULT, omiterea lui NU produce eroare - ia automat valoarea implicita 10. Rezultat corect: v_b = 400.
+
+##### ÎNTREBAREA 23 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela:
+ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume
+VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3))
+cu cel putin 200 de randuri.
+Se considera comanda SQL-Oracle:
+SELECT a.nume,
+       a.salariul - (SELECT AVG(b.salariul) FROM angajati b) AS diferenta
+FROM angajati a;
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) pentru fiecare angajat, afiseaza numele si diferenta dintre salariul sau si salariul mediu al intregii firme (subcerere scalara necorelata)
+b) afiseaza numai angajatii al caror salariu este peste medie
+c) genereaza eroare deoarece nu se poate face o operatie aritmetica intre o coloana si o subcerere
+d) afiseaza pentru fiecare angajat diferenta fata de salariul mediu al PROPRIULUI departament
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Subcererea (SELECT AVG(b.salariul) FROM angajati b) este o subcerere scalara NECORELATA: ea returneaza o singura valoare - salariul mediu calculat pe intreaga tabela ANGAJATI - care este aceeasi pentru toate randurile. In clauza SELECT, aceasta valoare este scazuta din salariul fiecarui angajat (a.salariul - medie), rezultand coloana "diferenta". Astfel, pentru fiecare angajat se afiseaza numele si cat de mult se abate salariul sau de la media firmei (valoare pozitiva daca este peste medie, negativa daca este sub). Deci a. b este falsa: nu exista clauza WHERE care sa filtreze - se afiseaza TOTI angajatii, doar ca unii au diferenta negativa. c este falsa: o subcerere scalara returneaza o valoare unica ce poate participa la orice expresie aritmetica. d este falsa: subcererea nu este corelata cu departamentul angajatului (nu are conditie care sa lege b.id_departament de a.id_departament), deci calculeaza media GLOBALA, nu pe departament.
+
+##### ÎNTREBAREA 24 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce va afisa la rulare urmatorul program C++?
+
+#include <iostream>
+using namespace std;
+class Angajat {
+public:
+   virtual int salariu() { return 1000; }
+};
+class Manager : public Angajat {
+public:
+   int salariu() { return 5000; }
+};
+class Director : public Manager {
+public:
+   int salariu() { return 8000; }
+};
+int main() {
+   Angajat* v[3];
+   v[0] = new Angajat();
+   v[1] = new Manager();
+   v[2] = new Director();
+   for (int i = 0; i < 3; i++)
+      cout << v[i]->salariu() << " ";
+   return 0;
+}
+
+VARIANTE:
+a) 1000 5000 8000
+b) 1000 1000 1000
+c) 8000 8000 8000
+d) 1000 5000 5000
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Metoda salariu() este virtual in clasa de baza Angajat si este suprascrisa pe fiecare nivel al ierarhiei: Manager o redefineste (5000), iar Director (derivat din Manager) o redefineste din nou (8000). Proprietatea virtual se transmite automat pe toata ierarhia. Parcurgand polimorfic tabloul de pointeri Angajat*, fiecare apel v[i]->salariu() se leaga dinamic la tipul real: v[0] Angajat -> 1000, v[1] Manager -> 5000, v[2] Director -> 8000. Rezultat: "1000 5000 8000 ", varianta a. b=1000 1000 1000 ar aparea daca metoda NU ar fi virtual (legare statica dupa Angajat*). c presupune gresit ca toate obiectele sunt Director. d greseste ultimul apel (Director suprascrie corect si pe Manager, deci 8000, nu 5000). Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza 1000 5000 8000 .
+
+##### ÎNTREBAREA 25 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa urmatorul program C++?
+
+#include <iostream>
+using namespace std;
+int f(int n, int p = 2) {
+   if (n == 0) return 1;
+   return p * f(n - 1, p);
+}
+int main() {
+   cout << f(3) << " " << f(3, 3);
+   return 0;
+}
+
+VARIANTE:
+a) 8 27
+b) 6 9
+c) 8 9
+d) 6 27
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia f este recursiva si calculeaza p la puterea n (p^n), avand parametrul p cu valoare implicita 2 (default argument). La fiecare pas inmulteste p cu rezultatul apelului f(n-1, p), iar cazul de baza n==0 returneaza 1. Analiza: f(3) foloseste p implicit = 2 -> 2^3 = 2*2*2 = 8. f(3, 3) transmite explicit p = 3 -> 3^3 = 3*3*3 = 27. La fiecare apel recursiv p se propaga neschimbat (se transmite acelasi p), deci baza puterii ramane constanta pe tot lantul. Rezultat: "8 27", varianta a. b=6 9 ar rezulta dintr-o inmultire gresita (p*n). c amesteca. d greseste primul termen. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza 8 27.
+
+##### ÎNTREBAREA 26 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera procedura cu un parametru OUT:
+CREATE OR REPLACE PROCEDURE get_nume(
+   p_id   IN  NUMBER,
+   p_nume OUT VARCHAR2) IS
+BEGIN
+   SELECT nume INTO p_nume
+   FROM angajati
+   WHERE id_angajat = p_id;
+END;
+Se apeleaza procedura (prin notatie cu nume) pentru un id care NU exista in tabela ANGAJATI:
+   get_nume(p_id => 99999, p_nume => v_rez);
+Precizati ce se intampla la executie:
+
+VARIANTE:
+a) se declanseaza exceptia NO_DATA_FOUND, deoarece SELECT ... INTO nu gaseste niciun rand, iar p_nume nu primeste nicio valoare
+b) p_nume primeste valoarea NULL, iar executia se incheie fara eroare
+c) se declanseaza exceptia TOO_MANY_ROWS
+d) apelul genereaza eroare de compilare deoarece un parametru OUT nu poate fi populat prin SELECT ... INTO
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Instructiunea SELECT ... INTO din PL/SQL trebuie sa returneze EXACT un rand. Daca interogarea nu gaseste niciun rand (cazul unui id inexistent), se declanseaza automat exceptia predefinita NO_DATA_FOUND (ORA-01403); daca ar gasi mai multe randuri, s-ar declansa TOO_MANY_ROWS. Cum id_angajat este cheie primara si valoarea 99999 nu exista, interogarea nu returneaza niciun rand, deci se ridica NO_DATA_FOUND, iar parametrul OUT p_nume ramane neatribuit (exceptia intrerupe executia inainte de finalizarea atribuirii). Deci a. b este falsa: SELECT ... INTO fara randuri NU pune NULL in variabila, ci arunca exceptie (aceasta este o capcana clasica). c este falsa: TOO_MANY_ROWS apare cand se returneaza MAI MULTE randuri, nu zero. d este falsa: un parametru OUT poate fi tinta unui SELECT ... INTO fara nicio problema de compilare.
+
+##### ÎNTREBAREA 27 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce va afisa la rulare urmatorul program C++?
+
+#include <iostream>
+using namespace std;
+class Baza {
+public:
+   virtual int val() { return 1; }
+   int dublu() { return 2 * val(); }
+};
+class Derivata : public Baza {
+public:
+   int val() { return 10; }
+};
+int main() {
+   Baza* p = new Derivata();
+   cout << p->dublu();
+   return 0;
+}
+
+VARIANTE:
+a) 2
+b) 20
+c) 11
+d) 10
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Metoda dublu() NU este virtual, dar in interiorul ei apeleaza metoda val(), care ESTE virtual. Cand se executa p->dublu() (p indica un obiect Derivata), se apeleaza Baza::dublu() (aceasta nu este redefinita), iar in corpul ei apelul val() se rezolva prin legare dinamica, dupa tipul REAL al obiectului catre care se aplica (Derivata). Astfel val() executa Derivata::val() = 10, iar dublu() returneaza 2 * 10 = 20, varianta b. Aceasta este esenta mecanismului: chiar daca metoda "invelis" nu e virtual, ea beneficiaza de polimorfism prin apelul intern al unei metode virtual. a=2 ar rezulta daca val() nu ar fi virtual (s-ar apela Baza::val()=1 -> 2*1=2). c si d nu corespund niciunei desfasurari. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza 20.
+
+##### ÎNTREBAREA 28 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela:
+ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume
+VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3))
+cu cel putin 200 de randuri, in care exista departamente ce contin mai multi angajati.
+Se considera comanda SQL-Oracle:
+SELECT a.nume,
+       (SELECT b.nume FROM angajati b
+        WHERE b.id_departament = a.id_departament) AS coleg
+FROM angajati a;
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) genereaza eroare la executie, deoarece subcererea scalara din SELECT poate returna mai multe randuri (pentru un departament cu mai multi angajati), ceea ce nu este permis intr-o subcerere scalara
+b) afiseaza pentru fiecare angajat numele tuturor colegilor sai de departament, cate unul pe rand
+c) se executa corect si afiseaza pentru fiecare angajat un coleg ales aleatoriu din departamentul sau
+d) genereaza eroare de sintaxa, deoarece o subcerere nu poate aparea niciodata in clauza SELECT
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: O subcerere plasata in clauza SELECT trebuie sa fie SCALARA, adica sa returneze cel mult o singura valoare (un singur rand, o singura coloana) pentru fiecare rand al interogarii exterioare. Aici, subcererea (SELECT b.nume FROM angajati b WHERE b.id_departament = a.id_departament) selecteaza numele TUTUROR angajatilor din acelasi departament cu angajatul curent. Cum exista departamente cu mai multi angajati, pentru acele randuri subcererea returneaza mai multe randuri, ceea ce incalca cerinta de subcerere scalara si produce eroarea de executie ORA-01427 ("single-row subquery returns more than one row"). Deci a. b este falsa: o subcerere scalara nu poate produce mai multe valori pe un rand - pentru a lista toti colegii ar trebui alta constructie (ex. un JOIN). c este falsa: Oracle nu "alege aleatoriu" - arunca eroare cand subcererea scalara returneaza mai multe randuri. d este falsa: o subcerere POATE aparea in SELECT (subcerere scalara) - problema nu este de sintaxa, ci de numarul de randuri returnate la executie.
+
+##### ÎNTREBAREA 29 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera procedura cu doi parametri OUT:
+CREATE OR REPLACE PROCEDURE minmax_dept(
+   p_id  IN  NUMBER,
+   p_min OUT NUMBER,
+   p_max OUT NUMBER) IS
+BEGIN
+   SELECT MIN(salariul), MAX(salariul)
+   INTO p_min, p_max
+   FROM angajati WHERE id_departament = p_id;
+END;
+Se incearca apelul:
+   minmax_dept(10, 0, v_max);
+unde v_max este o variabila NUMBER declarata in blocul apelant.
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) apelul este incorect: unui parametru OUT (p_min) nu i se poate transmite o constanta/literal (0), deoarece parametrul OUT trebuie sa fie o variabila (o tinta de atribuire)
+b) apelul este corect, iar p_min va porni de la valoarea 0
+c) apelul este corect, iar constanta 0 va fi ignorata fara nicio consecinta
+d) apelul este incorect deoarece o procedura nu poate avea doi parametri OUT
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Un parametru formal de tip OUT (sau IN OUT) reprezinta o valoare pe care procedura o SCRIE inapoi in argumentul actual la iesire. De aceea, argumentul actual asociat unui parametru OUT trebuie sa fie ceva ce poate primi o valoare, adica o VARIABILA (o tinta de atribuire, "lvalue") - nu o constanta, un literal sau o expresie. In apelul minmax_dept(10, 0, v_max), al doilea argument (0) este un literal transmis parametrului OUT p_min, ceea ce provoaca eroare (PLS-00363: "expression '0' cannot be used as an assignment target"). Deci a. b si c sunt false: valoarea 0 nu poate fi acceptata pentru un parametru OUT, iar problema nu se rezolva "ignorand" constanta - apelul pur si simplu nu compileaza. d este falsa: o procedura poate avea oricati parametri OUT; problema este exclusiv transmiterea unui literal in locul unei variabile pentru p_min.
+
+##### ÎNTREBAREA 30 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce va afisa la rulare urmatorul program C++?
+
+#include <iostream>
+using namespace std;
+class Baza {
+public:
+   virtual ~Baza() { cout << "b"; }
+};
+class D1 : public Baza {
+public:
+   ~D1() { cout << "1"; }
+};
+class D2 : public Baza {
+public:
+   ~D2() { cout << "2"; }
+};
+int main() {
+   Baza* v[2];
+   v[0] = new D1();
+   v[1] = new D2();
+   for (int i = 0; i < 2; i++)
+      delete v[i];
+   return 0;
+}
+
+VARIANTE:
+a) 1b2b
+b) bb
+c) 12
+d) b1b2
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Tabloul v contine pointeri Baza* catre obiecte alocate dinamic de tipuri derivate diferite (v[0] un D1, v[1] un D2). In bucla se elibereaza fiecare obiect cu delete v[i]. Deoarece destructorul bazei este virtual, delete printr-un pointer de baza porneste corect de la destructorul clasei REALE si respecta ordinea: intai destructorul derivatei, apoi al bazei. Pentru delete v[0] (D1): ~D1() -> "1", apoi ~Baza() -> "b", deci "1b". Pentru delete v[1] (D2): ~D2() -> "2", apoi ~Baza() -> "b", deci "2b". Rezultat total, in ordinea buclei: "1b2b", varianta a. b=bb ar aparea daca destructorul NU ar fi virtual (s-ar apela doar ~Baza() de doua ori - comportament nedefinit, obiectele derivate distruse incomplet). c=12 omite destructorii bazei. d greseste ordinea (baza inaintea derivatei). Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza 1b2b.

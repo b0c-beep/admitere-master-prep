@@ -1,0 +1,740 @@
+=== ADMITERE MASTER CSIE3 - TEST SIMULARE 7 ===
+Sursă: generat original, pe baza tiparelor din subiectele 2024-2025
+Format sursă original: intrebari noi, verificate prin compilare (C/C++, OOP) si
+  rationament riguros (SQL, PL/SQL)
+Număr total întrebări: 30
+Punctaj: 3 puncte/întrebare corectă, punctaj maxim 90 puncte
+
+##### ÎNTREBAREA 1 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa urmatorul program C?
+#include <stdio.h>
+int main() {
+    float f = 7.9;
+    int i = (int)f;
+    printf("%d", i * 2);
+    return 0;
+}
+
+VARIANTE:
+a) 14
+b) 16
+c) 15
+d) 15.8
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Conversia explicita (cast) (int)f transforma valoarea reala 7.9 intr-un intreg prin TRUNCHIERE catre zero, nu prin rotunjire: partea zecimala este pur si simplu eliminata, deci i = 7 (nu 8). Apoi i * 2 = 7 * 2 = 14, iar printf cu %d afiseaza 14. Deci a. b=16 ar rezulta daca 7.9 s-ar rotunji la 8 (8*2), dar castul catre int nu rotunjeste. c=15 nu corespunde. d=15.8 ar fi 7.9*2 fara cast, dar variabila i este de tip int, iar %d afiseaza un intreg. Verificat prin compilare si rulare (gcc): programul afiseaza 14.
+
+##### ÎNTREBAREA 2 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce va afisa la rulare urmatorul program C++?
+
+#include <iostream>
+using namespace std;
+class Metri {
+   int m;
+public:
+   Metri(int x) { m = x; }
+   int get() { return m; }
+};
+void afis(Metri d) { cout << d.get(); }
+int main() {
+   afis(5);
+   return 0;
+}
+
+VARIANTE:
+a) 5
+b) 0
+c) eroare de compilare deoarece functia afis asteapta un obiect Metri, nu un int
+d) o valoare nedefinita
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Constructorul Metri(int x) cu un SINGUR parametru este un CONSTRUCTOR DE CONVERSIE: el permite conversia implicita a unei valori de tip int intr-un obiect Metri. La apelul afis(5), compilatorul observa ca functia asteapta un Metri, dar primeste un int; folosind constructorul de conversie, construieste automat un obiect temporar Metri(5) (cu m=5) si il transmite functiei. Astfel d.get() returneaza 5. Deci a. c este falsa: tocmai existenta constructorului cu un singur parametru (neprecedat de explicit) face conversia posibila, deci nu apare eroare. b si d sunt false: obiectul temporar este initializat corect cu 5. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza 5.
+
+##### ÎNTREBAREA 3 #####
+CATEGORIE: SQL
+ENUNT:
+Se considera tabelele create astfel in Oracle:
+CREATE TABLE departamente (
+   id_departament NUMBER(5) PRIMARY KEY,
+   denumire_departament VARCHAR2(30));
+CREATE TABLE angajati (
+   id_angajat NUMBER(5) PRIMARY KEY,
+   nume VARCHAR2(30),
+   salariul NUMBER(10,2),
+   id_departament NUMBER(5) REFERENCES departamente(id_departament) ON DELETE CASCADE);
+Presupunem ca departamentul cu id_departament = 30 exista si are 4 angajati asociati.
+Se executa comanda:
+DELETE FROM departamente WHERE id_departament = 30;
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) se sterge departamentul 30 si, automat, cei 4 angajati care apartineau acestuia
+b) se sterge departamentul 30, iar cei 4 angajati raman in tabela cu id_departament = NULL
+c) comanda genereaza eroare deoarece exista angajati care refera departamentul 30
+d) se sterg cei 4 angajati, dar randul departamentului 30 ramane in tabela
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Cheia straina din tabela ANGAJATI este definita cu clauza ON DELETE CASCADE. Aceasta clauza spune ca, la stergerea unui rand PARINTE (un departament din DEPARTAMENTE), toate randurile COPIL care il refera (angajatii cu acel id_departament) sunt sterse AUTOMAT, in cascada. Prin urmare stergerea departamentului 30 antreneaza stergerea celor 4 angajati ai lui. Deci a. b descrie comportamentul clauzei ON DELETE SET NULL (nu CASCADE). c ar fi comportamentul IMPLICIT (fara nicio clauza ON DELETE - restrictie), care ar bloca stergerea cu eroarea ORA-02292; dar aici avem CASCADE, deci stergerea reuseste. d este imposibil: parintele nu poate fi sters lasand copiii care il refera - integritatea referentiala nu ar mai fi respectata.
+
+##### ÎNTREBAREA 4 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera functia Oracle:
+CREATE OR REPLACE FUNCTION categorie(p_sal NUMBER) RETURN VARCHAR2 IS
+BEGIN
+   IF p_sal < 2000 THEN
+      RETURN 'mic';
+   ELSIF p_sal < 5000 THEN
+      RETURN 'mediu';
+   ELSIF p_sal < 10000 THEN
+      RETURN 'mare';
+   ELSE
+      RETURN 'foarte mare';
+   END IF;
+END;
+Ce valoare returneaza apelul categorie(5000)?
+
+VARIANTE:
+a) 'mic'
+b) 'mediu'
+c) 'mare'
+d) 'foarte mare'
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Structura IF-ELSIF evalueaza conditiile IN ORDINE si executa prima ramura al carei test este adevarat. Pentru p_sal = 5000: prima conditie 5000 < 2000 este FALSA; a doua conditie 5000 < 5000 este FALSA (5000 nu este strict mai mic decat 5000); a treia conditie 5000 < 10000 este ADEVARATA, deci se returneaza 'mare' si functia se termina. Deci c. b='mediu' ar rezulta doar daca a doua conditie ar fi <= (mai mic sau egal), dar operatorul este < strict, iar 5000 pica exact pe limita si "cade" in ramura urmatoare - aceasta este capcana clasica a limitelor la IF-ELSIF. a si d nu corespund pasilor de evaluare.
+
+##### ÎNTREBAREA 5 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce se intampla la compilarea urmatorului program C++?
+
+#include <iostream>
+using namespace std;
+class Metri {
+   int m;
+public:
+   explicit Metri(int x) { m = x; }
+   int get() { return m; }
+};
+void afis(Metri d) { cout << d.get(); }
+int main() {
+   afis(5);
+   return 0;
+}
+
+VARIANTE:
+a) afiseaza 5
+b) afiseaza 0
+c) genereaza eroare de compilare deoarece cuvantul cheie explicit blocheaza conversia implicita din int in Metri
+d) afiseaza o valoare nedefinita
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Cuvantul cheie explicit aplicat unui constructor cu un singur parametru INTERZICE folosirea acelui constructor pentru conversii IMPLICITE. In consecinta, la apelul afis(5) compilatorul NU mai are voie sa transforme automat int-ul 5 intr-un obiect Metri, iar cum functia afis asteapta un Metri, nu exista nicio conversie disponibila si apare EROARE DE COMPILARE. Deci c. a ar fi rezultatul daca constructorul NU ar fi explicit (ca in intrebarea corespunzatoare fara explicit), caz in care conversia implicita ar functiona. Pentru a compila cu explicit, ar fi nevoie de o conversie EXPLICITA, de exemplu afis(Metri(5)). b si d sunt false: programul nici nu compileaza. Verificat prin compilare (g++ -std=c++11): compilatorul raporteaza "could not convert '5' from 'int' to 'Metri'".
+
+##### ÎNTREBAREA 6 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa urmatorul program C?
+#include <stdio.h>
+int main() {
+    char c = 'A';
+    printf("%d %d", (int)sizeof(c), (int)sizeof('A'));
+    return 0;
+}
+
+VARIANTE:
+a) 1 1
+b) 1 4
+c) 4 4
+d) 1 2
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Aceasta este o capcana clasica specifica limbajului C. Variabila c este de tip char, deci sizeof(c) = 1 (un char ocupa mereu 1 octet). In schimb, o CONSTANTA de tip caracter scrisa cu apostrof, precum 'A', are in limbajul C tipul int (nu char!), deci sizeof('A') = sizeof(int) = 4 pe o arhitectura obisnuita. Prin urmare programul afiseaza "1 4". Deci b. a=1 1 ar fi corect in C++ (unde 'A' are tipul char), dar in C constanta caracter este int. c=4 4 ar presupune gresit ca si c ar avea 4 octeti. d=1 2 nu corespunde niciunei situatii uzuale. Verificat prin compilare si rulare (gcc): programul afiseaza "1 4".
+
+##### ÎNTREBAREA 7 #####
+CATEGORIE: SQL
+ENUNT:
+Se considera tabelele create astfel in Oracle:
+CREATE TABLE departamente (
+   id_departament NUMBER(5) PRIMARY KEY,
+   denumire_departament VARCHAR2(30));
+CREATE TABLE angajati (
+   id_angajat NUMBER(5) PRIMARY KEY,
+   nume VARCHAR2(30),
+   salariul NUMBER(10,2),
+   id_departament NUMBER(5) REFERENCES departamente(id_departament) ON DELETE SET NULL);
+Presupunem ca departamentul cu id_departament = 30 exista si are 4 angajati asociati.
+Se executa comanda:
+DELETE FROM departamente WHERE id_departament = 30;
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) departamentul 30 se sterge, iar cei 4 angajati raman in tabela cu id_departament = NULL
+b) se sterg atat departamentul 30, cat si cei 4 angajati care il refereau
+c) comanda genereaza eroare deoarece exista angajati care refera departamentul 30
+d) departamentul 30 se sterge, iar id_departament al celor 4 angajati devine 0
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Cheia straina este definita cu clauza ON DELETE SET NULL. La stergerea unui rand parinte (departamentul 30), aceasta clauza NU sterge randurile copil, ci le PASTREAZA, punand valoarea NULL in coloana cheii straine a acestora (id_departament). Astfel departamentul 30 dispare, iar cei 4 angajati raman in tabela ANGAJATI, dar cu id_departament = NULL (nu mai apartin niciunui departament). Deci a. b descrie comportamentul lui ON DELETE CASCADE (care ar sterge si copiii). c ar fi comportamentul implicit (restrictie, fara clauza ON DELETE). d este falsa: valoarea pusa este NULL (necunoscut/lipsa), nu 0 - Oracle nu inlocuieste cu zero. Observatie: pentru ca SET NULL sa fie posibil, coloana id_departament trebuie sa accepte valori NULL (nu trebuie sa fie NOT NULL).
+
+##### ÎNTREBAREA 8 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera functia Oracle:
+CREATE OR REPLACE FUNCTION zi_text(p_nr NUMBER) RETURN VARCHAR2 IS
+   v_rez VARCHAR2(20);
+BEGIN
+   v_rez := CASE p_nr
+              WHEN 1 THEN 'Luni'
+              WHEN 2 THEN 'Marti'
+              WHEN 3 THEN 'Miercuri'
+              ELSE 'necunoscut'
+            END;
+   RETURN v_rez;
+END;
+Ce valoare returneaza apelul zi_text(6)?
+
+VARIANTE:
+a) 'Luni'
+b) NULL
+c) 'necunoscut'
+d) functia genereaza eroare deoarece 6 nu apare in niciun WHEN
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Expresia CASE de tip simplu compara valoarea p_nr, pe rand, cu fiecare valoare din clauzele WHEN (1, 2, 3). Pentru p_nr = 6 niciuna dintre potriviri nu reuseste, deci se aplica clauza ELSE, care returneaza 'necunoscut'; aceasta se atribuie lui v_rez si se returneaza. Deci c. b=NULL ar aparea DOAR daca expresia CASE nu ar avea clauza ELSE si nicio potrivire (caz in care un CASE fara ELSE intoarce NULL), dar aici ELSE exista. d este falsa: prezenta clauzei ELSE trateaza toate valorile neacoperite, deci nu se produce nicio eroare (un CASE-expresie fara ELSE si fara potrivire ar returna NULL, nu eroare). a corespunde doar valorii 1.
+
+##### ÎNTREBAREA 9 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce se intampla la compilarea urmatorului program C++?
+
+#include <iostream>
+using namespace std;
+class Contor {
+   int x;
+public:
+   Contor(int a) { x = a; }
+   int citeste() const { x++; return x; }
+};
+int main() {
+   Contor c(5);
+   cout << c.citeste();
+   return 0;
+}
+
+VARIANTE:
+a) afiseaza 6
+b) afiseaza 5
+c) genereaza eroare de compilare deoarece o metoda const nu are voie sa modifice membrii obiectului
+d) afiseaza o valoare nedefinita
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: O metoda declarata const (aici int citeste() const) promite ca NU va modifica starea obiectului pe care este apelata; in interiorul ei pointerul this este de tip pointer catre obiect constant, deci membrii de date sunt tratati ca "read-only". Instructiunea x++ incearca sa modifice membrul x in interiorul unei metode const, ceea ce INCALCA aceasta promisiune si produce EROARE DE COMPILARE. Deci c. a=6 ar presupune ca x++ se executa, dar codul nici nu compileaza. b=5 ar presupune ca x++ este ignorat, ceea ce nu se intampla. Pentru a permite modificarea unui membru chiar si dintr-o metoda const, acel membru ar trebui declarat mutable. Verificat prin compilare (g++ -std=c++11): compilatorul raporteaza "increment of member 'Contor::x' in read-only object".
+
+##### ÎNTREBAREA 10 #####
+CATEGORIE: Baze de date (teorie)
+ENUNT:
+Precizati care dintre urmatoarele afirmatii referitoare la chei (candidata, primara, alternativa)
+este corecta:
+
+VARIANTE:
+a) cheia primara este aleasa dintre cheile candidate, iar cheile candidate neselectate ca primara devin chei alternative
+b) o tabela (relatie) poate avea simultan mai multe chei primare
+c) cheia alternativa este acea cheie candidata care a fost aleasa drept cheie primara
+d) o cheie candidata poate contine valori NULL, deoarece nu identifica in mod unic randurile
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: O CHEIE CANDIDATA este un set minimal de atribute care identifica in mod UNIC fiecare rand al relatiei. O tabela poate avea mai multe chei candidate. Dintre acestea, proiectantul alege UNA singura ca si CHEIE PRIMARA, iar celelalte chei candidate ramase (neselectate) se numesc CHEI ALTERNATIVE (sau secundare). Deci a. b este falsa: o tabela poate avea o SINGURA cheie primara (dar mai multe chei candidate/alternative). c inverseaza definitia: cheia alternativa este exact cea care NU a fost aleasa ca primara. d este falsa: prin definitie o cheie candidata identifica UNIC randurile, deci trebuie sa fie unica si sa nu contina valori NULL (in plus, cheia primara nu accepta niciodata NULL).
+
+##### ÎNTREBAREA 11 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa urmatorul program C?
+#include <stdio.h>
+int main() {
+    int v[10];
+    printf("%d", (int)(sizeof(v) / sizeof(v[0])));
+    return 0;
+}
+
+VARIANTE:
+a) 10
+b) 40
+c) 1
+d) 4
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Aceasta este formula standard de calcul al NUMARULUI DE ELEMENTE dintr-un vector static. sizeof(v) da dimensiunea TOTALA in octeti a vectorului: 10 elemente * 4 octeti/int = 40 octeti. sizeof(v[0]) da dimensiunea unui singur element (un int) = 4 octeti. Raportul 40 / 4 = 10, adica exact numarul de elemente. Deci a. b=40 este dimensiunea totala in octeti (rezultatul lui sizeof(v) singur), nu numarul de elemente. d=4 este dimensiunea unui element. c=1 ar aparea daca v ar fi un pointer (nu un vector), caz in care sizeof ar da dimensiunea pointerului - dar aici v este un vector adevarat, cu dimensiunea completa cunoscuta la compilare. Verificat prin compilare si rulare (gcc): programul afiseaza 10.
+
+##### ÎNTREBAREA 12 #####
+CATEGORIE: SQL
+ENUNT:
+Se considera tabelele create astfel in Oracle:
+CREATE TABLE departamente (
+   id_departament NUMBER(5) PRIMARY KEY,
+   denumire_departament VARCHAR2(30));
+CREATE TABLE angajati (
+   id_angajat NUMBER(5) PRIMARY KEY,
+   nume VARCHAR2(30),
+   id_departament NUMBER(5) REFERENCES departamente(id_departament));
+Cheia straina a fost definita FARA nicio clauza ON DELETE. Presupunem ca departamentul 30
+exista si are angajati asociati. Se executa:
+DELETE FROM departamente WHERE id_departament = 30;
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) comanda genereaza eroare (integritate referentiala incalcata - exista randuri copil), iar departamentul nu se sterge
+b) departamentul 30 se sterge, iar angajatii lui primesc id_departament = NULL
+c) departamentul 30 se sterge impreuna cu angajatii lui, in cascada
+d) departamentul 30 se sterge, iar angajatii raman neschimbati, cu id_departament = 30
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Cand o cheie straina este definita FARA clauza ON DELETE (nici CASCADE, nici SET NULL), comportamentul IMPLICIT in Oracle este de RESTRICTIE (NO ACTION): stergerea unui rand parinte care mai are randuri copil ce il refera este INTERZISA. Incercarea de a sterge departamentul 30, care are angajati asociati, incalca constrangerea de integritate referentiala si genereaza eroarea ORA-02292 ("integrity constraint violated - child record found"); stergerea este anulata, departamentul ramane. Deci a. b (SET NULL) si c (CASCADE) descriu comportamente care necesita clauze ON DELETE explicite, absente aici. d este imposibil: nu se poate lasa un angajat care refera un departament inexistent. Pentru a sterge departamentul, ar trebui mai intai reasignati/stersi angajatii sau definita o clauza ON DELETE.
+
+##### ÎNTREBAREA 13 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera functia Oracle, care nu contine nicio comanda DML:
+CREATE OR REPLACE FUNCTION taxa(p_sal NUMBER) RETURN NUMBER IS
+BEGIN
+   RETURN p_sal * 0.1;
+END;
+si tabela ANGAJATI(id_angajat, nume, salariul, id_departament). Se executa interogarea:
+SELECT nume FROM angajati WHERE taxa(salariul) > 500;
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) interogarea ruleaza corect si selecteaza angajatii pentru care taxa(salariul) > 500 (adica salariul > 5000)
+b) interogarea genereaza eroare deoarece o functie definita de utilizator nu poate fi apelata in clauza WHERE
+c) interogarea genereaza eroarea ORA-14551 deoarece orice functie apelata dintr-un SELECT este interzisa
+d) interogarea ruleaza, dar ignora apelul functiei si returneaza toti angajatii
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: O functie definita de utilizator POATE fi apelata intr-o interogare SQL (in SELECT, WHERE, ORDER BY etc.) daca respecta anumite reguli - in principal daca NU contine comenzi DML (INSERT/UPDATE/DELETE) sau instructiuni de control al tranzactiei (COMMIT/ROLLBACK) si primeste doar parametri IN. Functia taxa doar calculeaza p_sal * 0.1 si returneaza rezultatul, fara niciun efect secundar, deci este perfect apelabila in WHERE. Interogarea pastreaza angajatii pentru care taxa(salariul) > 500, echivalent cu salariul * 0.1 > 500, adica salariul > 5000. Deci a. b este falsa: functiile "curate" (fara DML) sunt frecvent folosite in WHERE. c este falsa: ORA-14551 apare doar cand functia CONTINE DML - nu este cazul aici. d este falsa: apelul functiei chiar filtreaza randurile.
+
+##### ÎNTREBAREA 14 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce se intampla la compilarea urmatorului program C++?
+
+#include <iostream>
+using namespace std;
+class Punct {
+   int x;
+public:
+   Punct(int a) { x = a; }
+   int getX() { return x; }
+};
+int main() {
+   const Punct p(7);
+   cout << p.getX();
+   return 0;
+}
+
+VARIANTE:
+a) afiseaza 7
+b) afiseaza 0
+c) genereaza eroare de compilare deoarece pe un obiect const nu se poate apela o metoda care nu este declarata const
+d) afiseaza o valoare nedefinita
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Obiectul p este declarat const, deci pe el se pot apela DOAR metode care garanteaza ca nu il modifica, adica metode declarate const. Metoda getX() NU este declarata const (lipseste cuvantul cheie const dupa lista de parametri), deci compilatorul presupune ca ar putea modifica obiectul si INTERZICE apelul ei pe un obiect constant - rezulta EROARE DE COMPILARE. Deci c. a=7 ar fi rezultatul daca metoda ar fi fost declarata "int getX() const". b si d sunt false: programul nici nu compileaza. Regula generala: un obiect const isi poate invoca numai metodele const. Verificat prin compilare (g++ -std=c++11): compilatorul raporteaza "passing 'const Punct' as 'this' argument discards qualifiers".
+
+##### ÎNTREBAREA 15 #####
+CATEGORIE: SQL
+ENUNT:
+Se considera tabela creata astfel in Oracle:
+CREATE TABLE produse (
+   id_produs NUMBER(5) PRIMARY KEY,
+   denumire_produs VARCHAR2(32),
+   pret_lista NUMBER(8,2) CONSTRAINT ck_pret CHECK (pret_lista > 0));
+Se executa comanda:
+INSERT INTO produse VALUES (1, 'Mouse', -50);
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) inserarea esueaza cu eroare deoarece constrangerea CHECK (pret_lista > 0) este incalcata de valoarea -50
+b) inserarea reuseste, iar constrangerea CHECK doar afiseaza un avertisment
+c) inserarea reuseste, iar valoarea -50 este convertita automat la 0
+d) comanda genereaza eroare de sintaxa deoarece CHECK nu poate fi definit pe o coloana numerica
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: O constrangere CHECK impune ca fiecare rand sa satisfaca conditia specificata; orice operatie INSERT sau UPDATE care ar produce un rand ce incalca conditia este RESPINSA. Aici CHECK (pret_lista > 0) cere ca pretul sa fie strict pozitiv. Valoarea inserata -50 nu satisface -50 > 0 (conditia este FALSE), deci Oracle respinge inserarea cu eroarea ORA-02290 ("check constraint violated"). Deci a. b este falsa: CHECK nu este un simplu avertisment, ci blocheaza efectiv operatia. c este falsa: Oracle nu "corecteaza" valorile care incalca un CHECK, ci refuza randul. d este falsa: CHECK se poate defini fara probleme pe o coloana numerica (chiar este cazul tipic).
+
+##### ÎNTREBAREA 16 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa urmatorul program C?
+#include <stdio.h>
+#define DUBLU(x) x + x
+int main() {
+    printf("%d", DUBLU(3) * 2);
+    return 0;
+}
+
+VARIANTE:
+a) 9
+b) 12
+c) 6
+d) 18
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Directiva #define realizeaza o SUBSTITUTIE TEXTUALA (la nivel de preprocesare), fara a evalua expresia si fara a adauga paranteze. DUBLU(x) se inlocuieste cu textul "x + x", deci DUBLU(3) devine "3 + 3". Expresia DUBLU(3) * 2 devine, dupa substitutie, "3 + 3 * 2". Se aplica apoi regulile de precedenta a operatorilor: inmultirea are prioritate mai mare decat adunarea, deci 3 * 2 = 6, apoi 3 + 6 = 9. Deci a. b=12 ar fi rezultatul asteptat "intuitiv" (2*3)*2 daca macro-ul ar fi fost protejat cu paranteze: #define DUBLU(x) ((x)+(x)); tocmai lipsa parantezelor produce rezultatul neasteptat 9 - capcana clasica a macrodefinitiilor. c si d nu corespund. Verificat prin compilare si rulare (gcc): programul afiseaza 9.
+
+##### ÎNTREBAREA 17 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera functia Oracle, care contine o comanda DML:
+CREATE OR REPLACE FUNCTION mareste(p_id NUMBER) RETURN NUMBER IS
+BEGIN
+   UPDATE angajati SET salariul = salariul + 1 WHERE id_angajat = p_id;
+   RETURN p_id;
+END;
+Se executa apoi interogarea:
+SELECT mareste(id_angajat) FROM angajati;
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) interogarea genereaza eroarea ORA-14551 deoarece nu se poate executa o comanda DML (UPDATE) in interiorul unei interogari SELECT
+b) interogarea ruleaza corect si mareste salariul fiecarui angajat cu 1
+c) interogarea ruleaza, dar comanda UPDATE din functie este ignorata in context SELECT
+d) interogarea genereaza eroare deoarece o functie nu poate returna un NUMBER
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: O functie apelata din interiorul unei interogari SELECT NU are voie sa modifice tabelele bazei de date (sa contina comenzi DML: INSERT, UPDATE, DELETE), deoarece ar produce efecte secundare in timpul evaluarii interogarii. Functia mareste executa un UPDATE pe tabela ANGAJATI, iar la apelul ei din SELECT Oracle arunca eroarea ORA-14551 ("cannot perform a DML operation inside a query"). Deci a. b este falsa: interogarea nu ajunge sa se execute cu succes tocmai din cauza restrictiei. c este falsa: comanda DML nu este "ignorata", ci provoaca oprirea cu eroare. d este falsa: o functie poate returna perfect un NUMBER; problema nu e tipul returnat, ci prezenta DML-ului. Observatie: o astfel de functie ar putea fi apelata dintr-un bloc PL/SQL obisnuit (nu dintr-un SELECT).
+
+##### ÎNTREBAREA 18 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce va afisa la rulare urmatorul program C++?
+
+#include <iostream>
+using namespace std;
+class Cont {
+   double sold;
+public:
+   Cont(double s) { sold = s; }
+   double getSold() const { return sold; }
+};
+int main() {
+   const Cont c(250.0);
+   cout << c.getSold();
+   return 0;
+}
+
+VARIANTE:
+a) 250
+b) 0
+c) eroare de compilare deoarece obiectul c este const
+d) o valoare nedefinita
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Obiectul c este declarat const, deci pe el se pot apela numai metode const. Metoda getSold() ESTE declarata const (are cuvantul cheie const dupa lista de parametri) si doar CITESTE membrul sold, fara sa il modifice - deci apelul c.getSold() pe obiectul constant este perfect legal. Constructorul a initializat sold cu 250.0, prin urmare se afiseaza 250. Deci a. c este falsa: exact pentru ca metoda este const, apelul pe un obiect const NU produce eroare (spre deosebire de situatia in care metoda ar fi fost non-const). b si d sunt false: valoarea este initializata corect la 250. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza 250.
+
+##### ÎNTREBAREA 19 #####
+CATEGORIE: SQL
+ENUNT:
+Se considera tabela creata astfel in Oracle:
+CREATE TABLE angajati (
+   id_angajat NUMBER(5) PRIMARY KEY,
+   nume VARCHAR2(30),
+   salariul NUMBER(10,2) CONSTRAINT ck_sal CHECK (salariul >= 1000 AND salariul <= 20000));
+Se executa comanda:
+INSERT INTO angajati VALUES (1, 'Popescu', 25000);
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) inserarea esueaza deoarece 25000 nu respecta a doua parte a conditiei compuse (salariul <= 20000)
+b) inserarea reuseste deoarece 25000 respecta prima parte a conditiei (salariul >= 1000)
+c) inserarea reuseste deoarece intr-un CHECK compus este suficient ca o singura conditie sa fie adevarata
+d) comanda genereaza eroare de sintaxa deoarece un CHECK nu poate contine operatorul AND
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Constrangerea CHECK contine o conditie COMPUSA legata prin AND: (salariul >= 1000 AND salariul <= 20000). Pentru ca randul sa fie acceptat, INTREAGA expresie trebuie sa fie adevarata, adica AMBELE conditii trebuie satisfacute simultan. Valoarea 25000 satisface prima conditie (25000 >= 1000, TRUE) dar NU o satisface pe a doua (25000 <= 20000 este FALSE); cum TRUE AND FALSE = FALSE, conditia CHECK este incalcata si inserarea esueaza cu eroarea ORA-02290. Deci a. b si c interpreteaza gresit AND ca si cum ar fi suficienta o singura conditie (asta ar fi valabil pentru OR, nu pentru AND). d este falsa: operatorul AND (ca si OR, BETWEEN, IN) este perfect permis intr-o conditie CHECK.
+
+##### ÎNTREBAREA 20 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa urmatorul program C?
+#include <stdio.h>
+int main() {
+    char c = 'A';
+    int x = c + 4;
+    printf("%c", (char)x);
+    return 0;
+}
+
+VARIANTE:
+a) E
+b) A4
+c) 69
+d) 4
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Intr-o expresie aritmetica, caracterul c este promovat (convertit implicit) la valoarea sa numerica (codul ASCII). Litera 'A' are codul ASCII 65, deci x = c + 4 = 65 + 4 = 69. Prin conversia explicita (char)x se transforma valoarea intreaga 69 inapoi intr-un caracter, iar codul ASCII 69 corespunde literei 'E'; specificatorul %c afiseaza deci caracterul E. Deci a. c=69 ar fi rezultatul daca s-ar afisa x cu %d (valoarea numerica), dar aici se converteste la char si se afiseaza cu %c. b=A4 si d=4 nu corespund: nu are loc o concatenare, ci o aritmetica pe coduri ASCII urmata de reconversie la caracter. Verificat prin compilare si rulare (gcc): programul afiseaza E.
+
+##### ÎNTREBAREA 21 #####
+CATEGORIE: PL/SQL
+ENUNT:
+O functie definita de utilizator urmeaza sa fie apelata direct in clauza WHERE a unei
+interogari SELECT asupra unei tabele Oracle. Precizati care dintre urmatoarele afirmatii
+descrie corect ce este PERMIS pentru o astfel de functie:
+
+VARIANTE:
+a) functia poate avea doar parametri de tip IN si nu are voie sa contina comenzi DML (INSERT/UPDATE/DELETE) sau de control al tranzactiei (COMMIT/ROLLBACK)
+b) functia poate avea parametri de tip OUT, ale caror valori sunt returnate interogarii
+c) functia poate contine o comanda COMMIT pentru a-si salva propriile modificari
+d) functia poate executa un UPDATE asupra tabelei interogate, deoarece SELECT-ul o apeleaza automat
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Pentru a putea fi apelata dintr-o comanda SQL (de exemplu in WHERE, SELECT sau ORDER BY), o functie definita de utilizator trebuie sa respecte regulile de "puritate": sa aiba DOAR parametri de tip IN si sa NU modifice starea bazei de date sau a tranzactiei - adica sa nu contina comenzi DML (INSERT, UPDATE, DELETE) si nici comenzi de control al tranzactiei (COMMIT, ROLLBACK, SAVEPOINT). Deci a. b este falsa: parametrii OUT/IN OUT nu sunt permisi la o functie apelata din SQL. c este falsa: COMMIT/ROLLBACK in interiorul unei functii apelate din SQL sunt interzise (ar controla tranzactia din care se face interogarea). d este falsa: un UPDATE in functie ar declansa eroarea ORA-14551 la apelul din SELECT.
+
+##### ÎNTREBAREA 22 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce va afisa la rulare urmatorul program C++?
+
+#include <iostream>
+using namespace std;
+class Fractie {
+   int n;
+public:
+   Fractie(int x) { n = x; cout << "conv"; }
+};
+int main() {
+   Fractie f = 3;
+   return 0;
+}
+
+VARIANTE:
+a) conv
+b) programul nu afiseaza nimic
+c) eroare de compilare deoarece nu se poate atribui un int unui obiect Fractie
+d) 3
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Declaratia "Fractie f = 3;" este o initializare prin copiere (copy-initialization). Deoarece 3 este un int, iar f este de tip Fractie, compilatorul cauta o modalitate de conversie: gaseste constructorul de conversie Fractie(int x) (constructor cu un singur parametru, fara explicit) si il foloseste pentru a construi obiectul f direct din valoarea 3. In corpul constructorului se executa cout << "conv", deci programul afiseaza "conv". Deci a. Sintaxa "Fractie f = 3;" NU este o atribuire, ci o initializare care apeleaza constructorul de conversie - de aceea c este falsa. b este falsa: constructorul se executa si tipareste "conv". d este falsa: nu se afiseaza valoarea 3, ci textul din constructor. Observatie: daca constructorul ar fi fost declarat explicit, aceasta initializare implicita ar fi generat eroare. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza "conv".
+
+##### ÎNTREBAREA 23 #####
+CATEGORIE: SQL
+ENUNT:
+Se considera tabela creata astfel in Oracle:
+CREATE TABLE produse (
+   id_produs NUMBER(5) PRIMARY KEY,
+   denumire_produs VARCHAR2(32),
+   pret_lista NUMBER(8,2) CONSTRAINT ck_pret CHECK (pret_lista > 0));
+Se executa comanda (fara a preciza o valoare pentru pret_lista):
+INSERT INTO produse (id_produs, denumire_produs) VALUES (1, 'Cablu');
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) randul se insereaza cu pret_lista = NULL, deoarece o conditie CHECK evaluata la NULL (necunoscut) nu este considerata incalcata
+b) inserarea esueaza deoarece NULL nu satisface conditia pret_lista > 0
+c) inserarea esueaza deoarece o coloana pe care s-a definit un CHECK nu poate primi valoarea NULL
+d) randul se insereaza, dar pret_lista este pus automat la 0 pentru a respecta CHECK-ul
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Aceasta este o capcana clasica legata de interactiunea dintre CHECK si valorile NULL. Coloana pret_lista nu este declarata NOT NULL, deci poate ramane neprecizata (NULL). O constrangere CHECK respinge un rand DOAR daca conditia se evalueaza explicit la FALSE. Cand pret_lista este NULL, conditia NULL > 0 se evalueaza la NULL (necunoscut), NU la FALSE; iar regula Oracle este ca un CHECK este incalcat numai daca rezultatul este FALSE, nu si cand este NULL. Prin urmare randul cu pret_lista = NULL TRECE de verificare si se insereaza. Deci a. b este falsa tocmai din cauza acestei reguli (NULL nu este FALSE). c este falsa: un CHECK nu implica NOT NULL - pentru a interzice NULL ar trebui adaugata separat constrangerea NOT NULL. d este falsa: Oracle nu substituie NULL cu 0.
+
+##### ÎNTREBAREA 24 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera functia Oracle:
+CREATE OR REPLACE FUNCTION bonus(p_sal NUMBER) RETURN NUMBER IS
+BEGIN
+   IF p_sal > 3000 THEN
+      RETURN 100;
+   ELSE
+      RETURN 0;
+   END IF;
+END;
+Ce valoare returneaza apelul bonus(NULL)?
+
+VARIANTE:
+a) 0
+b) 100
+c) NULL
+d) functia genereaza eroare deoarece p_sal este NULL
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Cand p_sal este NULL, conditia p_sal > 3000 devine NULL > 3000, iar orice comparatie cu NULL da rezultatul NULL (necunoscut), nu TRUE. Intr-o instructiune IF, o conditie evaluata la NULL este tratata ca NEadevarata (ca FALSE) la executie, deci NU se intra pe ramura THEN, ci pe ramura ELSE, care returneaza 0. Deci a. b=100 ar presupune ca s-ar intra pe THEN, dar conditia nu este adevarata. c=NULL ar presupune ca functia intoarce NULL, insa functia intoarce explicit 0 pe ramura ELSE. d este falsa: transmiterea unei valori NULL ca parametru nu produce eroare - doar dirijeaza executia catre ELSE. Aceasta este capcana clasica "IF cu conditie NULL ia ramura ELSE".
+
+##### ÎNTREBAREA 25 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+In C++, declararea unei metode a unei clase cu cuvantul cheie const dupa lista de parametri
+(de exemplu: int getValoare() const;) inseamna ca:
+
+VARIANTE:
+a) metoda se angajeaza sa nu modifice membrii de date (nestatici) ai obiectului si poate fi apelata inclusiv pe obiecte const
+b) metoda nu poate fi apelata decat o singura data pe durata de viata a obiectului
+c) metoda devine automat statica si nu mai are acces la membrii obiectului
+d) toti parametrii metodei devin constanti si nu pot fi folositi in corpul ei
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Cuvantul cheie const plasat dupa lista de parametri a unei metode o transforma intr-o "metoda constanta": in interiorul ei, pointerul this este tratat ca pointer catre un obiect constant, deci metoda NU are voie sa modifice membrii de date nestatici ai obiectului (poate doar sa ii citeasca). Un avantaj esential este ca o astfel de metoda POATE fi apelata si pe obiecte declarate const (care isi pot invoca doar metodele const). Deci a. b este falsa: const nu limiteaza numarul de apeluri. c este falsa: o metoda const NU este statica - are in continuare acces la membrii obiectului (dar numai in citire) prin this. d este falsa: const de dupa paranteze se refera la obiect (this), nu la parametrii metodei; parametrii pot fi folositi si modificati normal in corp.
+
+##### ÎNTREBAREA 26 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa urmatorul program C?
+#include <stdio.h>
+int main() {
+    const double FACTOR = 3.0;
+    int r = 2;
+    printf("%d", (int)(FACTOR * r * r));
+    return 0;
+}
+
+VARIANTE:
+a) 12
+b) 3
+c) 6
+d) 12.0
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: FACTOR este o constanta de tip double, initializata cu 3.0 (valoarea ei nu poate fi modificata ulterior, fiind declarata const). Expresia FACTOR * r * r se calculeaza in aritmetica reala: 3.0 * 2 * 2 = 12.0. Conversia explicita (int) transforma rezultatul 12.0 intr-un intreg, 12, iar %d il afiseaza ca 12. Deci a. b=3 ar fi doar valoarea lui FACTOR. c=6 ar fi 3*2 (doar un factor r). d=12.0 nu poate aparea deoarece dupa cast valoarea este de tip int si se afiseaza cu %d ca numar intreg, fara zecimale. Verificat prin compilare si rulare (gcc): programul afiseaza 12.
+
+##### ÎNTREBAREA 27 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela ANGAJATI(id_angajat, nume, salariul, data_angajare, id_departament) in Oracle.
+Precizati care dintre urmatoarele constrangeri CHECK este VALIDA (acceptata de Oracle la
+crearea tabelei):
+
+VARIANTE:
+a) CHECK (salariul >= 1000 AND salariul <= 50000)
+b) CHECK (salariul > (SELECT AVG(salariul) FROM angajati))
+c) CHECK (data_angajare <= SYSDATE)
+d) CHECK (id_departament IN (SELECT id_departament FROM departamente))
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: O constrangere CHECK in Oracle poate contine doar o conditie care se evalueaza pe baza VALORILOR RANDULUI CURENT, folosind constante, operatori si coloane ale aceleiasi tabele. Varianta a - CHECK (salariul >= 1000 AND salariul <= 50000) - foloseste doar coloana salariul si constante, deci este perfect valida. Deci a. b este INVALIDA: o conditie CHECK NU poate contine SUBCERERI (SELECT). c este INVALIDA: CHECK NU poate folosi functii nedeterministe / dependente de sesiune precum SYSDATE, USER, SYSTIMESTAMP (valoarea lor s-ar putea schimba). d este INVALIDA: din nou o subcerere - integritatea referentiala intre tabele se implementeaza prin CHEIE STRAINA (FOREIGN KEY), nu printr-un CHECK cu SELECT.
+
+##### ÎNTREBAREA 28 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera functia Oracle:
+CREATE OR REPLACE FUNCTION calcul(p_x IN NUMBER) RETURN NUMBER IS
+BEGIN
+   p_x := p_x + 1;
+   RETURN p_x;
+END;
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) functia genereaza eroare de compilare deoarece un parametru de tip IN nu poate fi modificat in corpul subprogramului
+b) functia se compileaza si returneaza p_x + 1
+c) functia se compileaza, dar la apel valoarea parametrului actual creste cu 1
+d) functia genereaza eroare deoarece o functie nu poate avea parametri de tip IN
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Un parametru declarat IN (modul implicit) este considerat o CONSTANTA in interiorul subprogramului: valoarea lui poate fi doar CITITA, nu si modificata. Instructiunea p_x := p_x + 1 incearca sa ATRIBUIE o noua valoare parametrului IN p_x, ceea ce este interzis si produce o eroare de COMPILARE (PLS-00363: "expression 'P_X' cannot be used as an assignment target"). Deci a. b si c sunt false: functia nici nu se compileaza, deci nu returneaza nimic si nu modifica parametrul actual. Pentru a putea modifica parametrul in corp, ar trebui declarat IN OUT (sau OUT), sau ar trebui folosita o variabila locala auxiliara. d este falsa: parametrii IN sunt perfect permisi (chiar sunt modul obisnuit); problema este exclusiv incercarea de a-l modifica.
+
+##### ÎNTREBAREA 29 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+In C++, scopul principal al cuvantului cheie explicit aplicat unui constructor cu un singur
+parametru este:
+
+VARIANTE:
+a) sa impiedice folosirea acelui constructor pentru conversii implicite (automate) de tip, permitand doar conversii/constructii explicite
+b) sa faca obligatorie initializarea tuturor membrilor clasei in constructor
+c) sa transforme constructorul intr-o metoda statica a clasei
+d) sa permita apelarea constructorului fara a crea vreun obiect
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Un constructor cu un singur parametru poate fi folosit implicit de compilator pentru a converti automat o valoare a tipului parametrului intr-un obiect al clasei (constructor de conversie). Uneori aceste conversii implicite sunt nedorite si pot ascunde erori. Cuvantul cheie explicit dezactiveaza aceasta conversie AUTOMATA: constructorul nu mai poate fi folosit implicit (de exemplu "Clasa obj = valoare;" sau la transmiterea unui argument de alt tip), ci doar in constructii/conversii EXPLICITE (de exemplu "Clasa obj(valoare);" sau "Clasa(valoare)"). Deci a. b este falsa: explicit nu are legatura cu obligativitatea initializarii membrilor. c este falsa: explicit nu transforma constructorul in metoda statica. d este falsa: un constructor serveste tocmai la crearea unui obiect - explicit nu schimba acest lucru.
+
+##### ÎNTREBAREA 30 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce va afisa la rulare urmatorul program C++?
+
+#include <iostream>
+using namespace std;
+class Bani {
+   int lei;
+public:
+   Bani(int x = 0) { lei = x; }
+   int suma(const Bani &b) const { return lei + b.lei; }
+   int get() const { return lei; }
+};
+int main() {
+   Bani a(10);
+   cout << a.suma(5);
+   return 0;
+}
+
+VARIANTE:
+a) 15
+b) 10
+c) 5
+d) eroare de compilare deoarece metoda suma asteapta un obiect Bani, nu un int
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Constructorul Bani(int x = 0) are un singur parametru (cu valoare implicita), deci este un CONSTRUCTOR DE CONVERSIE si nu este marcat explicit. La apelul a.suma(5), metoda suma asteapta un parametru de tip const Bani&, dar primeste un int (5); compilatorul foloseste constructorul de conversie pentru a construi un obiect temporar Bani(5) (cu lei=5), care se leaga la referinta const. Metoda suma (declarata const, deci nu modifica obiectul a) calculeaza lei + b.lei = 10 + 5 = 15. Deci a. d este falsa tocmai pentru ca exista conversia implicita din int in Bani (constructorul nu este explicit). b=10 si c=5 iau in calcul o singura valoare. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza 15.

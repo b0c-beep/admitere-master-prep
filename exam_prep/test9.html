@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CSIE3 Test de simulare 9 — Test grilă admitere master</title>
+<meta name="description" content="Test grilă interactiv admitere master CSIE Test de simulare 9 — C/C++, SQL, PL/SQL, baze de date">
+<style>
+:root{
+  --bg:#f5f6fa; --surface:#ffffff; --surface-2:#eef0f6; --border:#dde1ea;
+  --text:#1a2030; --text-dim:#5c6579; --accent:#4a55d6; --accent-ink:#ffffff;
+  --good:#177a4c; --good-bg:#e2f6ec; --good-bd:#a9e3c3;
+  --bad:#a8271f; --bad-bg:#fbeae8; --bad-bd:#f0b8b2;
+  --warn:#8a6100; --warn-bg:#fff3d6; --warn-bd:#f0d998;
+  --code-bg:#eef0f7; --code-text:#2a3040;
+  --radius:14px; --shadow:0 2px 14px rgba(20,25,45,.07);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#10131c; --surface:#171b28; --surface-2:#1e2332; --border:#2a3042;
+    --text:#e8eaf2; --text-dim:#9aa2b8; --accent:#8b93ff; --accent-ink:#0d0f18;
+    --good:#3ddb92; --good-bg:#123326; --good-bd:#1f5c3f;
+    --bad:#ff8a80; --bad-bg:#3a1614; --bad-bd:#6e2a25;
+    --warn:#ffce6b; --warn-bg:#382b0a; --warn-bd:#6b4f14;
+    --code-bg:#12151f; --code-text:#d7dbe8;
+    --shadow:0 2px 18px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="light"]{
+  --bg:#f5f6fa; --surface:#ffffff; --surface-2:#eef0f6; --border:#dde1ea;
+  --text:#1a2030; --text-dim:#5c6579; --accent:#4a55d6; --accent-ink:#ffffff;
+  --good:#177a4c; --good-bg:#e2f6ec; --good-bd:#a9e3c3;
+  --bad:#a8271f; --bad-bg:#fbeae8; --bad-bd:#f0b8b2;
+  --warn:#8a6100; --warn-bg:#fff3d6; --warn-bd:#f0d998;
+  --code-bg:#eef0f7; --code-text:#2a3040;
+}
+:root[data-theme="dark"]{
+  --bg:#10131c; --surface:#171b28; --surface-2:#1e2332; --border:#2a3042;
+  --text:#e8eaf2; --text-dim:#9aa2b8; --accent:#8b93ff; --accent-ink:#0d0f18;
+  --good:#3ddb92; --good-bg:#123326; --good-bd:#1f5c3f;
+  --bad:#ff8a80; --bad-bg:#3a1614; --bad-bd:#6e2a25;
+  --warn:#ffce6b; --warn-bg:#382b0a; --warn-bd:#6b4f14;
+  --code-bg:#12151f; --code-text:#d7dbe8;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.55; min-height:100vh;
+}
+.wrap{max-width:840px;margin:0 auto;padding:20px 16px 64px}
+header.top{
+  display:flex;align-items:center;gap:12px;justify-content:space-between;
+  padding:14px 0;margin-bottom:18px;border-bottom:1px solid var(--border);
+}
+.brand{display:flex;flex-direction:column;gap:2px;min-width:0}
+.brand a{color:var(--text-dim);text-decoration:none;font-size:13px}
+.brand a:hover{color:var(--accent)}
+.brand h1{font-size:19px;margin:0;font-weight:700;letter-spacing:.2px}
+.brand .sub{font-size:12.5px;color:var(--text-dim)}
+.iconbtn{
+  border:1px solid var(--border);background:var(--surface);color:var(--text);
+  width:38px;height:38px;border-radius:10px;cursor:pointer;font-size:16px;
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+}
+.iconbtn:hover{border-color:var(--accent)}
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:22px;margin-bottom:16px;
+}
+h2.section-title{font-size:16px;margin:0 0 12px;color:var(--text)}
+.muted{color:var(--text-dim)}
+.small{font-size:12.5px}
+
+/* setup screen */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 18px}
+.chip{
+  border:1px solid var(--border);background:var(--surface-2);color:var(--text);
+  padding:8px 14px;border-radius:999px;cursor:pointer;font-size:13.5px;user-select:none;
+  display:flex;align-items:center;gap:7px;transition:border-color .15s,background .15s;
+}
+.chip .count{color:var(--text-dim);font-size:12px}
+.chip.active{border-color:var(--accent);background:color-mix(in srgb, var(--accent) 14%, var(--surface-2));}
+.chip.active .count{color:var(--accent)}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border)}
+.toggle-row:last-of-type{border-bottom:none}
+.toggle-row .label{font-size:14px}
+.toggle-row .desc{font-size:12.5px;color:var(--text-dim);margin-top:2px}
+.switch{
+  position:relative;width:44px;height:26px;border-radius:999px;background:var(--surface-2);
+  border:1px solid var(--border);cursor:pointer;flex:0 0 auto;
+}
+.switch::after{
+  content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;
+  background:var(--text-dim);transition:transform .18s ease, background .18s ease;
+}
+.switch.on{background:color-mix(in srgb, var(--accent) 30%, var(--surface-2));border-color:var(--accent)}
+.switch.on::after{transform:translateX(18px);background:var(--accent)}
+.btn{
+  appearance:none;border:none;border-radius:11px;padding:13px 22px;font-size:15px;font-weight:600;
+  cursor:pointer;display:inline-flex;align-items:center;gap:8px;justify-content:center;
+}
+.btn-primary{background:var(--accent);color:var(--accent-ink);width:100%;margin-top:6px}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.btn-secondary{background:var(--surface-2);color:var(--text);border:1px solid var(--border)}
+.best-score{font-size:13px;color:var(--text-dim);margin-top:10px}
+
+/* quiz screen */
+.progress-outer{height:7px;border-radius:999px;background:var(--surface-2);overflow:hidden;margin-bottom:16px}
+.progress-inner{height:100%;background:var(--accent);transition:width .25s ease}
+.quiz-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:13px;color:var(--text-dim)}
+.badge{
+  display:inline-block;padding:3px 10px;border-radius:999px;background:var(--surface-2);
+  border:1px solid var(--border);font-size:12px;color:var(--text-dim);
+}
+#quizTimer{font-variant-numeric:tabular-nums;font-weight:700;color:var(--text)}
+#quizTimer.timer-warn{color:var(--bad)}
+.enunt p{margin:0 0 10px;font-size:15.5px}
+.enunt pre.code{
+  background:var(--code-bg);color:var(--code-text);border:1px solid var(--border);
+  border-radius:10px;padding:12px 14px;overflow-x:auto;font-size:13.5px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;margin:0 0 12px;
+  white-space:pre;line-height:1.5;
+}
+.options{display:flex;flex-direction:column;gap:9px;margin-top:14px}
+.opt{
+  text-align:left;border:1px solid var(--border);background:var(--surface-2);color:var(--text);
+  border-radius:11px;padding:12px 14px;cursor:pointer;font-size:14.5px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  display:flex;gap:10px;align-items:flex-start;transition:border-color .12s, background .12s;
+}
+.opt:hover:not(.locked){border-color:var(--accent)}
+.opt .letter{font-weight:700;flex:0 0 auto;color:var(--text-dim)}
+.opt .txt{white-space:pre-wrap;word-break:break-word}
+.opt .tag{margin-left:auto;font-size:11px;color:var(--text-dim);font-family:inherit;flex:0 0 auto;padding-left:8px}
+.opt.correct{background:var(--good-bg);border-color:var(--good-bd);color:var(--good)}
+.opt.correct .letter,.opt.correct .tag{color:var(--good)}
+.opt.incorrect{background:var(--bad-bg);border-color:var(--bad-bd);color:var(--bad)}
+.opt.incorrect .letter,.opt.incorrect .tag{color:var(--bad)}
+.opt.locked{cursor:default}
+.opt.dim{opacity:.55}
+
+.feedback{margin-top:16px;border-radius:12px;padding:14px 16px;font-size:14.5px;display:none}
+.feedback.show{display:block}
+.feedback.ok{background:var(--good-bg);border:1px solid var(--good-bd);color:var(--text)}
+.feedback.ko{background:var(--bad-bg);border:1px solid var(--bad-bd);color:var(--text)}
+.feedback .fb-title{font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.feedback .fb-title.ok-txt{color:var(--good)}
+.feedback .fb-title.ko-txt{color:var(--bad)}
+.barem-warn{
+  background:var(--warn-bg);border:1px solid var(--warn-bd);color:var(--warn);
+  border-radius:10px;padding:10px 12px;margin:10px 0;font-size:13.5px;font-weight:600;
+}
+.explic{margin-top:10px;white-space:pre-wrap;font-size:14px;color:var(--text)}
+.quiz-actions{display:flex;justify-content:flex-end;margin-top:18px;gap:10px}
+
+/* results screen */
+.score-hero{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.score-circle{
+  width:104px;height:104px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  flex-direction:column;border:6px solid var(--accent);flex:0 0 auto;
+}
+.score-circle .n{font-size:26px;font-weight:800}
+.score-circle .d{font-size:11px;color:var(--text-dim)}
+.cat-bar-row{margin:8px 0}
+.cat-bar-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}
+.cat-bar-outer{height:8px;border-radius:999px;background:var(--surface-2);overflow:hidden}
+.cat-bar-inner{height:100%;background:var(--accent)}
+table.review{width:100%;border-collapse:collapse;margin-top:8px;font-size:13.5px}
+table.review th, table.review td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--border)}
+table.review tr.miss td:first-child{color:var(--bad);font-weight:700}
+table.review tr.hit td:first-child{color:var(--good);font-weight:700}
+table.review tr{cursor:pointer}
+table.review tr:hover td{background:var(--surface-2)}
+.review-detail{display:none;padding:10px 6px 16px;font-size:13.5px;white-space:pre-wrap;border-bottom:1px solid var(--border)}
+.review-detail.show{display:table-row}
+.footer-note{font-size:12px;color:var(--text-dim);text-align:center;margin-top:26px}
+.view{display:none}
+.view.active{display:block}
+.hint{font-size:12.5px;color:var(--text-dim);margin-top:4px}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <a href="../index.html">&larr; Toate anii</a>
+      <h1>CSIE3 &middot; Admitere master &middot; Test de simulare 9</h1>
+      <div class="sub">generat original, pe baza tiparelor din subiectele 2024-2025 &nbsp;&bull;&nbsp; 3 puncte/întrebare corectă, punctaj maxim 90 puncte</div>
+    </div>
+    <button class="iconbtn" id="themeToggle" title="Comută tema">&#9788;</button>
+  </header>
+
+  <div id="view-setup" class="view active">
+    <div class="card">
+      <h2 class="section-title">Categorii incluse</h2>
+      <div class="chips" id="categoryChips"></div>
+
+      <h2 class="section-title">Opțiuni</h2>
+      <div class="toggle-row">
+        <div>
+          <div class="label">Amestecă ordinea întrebărilor</div>
+          <div class="desc">Întrebările apar într-o ordine aleatorie la fiecare start</div>
+        </div>
+        <div class="switch on" id="toggleShuffleQ"></div>
+      </div>
+      <div class="toggle-row">
+        <div>
+          <div class="label">Amestecă ordinea variantelor</div>
+          <div class="desc">Variantele a/b/c/d sunt reordonate aleator</div>
+        </div>
+        <div class="switch on" id="toggleShuffleA"></div>
+      </div>
+
+      <button class="btn btn-primary" id="startBtn">Începe testul (30 întrebări)</button>
+      <div class="best-score" id="bestScoreNote"></div>
+    </div>
+  </div>
+
+  <div id="view-quiz" class="view">
+    <div class="progress-outer"><div class="progress-inner" id="progressBar" style="width:0%"></div></div>
+    <div class="quiz-meta">
+      <span id="quizPos">Întrebarea 1 din 30</span>
+      <span class="badge" id="quizCat">—</span>
+      <span id="quizTimer">Timp: 40:00</span>
+      <span id="quizScore">Scor: 0</span>
+    </div>
+    <div class="card">
+      <div class="enunt" id="quizEnunt"></div>
+      <div class="options" id="quizOptions"></div>
+      <div class="feedback" id="quizFeedback">
+        <div class="fb-title" id="fbTitle"></div>
+        <div class="barem-warn" id="fbBaremWarn" style="display:none"></div>
+        <div class="explic" id="fbExplic"></div>
+      </div>
+      <div class="quiz-actions">
+        <button class="btn btn-secondary" id="quitBtn">Renunță</button>
+        <button class="btn btn-primary" id="nextBtn" style="display:none;width:auto">Următoarea &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="view-results" class="view">
+    <div class="card">
+      <h2 class="section-title">Rezultat final</h2>
+      <div class="score-hero">
+        <div class="score-circle"><div class="n" id="resScoreN">0/0</div><div class="d">corecte</div></div>
+        <div>
+          <div style="font-size:20px;font-weight:700" id="resPercent">0%</div>
+          <div class="muted small" id="resPunctaj">Punctaj estimat: 0 puncte</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Pe categorii</h2>
+      <div id="resCatBars"></div>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Recapitulare (click pe un rând pentru detalii)</h2>
+      <table class="review" id="resTable">
+        <thead><tr><th>#</th><th>Categorie</th><th>Răspunsul tău</th><th>Corect</th></tr></thead>
+        <tbody id="resTableBody"></tbody>
+      </table>
+    </div>
+    <button class="btn btn-primary" id="restartBtn">Înapoi la opțiuni</button>
+  </div>
+
+  <div class="footer-note">Grile extrase din subiectele oficiale de anii anteriori și verificate independent. Explicațiile marcate „barem oficial eronat” indică o discrepanță identificată față de baremul original — verifică și tu raționamentul.</div>
+</div>
+
+<script>
+const DATA = {"year": "test9", "sursa": "generat original, pe baza tiparelor din subiectele 2024-2025", "punctaj": "3 puncte/întrebare corectă, punctaj maxim 90 puncte", "questions": [{"nr": 1, "categorie": "C/C++", "enunt": "Ce va afisa urmatorul program C?\n#include <stdio.h>\nint main() {\n    int a[3][3] = {{1,2,3},{4,5,6},{7,8,9}};\n    int s = 0, i;\n    for (i = 0; i < 3; i++) s += a[i][i];\n    printf(\"%d\", s);\n    return 0;\n}", "variante": {"a": "15", "b": "16", "c": "45", "d": "25"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Bucla parcurge diagonala PRINCIPALA a matricei patratice, adica elementele pentru care indicele de linie este egal cu indicele de coloana: a[i][i]. Pentru matricea data acestea sunt a[0][0]=1, a[1][1]=5, a[2][2]=9, iar suma lor este 1+5+9=15. Deci a. b=16 este suma diagonalei SECUNDARE (a[0][2]+a[1][1]+a[2][0]=3+5+7), nu a celei principale. c=45 este suma TUTUROR elementelor matricei (1+2+...+9). d=25 nu corespunde niciunei parcurgeri corecte. Verificat prin compilare si rulare (gcc): programul afiseaza 15.", "enunt_html": "<p>Ce va afisa urmatorul program C?</p><pre class=\"code\">#include &lt;stdio.h&gt;\nint main() {\n    int a[3][3] = {{1,2,3},{4,5,6},{7,8,9}};\n    int s = 0, i;\n    for (i = 0; i &lt; 3; i++) s += a[i][i];\n    printf(\"%d\", s);\n    return 0;\n}</pre>"}, {"nr": 2, "categorie": "OOP (C++)", "enunt": "Ce va afisa la rulare urmatorul program C++?\n\n#include <iostream>\nusing namespace std;\nclass Punct {\n   int x, y;\npublic:\n   Punct(int a, int b) { x = a; y = b; }\n   bool operator==(const Punct& p) {\n      return (x*x + y*y) == (p.x*p.x + p.y*p.y);\n   }\n};\nint main() {\n   Punct a(3, 4), b(5, 0);\n   cout << (a == b);\n   return 0;\n}", "variante": {"a": "0", "b": "1", "c": "afiseaza coordonatele celor doua puncte", "d": "eroare de compilare deoarece operator== nu poate accesa membrii privati ai lui p"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Operatorul == este supraincarcat ca metoda membru si compara cele doua puncte dupa criteriul distantei fata de origine (mai exact dupa patratul acesteia, x^2+y^2, pentru a evita radicalul). Pentru a(3,4): 3*3+4*4=9+16=25; pentru b(5,0): 5*5+0*0=25. Cele doua valori sunt egale, deci operator== returneaza true, iar cout afiseaza 1 (valoarea booleana true se tipareste ca 1). Deci b. a=0 ar aparea daca punctele ar fi considerate diferite. c este falsa: se afiseaza rezultatul comparatiei, nu coordonatele. d este falsa: operator==, fiind metoda a clasei Punct, are acces la membrii privati ai ORICARUI obiect Punct, inclusiv la p.x si p.y (accesul privat este la nivel de clasa, nu de obiect). Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza 1.", "enunt_html": "<p>Ce va afisa la rulare urmatorul program C++?</p><pre class=\"code\">#include &lt;iostream&gt;\nusing namespace std;\nclass Punct {\n    int x, y;\npublic:\n    Punct(int a, int b) { x = a; y = b; }\n    bool operator==(const Punct&amp; p) {\n        return (x*x + y*y) == (p.x*p.x + p.y*p.y);\n    }\n};\nint main() {\n    Punct a(3, 4), b(5, 0);\n    cout &lt;&lt; (a == b);\n    return 0;\n}</pre>"}, {"nr": 3, "categorie": "SQL", "enunt": "Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume\nVARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3))\ncu cel putin 200 de randuri (inregistrari).\nIntr-o singura sesiune se executa, in ordine, comenzile SQL-Oracle:\nUPDATE angajati SET salariul = salariul + 100 WHERE id_departament = 10;\nSAVEPOINT sp1;\nUPDATE angajati SET salariul = salariul + 500 WHERE id_departament = 20;\nROLLBACK TO SAVEPOINT sp1;\nCOMMIT;\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "raman salvate definitiv doar maririle de 100 pentru departamentul 10; maririle de 500 pentru departamentul 20 sunt anulate", "b": "sunt anulate ambele modificari, deoarece ROLLBACK anuleaza intreaga tranzactie", "c": "raman salvate definitiv ambele modificari (si +100 si +500)", "d": "raman salvate definitiv doar maririle de 500 pentru departamentul 20"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "ROLLBACK TO SAVEPOINT sp1 anuleaza numai modificarile efectuate DUPA marcajul sp1, pastrand intacte modificarile de dinaintea lui si mentinand tranzactia deschisa. Cronologie: primul UPDATE (+100 pentru departamentul 10) se face INAINTE de sp1; se stabileste sp1; al doilea UPDATE (+500 pentru departamentul 20) se face DUPA sp1; ROLLBACK TO SAVEPOINT sp1 anuleaza doar acest al doilea UPDATE; COMMIT face permanente modificarile ramase, adica doar +100 pentru departamentul 10. Deci a. b este falsa: aceasta ar fi comportamentul unui ROLLBACK complet (fara TO SAVEPOINT), care anuleaza toata tranzactia; aici s-a folosit ROLLBACK TO SAVEPOINT, care este partial. c este falsa: al doilea UPDATE a fost anulat. d inverseaza situatia (tocmai a doua modificare este cea anulata).", "enunt_html": "<p>Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3)) cu cel putin 200 de randuri (inregistrari). Intr-o singura sesiune se executa, in ordine, comenzile SQL-Oracle:</p><pre class=\"code\">UPDATE angajati SET salariul = salariul + 100 WHERE id_departament = 10;\nSAVEPOINT sp1;\nUPDATE angajati SET salariul = salariul + 500 WHERE id_departament = 20;\nROLLBACK TO SAVEPOINT sp1;\nCOMMIT;</pre><p>Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 4, "categorie": "PL/SQL", "enunt": "Fie tabelele:\nANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30),\nsalariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3))\nJURNAL (id_ang NUMBER(5), operatie VARCHAR2(10), data_op DATE)\nSe considera declansatorul (trigger):\nCREATE OR REPLACE TRIGGER trg_audit\nAFTER INSERT ON angajati\nFOR EACH ROW\nBEGIN\n   INSERT INTO jurnal(id_ang, operatie, data_op)\n   VALUES (:NEW.id_angajat, 'INSERT', SYSDATE);\nEND;\n/\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "la fiecare rand nou inserat in ANGAJATI se adauga automat un rand corespunzator in tabela JURNAL, cu id-ul noului angajat, textul 'INSERT' si data curenta", "b": "triggerul genereaza eroare deoarece nu se poate insera intr-o alta tabela din corpul unui trigger", "c": "triggerul se declanseaza o singura data pentru intreaga comanda INSERT, indiferent cate randuri se insereaza", "d": "triggerul genereaza eroare deoarece :NEW nu poate fi folosit intr-un trigger AFTER"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Este un declansator la nivel de RAND (FOR EACH ROW), de tip AFTER INSERT pe tabela ANGAJATI. Fiind la nivel de rand, corpul lui se executa o data pentru FIECARE rand inserat, iar :NEW ofera acces la valorile randului tocmai inserat. Corpul realizeaza un INSERT intr-o ALTA tabela (JURNAL), scriind id-ul noului angajat, eticheta 'INSERT' si SYSDATE - un mecanism clasic de audit/jurnalizare. Deci a. b este falsa: un trigger poate face DML asupra altor tabele (restrictia priveste doar tabela mutating - cea pe care este definit triggerul, aici ANGAJATI, pe care nu ar trebui interogata/modificata din trigger; JURNAL este o alta tabela, deci este perfect valid). c este falsa: FOR EACH ROW inseamna declansare per rand, nu o singura data (aceea ar fi un trigger la nivel de comanda, fara FOR EACH ROW). d este falsa: :NEW este pe deplin disponibil in triggerele AFTER INSERT (doar ca in AFTER valorile :NEW sunt read-only, nu pot fi modificate - dar aici sunt doar citite).", "enunt_html": "<p>Fie tabelele: ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3)) JURNAL (id_ang NUMBER(5), operatie VARCHAR2(10), data_op DATE) Se considera declansatorul (trigger):</p><pre class=\"code\">CREATE OR REPLACE TRIGGER trg_audit\nAFTER INSERT ON angajati\nFOR EACH ROW\nBEGIN\n    INSERT INTO jurnal(id_ang, operatie, data_op)\n    VALUES (:NEW.id_angajat, 'INSERT', SYSDATE);\nEND;\n/</pre><p>Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 5, "categorie": "OOP (C++)", "enunt": "Ce va afisa la rulare urmatorul program C++?\n\n#include <iostream>\nusing namespace std;\nclass Produs {\n   int pret;\npublic:\n   Produs(int p) { pret = p; }\n   bool operator<(const Produs& x) { return pret < x.pret; }\n};\nint main() {\n   Produs a(10), b(25);\n   cout << (a < b) << (b < a);\n   return 0;\n}", "variante": {"a": "10", "b": "01", "c": "1", "d": "00"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Operatorul < este supraincarcat ca metoda membru si compara doua produse dupa pret: a < b este echivalent cu a.operator<(b), care returneaza (a.pret < b.pret). Se evalueaza doua expresii: (a < b) inseamna 10 < 25 = true -> se tipareste 1; (b < a) inseamna 25 < 10 = false -> se tipareste 0. Cele doua valori se afiseaza una dupa alta (operatorul << are asociativitate la stanga), deci rezultatul concatenat este \"10\". Deci a. b=01 inverseaza rezultatele. c=1 ar aparea daca s-ar afisa o singura comparatie. d=00 ar insemna ca ambele comparatii sunt false, ceea ce nu e cazul. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza 10.", "enunt_html": "<p>Ce va afisa la rulare urmatorul program C++?</p><pre class=\"code\">#include &lt;iostream&gt;\nusing namespace std;\nclass Produs {\n    int pret;\npublic:\n    Produs(int p) { pret = p; }\n    bool operator&lt;(const Produs&amp; x) { return pret &lt; x.pret; }\n};\nint main() {\n    Produs a(10), b(25);\n    cout &lt;&lt; (a &lt; b) &lt;&lt; (b &lt; a);\n    return 0;\n}</pre>"}, {"nr": 6, "categorie": "C/C++", "enunt": "Ce va afisa urmatorul program C?\n#include <stdio.h>\nvoid schimba(int *x, int *y) {\n    int t = *x; *x = *y; *y = t;\n}\nint main() {\n    int a = 3, b = 8;\n    schimba(&a, &b);\n    printf(\"%d %d\", a, b);\n    return 0;\n}", "variante": {"a": "3 8", "b": "8 3", "c": "3 3", "d": "8 8"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Functia schimba primeste ADRESELE variabilelor a si b (transmitere prin pointer). In interior, prin dereferentiere, se interschimba efectiv VALORILE de la adresele respective: t retine vechea valoare a lui *x (3), apoi *x primeste *y (8), iar *y primeste t (3). Deoarece x si y pointeaza chiar catre a si b din main, modificarile sunt vizibile in main: a devine 8, b devine 3. Deci se afiseaza \"8 3\", varianta b. a=3 8 ar fi rezultatul daca schimbul nu ar avea efect (ex. transmitere prin valoare, fara pointeri). c si d sunt gresite - un swap corect prin variabila temporara nu pierde niciuna dintre valori. Verificat prin compilare si rulare (gcc): programul afiseaza \"8 3\".", "enunt_html": "<p>Ce va afisa urmatorul program C?</p><pre class=\"code\">#include &lt;stdio.h&gt;\nvoid schimba(int *x, int *y) {\n    int t = *x; *x = *y; *y = t;\n}\nint main() {\n    int a = 3, b = 8;\n    schimba(&amp;a, &amp;b);\n    printf(\"%d %d\", a, b);\n    return 0;\n}</pre>"}, {"nr": 7, "categorie": "SQL", "enunt": "Referitor la comenzile de control al tranzactiilor in Oracle, precizati care dintre\nurmatoarele afirmatii este corecta:", "variante": {"a": "ROLLBACK TO SAVEPOINT sp anuleaza doar modificarile efectuate dupa marcajul sp si lasa tranzactia deschisa, in timp ce ROLLBACK (fara TO SAVEPOINT) anuleaza toate modificarile tranzactiei curente si o incheie", "b": "ROLLBACK TO SAVEPOINT sp si ROLLBACK produc exact acelasi efect, ambele anuleaza intreaga tranzactie", "c": "ROLLBACK TO SAVEPOINT sp face permanente (COMMIT) modificarile de pana la savepoint", "d": "dupa un ROLLBACK TO SAVEPOINT nu se mai poate executa niciun COMMIT in aceeasi tranzactie"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "SAVEPOINT stabileste un marcaj intermediar in interiorul unei tranzactii. ROLLBACK TO SAVEPOINT sp este o anulare PARTIALA: reface starea de la momentul marcajului sp, anuland doar modificarile de dupa el, dar tranzactia RAMANE deschisa si se poate continua (inclusiv cu un COMMIT sau ROLLBACK ulterior). ROLLBACK (complet, fara TO SAVEPOINT) anuleaza TOATE modificarile tranzactiei curente si o incheie. Deci a. b este falsa: cele doua difera fundamental (partial vs total). c este falsa: ROLLBACK TO SAVEPOINT NU face COMMIT - nu confirma nimic definitiv, doar anuleaza pana la marcaj; modificarile raman nepermanentizate pana la un COMMIT explicit. d este falsa: tranzactia continua dupa ROLLBACK TO SAVEPOINT, deci se poate face COMMIT ulterior pentru a permanentiza ce a ramas.", "enunt_html": "<p>Referitor la comenzile de control al tranzactiilor in Oracle, precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 8, "categorie": "PL/SQL", "enunt": "Fie tabelele:\nANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30),\nsalariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3))\nISTORIC_SAL (id_ang NUMBER(5), sal_vechi NUMBER(10,2), sal_nou NUMBER(10,2), data_op DATE)\nSe considera declansatorul:\nCREATE OR REPLACE TRIGGER trg_sal\nAFTER UPDATE OF salariul ON angajati\nFOR EACH ROW\nBEGIN\n   INSERT INTO istoric_sal(id_ang, sal_vechi, sal_nou, data_op)\n   VALUES (:OLD.id_angajat, :OLD.salariul, :NEW.salariul, SYSDATE);\nEND;\n/\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "la fiecare modificare a coloanei salariul, se adauga in ISTORIC_SAL un rand cu id-ul angajatului, salariul dinainte (:OLD.salariul) si salariul de dupa modificare (:NEW.salariul)", "b": "triggerul genereaza eroare deoarece :OLD si :NEW nu pot fi folosite in acelasi trigger", "c": "in ISTORIC_SAL, coloanele sal_vechi si sal_nou vor avea intotdeauna aceeasi valoare", "d": "triggerul se declanseaza la orice UPDATE pe tabela ANGAJATI, chiar daca nu se modifica salariul"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Triggerul este AFTER UPDATE OF salariul FOR EACH ROW - se declanseaza la nivel de rand, doar cand comanda UPDATE modifica coloana salariul. Intr-un trigger de UPDATE, :OLD contine valorile randului INAINTE de modificare, iar :NEW valorile DUPA modificare. Astfel se jurnalizeaza in ISTORIC_SAL id-ul angajatului, salariul vechi (:OLD.salariul) si cel nou (:NEW.salariul) - un mecanism tipic de istoric al salariilor. Deci a. b este falsa: intr-un trigger de UPDATE ambele pseudo-inregistrari :OLD si :NEW sunt disponibile simultan (tocmai comparatia vechi/nou este scopul lor). c este falsa: sal_vechi (:OLD.salariul) si sal_nou (:NEW.salariul) reflecta valori diferite atunci cand salariul chiar se schimba. d este falsa: clauza OF salariul restrange declansarea DOAR la modificarile care ating coloana salariul, nu la orice UPDATE.", "enunt_html": "<p>Fie tabelele: ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3)) ISTORIC_SAL (id_ang NUMBER(5), sal_vechi NUMBER(10,2), sal_nou NUMBER(10,2), data_op DATE) Se considera declansatorul:</p><pre class=\"code\">CREATE OR REPLACE TRIGGER trg_sal\nAFTER UPDATE OF salariul ON angajati\nFOR EACH ROW\nBEGIN\n    INSERT INTO istoric_sal(id_ang, sal_vechi, sal_nou, data_op)\n    VALUES (:OLD.id_angajat, :OLD.salariul, :NEW.salariul, SYSDATE);\nEND;\n/</pre><p>Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 9, "categorie": "OOP (C++)", "enunt": "Ce va afisa la rulare urmatorul program C++?\n\n#include <iostream>\nusing namespace std;\nclass Vector {\n   int v[5];\npublic:\n   Vector() { for (int i = 0; i < 5; i++) v[i] = i * 10; }\n   int& operator[](int i) { return v[i]; }\n};\nint main() {\n   Vector a;\n   a[2] = 99;\n   cout << a[2] + a[3];\n   return 0;\n}", "variante": {"a": "129", "b": "50", "c": "99", "d": "eroare de compilare deoarece operator[] nu poate fi folosit in partea stanga a unei atribuiri"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Constructorul initializeaza v[i]=i*10, deci v = {0, 10, 20, 30, 40}. Operatorul [] este supraincarcat sa returneze o REFERINTA la element (int&), ceea ce permite folosirea lui atat pentru citire, cat si pentru SCRIERE. Instructiunea a[2] = 99 modifica prin referinta elementul v[2], care devine 99. La afisare: a[2] este acum 99, iar a[3] este 30 (neschimbat), deci suma este 99 + 30 = 129. Deci a. b=50 ar fi 20+30 (valorile initiale, ignorand atribuirea). c=99 ia doar a[2]. d este falsa: tocmai pentru ca operator[] returneaza int& (referinta, deci un lvalue), expresia a[2] poate aparea in partea stanga a unei atribuiri - acesta este scopul returnarii prin referinta. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza 129.", "enunt_html": "<p>Ce va afisa la rulare urmatorul program C++?</p><pre class=\"code\">#include &lt;iostream&gt;\nusing namespace std;\nclass Vector {\n    int v[5];\npublic:\n    Vector() { for (int i = 0; i &lt; 5; i++) v[i] = i * 10; }\n    int&amp; operator[](int i) { return v[i]; }\n};\nint main() {\n    Vector a;\n    a[2] = 99;\n    cout &lt;&lt; a[2] + a[3];\n    return 0;\n}</pre>"}, {"nr": 10, "categorie": "Baze de date (teorie)", "enunt": "O asociere (relatie) de tip M:N (many-to-many, \"multi-la-multi\") intre doua entitati -\nde exemplu STUDENT si DISCIPLINA, unde un student urmeaza mai multe discipline si o\ndisciplina este urmata de mai multi studenti - se implementeaza in modelul relational\nprin:", "variante": {"a": "adaugarea unei singure chei straine in una dintre cele doua tabele", "b": "o tabela de legatura (asociativa) suplimentara, care contine cheile straine catre ambele tabele (de regula formand impreuna cheia primara compusa)", "c": "fuzionarea celor doua entitati intr-o singura tabela", "d": "o asociere M:N nu poate fi reprezentata deloc in modelul relational"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "In modelul relational nu se poate reprezenta direct o asociere M:N doar prin chei straine in tabelele entitatilor, deoarece fiecare rand poate fi legat de mai multe randuri din cealalta tabela (o coloana nu poate contine mai multe valori). Solutia standard este introducerea unei TABELE DE LEGATURA (asociative / de jonctiune), de exemplu STUDENT_DISCIPLINA, care contine cate o cheie straina catre fiecare dintre cele doua tabele; combinatia celor doua chei straine formeaza de obicei cheia primara compusa a tabelei de legatura, iar fiecare rand reprezinta o pereche concreta (student, disciplina). Astfel o asociere M:N se descompune in doua asocieri 1:N catre tabela asociativa. Deci b. a este falsa: o singura cheie straina poate modela doar o asociere 1:N, nu M:N. c este falsa: fuzionarea entitatilor ar duce la redundanta masiva si nu rezolva multiplicitatea pe ambele parti. d este falsa: M:N se implementeaza uzual, tocmai prin tabela asociativa.", "enunt_html": "<p>O asociere (relatie) de tip M:N (many-to-many, \"multi-la-multi\") intre doua entitati - de exemplu STUDENT si DISCIPLINA, unde un student urmeaza mai multe discipline si o disciplina este urmata de mai multi studenti - se implementeaza in modelul relational prin:</p>"}, {"nr": 11, "categorie": "C/C++", "enunt": "Ce va afisa urmatorul program C?\n#include <stdio.h>\nint main() {\n    int a[3][3] = {{2,4,6},{1,3,5},{7,8,9}};\n    int s = 0, i, n = 3;\n    for (i = 0; i < n; i++) s += a[i][n-1-i];\n    printf(\"%d\", s);\n    return 0;\n}", "variante": {"a": "14", "b": "16", "c": "15", "d": "45"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Expresia a[i][n-1-i] parcurge diagonala SECUNDARA a matricei patratice de ordin n=3: pentru fiecare linie i se ia coloana n-1-i. Elementele sunt: i=0 -> a[0][2]=6; i=1 -> a[1][1]=3; i=2 -> a[2][0]=7. Suma este 6+3+7=16. Deci b. a=14 (=2+3+9) este suma diagonalei PRINCIPALE a[i][i], nu a celei secundare. c=15 nu corespunde. d=45 este suma tuturor elementelor. Verificat prin compilare si rulare (gcc): programul afiseaza 16.", "enunt_html": "<p>Ce va afisa urmatorul program C?</p><pre class=\"code\">#include &lt;stdio.h&gt;\nint main() {\n    int a[3][3] = {{2,4,6},{1,3,5},{7,8,9}};\n    int s = 0, i, n = 3;\n    for (i = 0; i &lt; n; i++) s += a[i][n-1-i];\n    printf(\"%d\", s);\n    return 0;\n}</pre>"}, {"nr": 12, "categorie": "SQL", "enunt": "Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume\nVARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3))\ncu cel putin 200 de randuri (inregistrari).\nSesiunea A executa comanda:\nUPDATE angajati SET salariul = salariul * 2 WHERE id_departament = 30;\n(fara a executa inca COMMIT).\nIntre timp, sesiunea B (alt utilizator) executa:\nSELECT salariul FROM angajati WHERE id_departament = 30;\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "sesiunea B vede salariile VECHI (nemodificate), deoarece modificarile facute de sesiunea A devin vizibile altor sesiuni doar dupa COMMIT", "b": "sesiunea B vede salariile deja dublate, deoarece modificarile UPDATE sunt vizibile imediat tuturor sesiunilor", "c": "comanda SELECT a sesiunii B genereaza eroare deoarece randurile sunt blocate de sesiunea A", "d": "sesiunea B ramane blocata (asteapta) pana cand sesiunea A face COMMIT"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Oracle asigura consistenta la citire (read consistency) si izolarea tranzactiilor: modificarile efectuate de o tranzactie necomise (fara COMMIT) sunt vizibile DOAR in propria sesiune. O alta sesiune care doar CITESTE (SELECT) vede versiunea \"de dinainte\" a datelor (imaginea consistenta), reconstruita din segmentele de undo, pana cand sesiunea A face COMMIT. Deci sesiunea B vede salariile vechi. Deci a. b este falsa: modificarile necomise nu sunt vizibile in exterior (nu exista \"dirty read\" in Oracle). c este falsa: un SELECT (cititorii) nu este blocat de un UPDATE (scriitorii) - \"cititorii nu blocheaza scriitorii si scriitorii nu blocheaza cititorii\". d este falsa: sesiunea B nu asteapta pentru un simplu SELECT; ar astepta doar daca ar incerca sa MODIFICE aceleasi randuri blocate.", "enunt_html": "<p>Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3)) cu cel putin 200 de randuri (inregistrari). Sesiunea A executa comanda:</p><pre class=\"code\">UPDATE angajati SET salariul = salariul * 2 WHERE id_departament = 30;</pre><p>(fara a executa inca COMMIT). Intre timp, sesiunea B (alt utilizator) executa:</p><pre class=\"code\">SELECT salariul FROM angajati WHERE id_departament = 30;</pre><p>Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 13, "categorie": "PL/SQL", "enunt": "Fie tabelele:\nANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30),\nsalariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3))\nANGAJATI_STERSI (id_ang NUMBER(5), nume VARCHAR2(30), data_stergere DATE)\nSe considera declansatorul:\nCREATE OR REPLACE TRIGGER trg_del\nAFTER DELETE ON angajati\nFOR EACH ROW\nBEGIN\n   INSERT INTO angajati_stersi(id_ang, nume, data_stergere)\n   VALUES (:OLD.id_angajat, :OLD.nume, SYSDATE);\nEND;\n/\nDe ce se foloseste :OLD (si nu :NEW) pentru a prelua datele randului sters? Precizati\nafirmatia corecta:", "variante": {"a": "intr-un trigger de DELETE, :NEW nu are valori (randul dispare), iar :OLD contine valorile randului ce urmeaza a fi/tocmai a fost sters", "b": ":OLD si :NEW sunt interschimbabile intr-un trigger de DELETE, se putea folosi oricare", "c": ":NEW ar fi fost corect, iar :OLD genereaza eroare in triggerele de DELETE", "d": "intr-un trigger de DELETE nu se poate accesa niciun fel de valoare a randului sters"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Disponibilitatea pseudo-inregistrarilor :OLD si :NEW depinde de operatia care declanseaza triggerul. La INSERT exista doar :NEW (randul nou), :OLD fiind NULL. La DELETE exista doar :OLD (randul care este eliminat), :NEW fiind NULL - logic, deoarece dupa stergere nu mai exista o \"valoare noua\". La UPDATE exista ambele. Prin urmare, pentru a arhiva datele unui angajat sters, singura sursa valida este :OLD (id_angajat, nume vechi), care retine valorile randului inainte de disparitie. Deci a. b este falsa: nu sunt interschimbabile - :NEW este NULL la DELETE. c inverseaza situatia (tocmai :NEW nu contine date la DELETE). d este falsa: :OLD ofera acces complet la valorile randului sters, ceea ce face posibila arhivarea/auditul.", "enunt_html": "<p>Fie tabelele: ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3)) ANGAJATI_STERSI (id_ang NUMBER(5), nume VARCHAR2(30), data_stergere DATE) Se considera declansatorul:</p><pre class=\"code\">CREATE OR REPLACE TRIGGER trg_del\nAFTER DELETE ON angajati\nFOR EACH ROW\nBEGIN\n    INSERT INTO angajati_stersi(id_ang, nume, data_stergere)\n    VALUES (:OLD.id_angajat, :OLD.nume, SYSDATE);\nEND;\n/</pre><p>De ce se foloseste :OLD (si nu :NEW) pentru a prelua datele randului sters? Precizati afirmatia corecta:</p>"}, {"nr": 14, "categorie": "OOP (C++)", "enunt": "In C++, atunci cand operatorul relational < este supraincarcat ca FUNCTIE MEMBRU\n(metoda) a unei clase pentru a compara doua obiecte de acel tip (de forma obiect1 <\nobiect2), numarul de parametri EXPLICITI ai metodei operator< este:", "variante": {"a": "1 (operandul din dreapta; operandul din stanga este obiectul curent, accesat prin this)", "b": "2 (ambii operanzi sunt transmisi ca parametri)", "c": "0 (ambii operanzi sunt accesati prin this)", "d": "3 (cei doi operanzi plus un parametru pentru rezultat)"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Cand un operator binar (cum este <) este supraincarcat ca metoda membru, operandul din STANGA al expresiei este chiar obiectul pentru care se apeleaza metoda (adica *this), iar operandul din DREAPTA se transmite ca UNIC parametru explicit. Astfel, expresia a < b este interpretata de compilator ca a.operator<(b): a este obiectul curent (this), iar b este singurul argument. Prin urmare metoda membru operator< are exact 1 parametru explicit. Deci a. b=2 este cazul in care operatorul e supraincarcat ca functie GLOBALA/prietena (friend), nu ca membru - acolo ambii operanzi sunt parametri. c=0 este gresit: operandul din dreapta trebuie transmis undeva. d=3 nu are sens: rezultatul comparatiei este returnat (uzual bool), nu primit ca parametru.", "enunt_html": "<p>In C++, atunci cand operatorul relational &lt; este supraincarcat ca FUNCTIE MEMBRU (metoda) a unei clase pentru a compara doua obiecte de acel tip (de forma obiect1 &lt; obiect2), numarul de parametri EXPLICITI ai metodei operator&lt; este:</p>"}, {"nr": 15, "categorie": "C/C++", "enunt": "Ce va afisa urmatorul program C?\n#include <stdio.h>\nint main() {\n    int a[3][3] = {{1,2,3},{4,5,6},{7,8,9}};\n    int s = 0, i, c = 1;\n    for (i = 0; i < 3; i++) s += a[i][c];\n    printf(\"%d\", s);\n    return 0;\n}", "variante": {"a": "6", "b": "15", "c": "12", "d": "18"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Indicele de coloana este fixat la c=1, iar bucla variaza indicele de linie i de la 0 la 2, deci se aduna elementele de pe COLOANA 1 (a doua coloana): a[0][1]=2, a[1][1]=5, a[2][1]=8. Suma este 2+5+8=15. Deci b. a=6 (=1+2+3) ar fi suma primei LINII, nu a coloanei 1. c=12 (=1+4+7) este suma coloanei 0. d=18 (=3+6+9) este suma coloanei 2. Trebuie distins clar: la fixarea coloanei si variatia liniei se obtine suma pe coloana. Verificat prin compilare si rulare (gcc): programul afiseaza 15.", "enunt_html": "<p>Ce va afisa urmatorul program C?</p><pre class=\"code\">#include &lt;stdio.h&gt;\nint main() {\n    int a[3][3] = {{1,2,3},{4,5,6},{7,8,9}};\n    int s = 0, i, c = 1;\n    for (i = 0; i &lt; 3; i++) s += a[i][c];\n    printf(\"%d\", s);\n    return 0;\n}</pre>"}, {"nr": 16, "categorie": "SQL", "enunt": "Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume\nVARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3))\ncu cel putin 200 de randuri (inregistrari).\nIntr-o singura tranzactie se executa, in ordine:\nUPDATE angajati SET salariul = salariul + 100 WHERE id_angajat = 1;\nSAVEPOINT a;\nUPDATE angajati SET salariul = salariul + 200 WHERE id_angajat = 2;\nSAVEPOINT b;\nUPDATE angajati SET salariul = salariul + 300 WHERE id_angajat = 3;\nROLLBACK TO SAVEPOINT a;\nCOMMIT;\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "se pastreaza doar mararirea de 100 (angajatul 1); maririle de 200 (angajatul 2) si de 300 (angajatul 3) sunt anulate, iar savepoint-ul b este eliminat", "b": "se pastreaza maririle de 100 si de 200, se anuleaza doar cea de 300, deoarece savepoint b este ulterior lui a", "c": "se pastreaza toate cele trei mariri (100, 200, 300)", "d": "comanda ROLLBACK TO SAVEPOINT a genereaza eroare deoarece exista si savepoint-ul b definit dupa a"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "ROLLBACK TO SAVEPOINT a anuleaza TOATE modificarile efectuate dupa marcajul a, indiferent cate savepoint-uri intermediare exista intre a si momentul curent. Modificarea de +100 (angajatul 1) este anterioara lui a, deci se pastreaza. Modificarile de +200 (angajatul 2) si +300 (angajatul 3) sunt ulterioare lui a, deci se anuleaza ambele. In plus, orice savepoint stabilit DUPA a (aici, savepoint b) este eliminat (devine invalid) in urma revenirii la a. COMMIT permanentizeaza ce a ramas: doar +100. Deci a. b este falsa: revenirea la a anuleaza tot ce e dupa a, deci si +200. c este falsa: doua dintre mariri se anuleaza. d este falsa: prezenta savepoint-ului b nu impiedica revenirea la un savepoint anterior (a); b este pur si simplu inlaturat.", "enunt_html": "<p>Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3)) cu cel putin 200 de randuri (inregistrari). Intr-o singura tranzactie se executa, in ordine:</p><pre class=\"code\">UPDATE angajati SET salariul = salariul + 100 WHERE id_angajat = 1;\nSAVEPOINT a;\nUPDATE angajati SET salariul = salariul + 200 WHERE id_angajat = 2;\nSAVEPOINT b;\nUPDATE angajati SET salariul = salariul + 300 WHERE id_angajat = 3;\nROLLBACK TO SAVEPOINT a;\nCOMMIT;</pre><p>Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 17, "categorie": "PL/SQL", "enunt": "Se considera o vedere (view) care combina, printr-o jonctiune, date din doua tabele\n(ANGAJATI si DEPARTAMENTE) si care, din aceasta cauza, nu este direct actualizabila\nprin comenzi INSERT/UPDATE/DELETE. Precizati care dintre urmatoarele afirmatii despre\ndeclansatoarele INSTEAD OF este corecta:", "variante": {"a": "un trigger INSTEAD OF, definit pe vedere, intercepteaza operatiile DML asupra vederii si executa in locul lor cod propriu (de regula DML pe tabelele de baza), facand astfel posibila \"actualizarea\" unei vederi altfel neactualizabile", "b": "triggerele INSTEAD OF se pot defini pe orice tabela, pentru a inlocui comportamentul implicit al comenzilor DML", "c": "un trigger INSTEAD OF ruleaza suplimentar, pe langa operatia DML normala a vederii, nu in locul ei", "d": "triggerele INSTEAD OF nu pot contine comenzi INSERT/UPDATE/DELETE in corpul lor"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Vederile complexe (cu jonctiuni, functii de grup, DISTINCT etc.) nu sunt direct actualizabile, deoarece Oracle nu poate deduce univoc cum sa propage o modificare a vederii catre tabelele de baza. Solutia este un trigger INSTEAD OF, care se defineste EXCLUSIV pe VEDERI: cand se incearca un INSERT/UPDATE/DELETE asupra vederii, Oracle nu executa operatia direct, ci ruleaza IN LOCUL EI (instead of) corpul triggerului, in care programatorul scrie explicit DML-ul asupra tabelelor de baza corespunzatoare. Astfel vederea devine \"actualizabila\". Deci a. b este falsa: INSTEAD OF se poate defini DOAR pe vederi, nu pe tabele (pe tabele exista BEFORE/AFTER). c este falsa: prin definitie, INSTEAD OF inlocuieste operatia (instead of = \"in loc de\"), nu se adauga la ea. d este falsa: exact contrariul - corpul unui trigger INSTEAD OF contine de regula comenzi INSERT/UPDATE/DELETE catre tabelele de baza, ele fiind ratiunea lui de a exista.", "enunt_html": "<p>Se considera o vedere (view) care combina, printr-o jonctiune, date din doua tabele (ANGAJATI si DEPARTAMENTE) si care, din aceasta cauza, nu este direct actualizabila prin comenzi INSERT/UPDATE/DELETE. Precizati care dintre urmatoarele afirmatii despre declansatoarele INSTEAD OF este corecta:</p>"}, {"nr": 18, "categorie": "OOP (C++)", "enunt": "Ce va afisa la rulare urmatorul program C++?\n\n#include <iostream>\nusing namespace std;\nclass Nota {\n   int val;\npublic:\n   Nota(int v) { val = v; }\n   bool operator>(const Nota& n) { return val > n.val; }\n   int get() { return val; }\n};\nint main() {\n   Nota a(7), b(9);\n   Nota mx = (a > b) ? a : b;\n   cout << mx.get();\n   return 0;\n}", "variante": {"a": "9", "b": "7", "c": "1", "d": "16"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Operatorul > este supraincarcat sa compare doua obiecte Nota dupa membrul val. Expresia (a > b) inseamna a.operator>(b), adica 7 > 9, care este false. In operatorul ternar conditie ? x : y, cand conditia este false se alege ramura y, deci mx primeste o copie a lui b (Nota cu val=9). Apoi mx.get() returneaza 9. Deci a. b=7 ar aparea daca s-ar alege a (adica daca a > b ar fi fost true). c=1 confunda rezultatul comparatiei booleene (dar aici se afiseaza get(), nu comparatia; in plus a>b este oricum false=0). d=16 ar fi suma 7+9, dar operatorul ternar selecteaza un obiect, nu insumeaza. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza 9.", "enunt_html": "<p>Ce va afisa la rulare urmatorul program C++?</p><pre class=\"code\">#include &lt;iostream&gt;\nusing namespace std;\nclass Nota {\n    int val;\npublic:\n    Nota(int v) { val = v; }\n    bool operator&gt;(const Nota&amp; n) { return val &gt; n.val; }\n    int get() { return val; }\n};\nint main() {\n    Nota a(7), b(9);\n    Nota mx = (a &gt; b) ? a : b;\n    cout &lt;&lt; mx.get();\n    return 0;\n}</pre>"}, {"nr": 19, "categorie": "C/C++", "enunt": "Ce va afisa urmatorul program C?\n#include <stdio.h>\nvoid proceseaza(int m[][2], int n) {\n    int i, j;\n    for (i = 0; i < n; i++)\n        for (j = 0; j < 2; j++)\n            m[i][j] *= 2;\n}\nint main() {\n    int a[2][2] = {{1,2},{3,4}};\n    proceseaza(a, 2);\n    printf(\"%d\", a[1][1]);\n    return 0;\n}", "variante": {"a": "8", "b": "4", "c": "2", "d": "16"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Cand o matrice este transmisa unei functii, se transmite de fapt adresa ei (matricea nu se copiaza), asa incat modificarile din functie afecteaza matricea originala din main. Antetul int m[][2] este forma corecta: a doua dimensiune (numarul de coloane, 2) TREBUIE specificata pentru ca indexarea m[i][j] sa calculeze corect adresa. Functia dubleaza fiecare element: din {{1,2},{3,4}} rezulta {{2,4},{6,8}}. Dupa apel, a[1][1] este 4*2=8. Deci a. b=4 este valoarea INITIALA a lui a[1][1] (inainte de dublare) - ar fi corect doar daca modificarile nu s-ar propaga in main, ceea ce nu e cazul la matrice. c=2 este a[0][0] dublat. d=16 ar fi o dublare aplicata de doua ori. Verificat prin compilare si rulare (gcc): programul afiseaza 8.", "enunt_html": "<p>Ce va afisa urmatorul program C?</p><pre class=\"code\">#include &lt;stdio.h&gt;\nvoid proceseaza(int m[][2], int n) {\n    int i, j;\n    for (i = 0; i &lt; n; i++)\n    for (j = 0; j &lt; 2; j++)\n    m[i][j] *= 2;\n}\nint main() {\n    int a[2][2] = {{1,2},{3,4}};\n    proceseaza(a, 2);\n    printf(\"%d\", a[1][1]);\n    return 0;\n}</pre>"}, {"nr": 20, "categorie": "SQL", "enunt": "Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume\nVARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3))\ncu cel putin 200 de randuri (inregistrari).\nIntr-o sesiune se executa, in ordine:\nINSERT INTO angajati (id_angajat, nume, salariul) VALUES (999, 'Test', 5000);\nCREATE TABLE temp_backup (id NUMBER);\nROLLBACK;\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "randul cu id_angajat = 999 RAMANE in tabela ANGAJATI, deoarece comanda CREATE TABLE (DDL) a produs un COMMIT implicit care a permanentizat si INSERT-ul anterior, iar ROLLBACK nu mai are ce anula", "b": "randul cu id_angajat = 999 este anulat de ROLLBACK, ca orice INSERT necomis", "c": "comanda ROLLBACK genereaza eroare deoarece dupa un CREATE TABLE nu se mai poate face ROLLBACK", "d": "atat INSERT-ul cat si crearea tabelei temp_backup sunt anulate de ROLLBACK"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Comenzile DDL (CREATE, ALTER, DROP, TRUNCATE) provoaca un COMMIT IMPLICIT: Oracle executa automat un COMMIT inainte si dupa comanda DDL. In secventa data, INSERT-ul (o comanda DML necomisa) este urmat de CREATE TABLE, al carui COMMIT implicit permanentizeaza TOATE modificarile necomise de pana atunci, inclusiv INSERT-ul angajatului 999. Cand se ajunge la ROLLBACK, nu mai exista nicio modificare necomisa de anulat, deci randul 999 ramane definitiv in tabela. Deci a. b este falsa tocmai din cauza COMMIT-ului implicit al DDL-ului. c este falsa: ROLLBACK nu da eroare, doar ca nu are ce anula (tranzactia anterioara a fost deja comisa). d este falsa: o comanda DDL (crearea tabelei) nu poate fi oricum anulata prin ROLLBACK, iar INSERT-ul a fost deja comis.", "enunt_html": "<p>Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3)) cu cel putin 200 de randuri (inregistrari). Intr-o sesiune se executa, in ordine:</p><pre class=\"code\">INSERT INTO angajati (id_angajat, nume, salariul) VALUES (999, 'Test', 5000);\nCREATE TABLE temp_backup (id NUMBER);\nROLLBACK;</pre><p>Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 21, "categorie": "PL/SQL", "enunt": "Precizati care dintre urmatoarele afirmatii referitoare la declansatoarele (triggerele)\nde tip INSTEAD OF in Oracle este corecta:", "variante": {"a": "un trigger INSTEAD OF poate fi definit numai pe o VEDERE (view), nu pe o tabela; incercarea de a-l crea pe o tabela genereaza eroare", "b": "un trigger INSTEAD OF poate fi definit atat pe tabele cat si pe vederi, fara restrictii", "c": "un trigger INSTEAD OF se defineste pe o tabela pentru a inlocui declansatoarele BEFORE si AFTER ale acesteia", "d": "triggerele INSTEAD OF se declanseaza la nivel de comanda (statement), nu la nivel de rand"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Triggerele INSTEAD OF au un domeniu de aplicare strict: se pot defini EXCLUSIV pe VEDERI (in special pe cele complexe, neactualizabile direct). Scopul lor este de a intercepta operatiile DML (INSERT/UPDATE/DELETE) asupra vederii si de a le inlocui cu cod propriu ce actioneaza asupra tabelelor de baza. Incercarea de a defini un INSTEAD OF pe o TABELA genereaza eroare de compilare (pentru tabele se folosesc BEFORE si AFTER). Deci a. b este falsa: nu se pot defini pe tabele. c este falsa: pe tabele NU se pune INSTEAD OF; el nu inlocuieste BEFORE/AFTER, ci este un tip complet diferit, specific vederilor. d este falsa: triggerele INSTEAD OF sunt intrinsec la nivel de RAND (se comporta ca FOR EACH ROW pentru fiecare rand afectat al vederii), nu la nivel de comanda.", "enunt_html": "<p>Precizati care dintre urmatoarele afirmatii referitoare la declansatoarele (triggerele) de tip INSTEAD OF in Oracle este corecta:</p>"}, {"nr": 22, "categorie": "OOP (C++)", "enunt": "Ce se intampla la compilarea urmatorului program C++?\n\n#include <iostream>\nusing namespace std;\nclass Sir {\n   int v[4];\npublic:\n   Sir() { for (int i = 0; i < 4; i++) v[i] = i + 1; }\n   int operator[](int i) { return v[i]; }\n};\nint main() {\n   Sir s;\n   s[0] = 100;\n   cout << s[0];\n   return 0;\n}", "variante": {"a": "genereaza eroare de compilare la \"s[0] = 100;\", deoarece operator[] returneaza int (o valoare), nu o referinta, deci rezultatul nu poate fi folosit ca destinatie a atribuirii", "b": "compileaza si afiseaza 100", "c": "compileaza si afiseaza 1", "d": "compileaza si afiseaza 0"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Aici operator[] este declarat sa returneze int (prin VALOARE), nu int& (prin referinta). Expresia s[0] apeleaza operator[] si produce o COPIE temporara a valorii lui v[0] - un rvalue (valoare temporara), nu un lvalue care sa desemneze o locatie de memorie modificabila. Instructiunea s[0] = 100 incearca sa atribuie unei asemenea valori temporare, ceea ce este ilegal si genereaza eroarea de compilare \"lvalue required as left operand of assignment\". Deci a. Pentru a permite scrierea (s[0] = 100), operator[] ar fi trebuit sa returneze o referinta (int&). b, c, d presupun gresit ca programul compileaza; el nici nu ajunge la executie. Verificat prin compilare (g++ -std=c++11): compilatorul raporteaza \"error: lvalue required as left operand of assignment\" la linia s[0] = 100.", "enunt_html": "<p>Ce se intampla la compilarea urmatorului program C++?</p><pre class=\"code\">#include &lt;iostream&gt;\nusing namespace std;\nclass Sir {\n    int v[4];\npublic:\n    Sir() { for (int i = 0; i &lt; 4; i++) v[i] = i + 1; }\n    int operator[](int i) { return v[i]; }\n};\nint main() {\n    Sir s;\n    s[0] = 100;\n    cout &lt;&lt; s[0];\n    return 0;\n}</pre>"}, {"nr": 23, "categorie": "C/C++", "enunt": "Ce va afisa urmatorul program C?\n#include <stdio.h>\nint main() {\n    int a[3][3] = {{1,2,3},{4,5,6},{7,8,9}};\n    int s = 0, i, j;\n    for (i = 0; i < 3; i++)\n        for (j = 0; j < 3; j++)\n            if (i < j) s += a[i][j];\n    printf(\"%d\", s);\n    return 0;\n}", "variante": {"a": "11", "b": "24", "c": "15", "d": "45"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Conditia if (i < j) selecteaza elementele situate STRICT DEASUPRA diagonalei principale (indicele de linie mai mic decat cel de coloana). Pentru matricea data, aceste elemente sunt: a[0][1]=2, a[0][2]=3 si a[1][2]=6 (perechile (i,j) cu i<j: (0,1),(0,2),(1,2)). Suma este 2+3+6=11. Deci a. b=24 este suma elementelor de SUB diagonala (i>j: a[1][0]+a[2][0]+a[2][1]=4+7+8). c=15 este suma diagonalei principale (i==j). d=45 este suma tuturor elementelor. Verificat prin compilare si rulare (gcc): programul afiseaza 11.", "enunt_html": "<p>Ce va afisa urmatorul program C?</p><pre class=\"code\">#include &lt;stdio.h&gt;\nint main() {\n    int a[3][3] = {{1,2,3},{4,5,6},{7,8,9}};\n    int s = 0, i, j;\n    for (i = 0; i &lt; 3; i++)\n    for (j = 0; j &lt; 3; j++)\n    if (i &lt; j) s += a[i][j];\n    printf(\"%d\", s);\n    return 0;\n}</pre>"}, {"nr": 24, "categorie": "SQL", "enunt": "Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume\nVARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3)).\nPentru angajatul cu id_angajat = 100, salariul curent este 2000. Se executa, in ordine:\nUPDATE angajati SET salariul = 3000 WHERE id_angajat = 100;\nSAVEPOINT s1;\nUPDATE angajati SET salariul = 5000 WHERE id_angajat = 100;\nROLLBACK TO SAVEPOINT s1;\nCOMMIT;\nCare va fi valoarea coloanei salariul pentru angajatul cu id_angajat = 100 dupa\nexecutia acestei secvente?", "variante": {"a": "3000", "b": "5000", "c": "2000", "d": "4000"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Urmarim valoarea coloanei salariul pentru angajatul 100 pas cu pas: initial 2000; primul UPDATE o aduce la 3000; se stabileste marcajul s1 (in acest moment salariul = 3000); al doilea UPDATE o aduce la 5000; ROLLBACK TO SAVEPOINT s1 reface starea de la marcajul s1, deci anuleaza doar al doilea UPDATE si readuce salariul la 3000 (NU la 2000, pentru ca primul UPDATE este anterior lui s1 si ramane valabil); COMMIT permanentizeaza valoarea curenta, 3000. Deci a. b=5000 ar fi valoarea daca nu s-ar fi facut ROLLBACK TO s1. c=2000 ar fi rezultatul unui ROLLBACK COMPLET (care ar anula si primul UPDATE), dar aici s-a folosit ROLLBACK TO SAVEPOINT (partial). d=4000 nu corespunde niciunui pas.", "enunt_html": "<p>Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3)). Pentru angajatul cu id_angajat = 100, salariul curent este 2000. Se executa, in ordine:</p><pre class=\"code\">UPDATE angajati SET salariul = 3000 WHERE id_angajat = 100;\nSAVEPOINT s1;\nUPDATE angajati SET salariul = 5000 WHERE id_angajat = 100;\nROLLBACK TO SAVEPOINT s1;\nCOMMIT;</pre><p>Care va fi valoarea coloanei salariul pentru angajatul cu id_angajat = 100 dupa executia acestei secvente?</p>"}, {"nr": 25, "categorie": "PL/SQL", "enunt": "Se considera urmatoarea incercare de declansator pe tabela ANGAJATI (id_angajat\nNUMBER(5), nume VARCHAR2(30), salariul NUMBER(10,2), ...):\nCREATE OR REPLACE TRIGGER trg_x\nAFTER INSERT ON angajati\nFOR EACH ROW\nBEGIN\n   :NEW.salariul := :NEW.salariul * 1.1;\nEND;\n/\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "triggerul genereaza eroare, deoarece valorile :NEW pot fi MODIFICATE (atribuite) numai intr-un trigger BEFORE la nivel de rand, nu intr-unul AFTER", "b": "triggerul functioneaza corect si mareste salariul noului angajat cu 10%", "c": "triggerul functioneaza, dar modificarea lui :NEW.salariul nu are niciun efect asupra randului inserat", "d": "triggerul genereaza eroare deoarece nu se poate folosi inmultirea (*) intr-un corp de trigger"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Pseudo-inregistrarea :NEW poate fi CITITA in triggerele BEFORE si AFTER la nivel de rand, dar poate fi MODIFICATA (i se pot atribui valori) DOAR intr-un trigger BEFORE la nivel de rand - pentru ca doar atunci modificarea mai poate influenta randul inainte ca acesta sa fie scris efectiv in tabela. Intr-un trigger AFTER randul a fost deja inserat, deci :NEW este read-only; incercarea de a-i atribui o valoare (:NEW.salariul := ...) produce eroare de compilare (ORA-04084: cannot change NEW values for this trigger type). Deci a. b este falsa: aceasta ar functiona doar daca triggerul ar fi BEFORE INSERT, nu AFTER. c este falsa: nu este vorba de \"fara efect\", ci de eroare efectiva. d este falsa: operatorul de inmultire este perfect valid in PL/SQL; problema este exclusiv tipul triggerului (AFTER vs BEFORE).", "enunt_html": "<p>Se considera urmatoarea incercare de declansator pe tabela ANGAJATI (id_angajat NUMBER(5), nume VARCHAR2(30), salariul NUMBER(10,2), ...):</p><pre class=\"code\">CREATE OR REPLACE TRIGGER trg_x\nAFTER INSERT ON angajati\nFOR EACH ROW\nBEGIN\n    :NEW.salariul := :NEW.salariul * 1.1;\nEND;\n/</pre><p>Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 26, "categorie": "OOP (C++)", "enunt": "Ce va afisa la rulare urmatorul program C++?\n\n#include <iostream>\nusing namespace std;\nclass Fractie {\n   int nr, num;\npublic:\n   Fractie(int a, int b) { nr = a; num = b; }\n   bool operator==(const Fractie& f) {\n      return nr * f.num == f.nr * num;\n   }\n};\nint main() {\n   Fractie a(1, 2), b(2, 4);\n   if (a == b) cout << \"egale\"; else cout << \"diferite\";\n   return 0;\n}", "variante": {"a": "egale", "b": "diferite", "c": "1", "d": "eroare de compilare deoarece operator== trebuie sa returneze int, nu bool"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Operatorul == este supraincarcat sa compare doua fractii dupa criteriul echivalentei valorice, evitand impartirea: doua fractii nr/num si f.nr/f.num sunt egale daca nr*f.num == f.nr*num (produsul in cruce). Pentru a = 1/2 si b = 2/4: nr*f.num = 1*4 = 4, iar f.nr*num = 2*2 = 4; cele doua produse sunt egale, deci operator== returneaza true, iar ramura if afiseaza \"egale\". Deci a. b=diferite ar aparea daca produsele in cruce ar fi inegale. c=1 este gresit: se afiseaza textul din ramurile if/else, nu valoarea booleana. d este falsa: un operator de comparatie poate returna orice tip, iar bool este chiar cel firesc si corect pentru == (poate fi folosit direct intr-un if). Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza \"egale\".", "enunt_html": "<p>Ce va afisa la rulare urmatorul program C++?</p><pre class=\"code\">#include &lt;iostream&gt;\nusing namespace std;\nclass Fractie {\n    int nr, num;\npublic:\n    Fractie(int a, int b) { nr = a; num = b; }\n    bool operator==(const Fractie&amp; f) {\n        return nr * f.num == f.nr * num;\n    }\n};\nint main() {\n    Fractie a(1, 2), b(2, 4);\n    if (a == b) cout &lt;&lt; \"egale\"; else cout &lt;&lt; \"diferite\";\n    return 0;\n}</pre>"}, {"nr": 27, "categorie": "SQL", "enunt": "Referitor la comportamentul unui SAVEPOINT dupa executia comenzii ROLLBACK TO SAVEPOINT,\nprecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "dupa ROLLBACK TO SAVEPOINT sp, tranzactia ramane deschisa, savepoint-ul sp continua sa existe (se poate reveni din nou la el), iar modificarile pastrate pot fi ulterior confirmate cu COMMIT sau anulate complet cu ROLLBACK", "b": "ROLLBACK TO SAVEPOINT sp incheie automat tranzactia, ca un COMMIT", "c": "dupa ROLLBACK TO SAVEPOINT sp, savepoint-ul sp este sters si nu se mai poate reveni la el", "d": "o tranzactie poate contine cel mult un singur SAVEPOINT"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "ROLLBACK TO SAVEPOINT sp este o operatie de anulare PARTIALA care nu incheie tranzactia. Dupa executia ei: tranzactia ramane deschisa si activa; marcajul sp NU se sterge - se poate reveni din nou la acelasi savepoint (ceea ce se elimina sunt doar savepoint-urile stabilite DUPA sp); modificarile ramase (cele de dinainte de sp) pot fi apoi permanentizate cu COMMIT sau anulate integral cu un ROLLBACK complet. Deci a. b este falsa: nu are efect de COMMIT si nu incheie tranzactia. c este falsa: exact savepoint-ul la care se revine ramane valabil (spre deosebire de cele ulterioare, care se pierd). d este falsa: o tranzactie poate contine oricate savepoint-uri, cu nume distincte (iar reutilizarea aceluiasi nume muta marcajul in noua pozitie).", "enunt_html": "<p>Referitor la comportamentul unui SAVEPOINT dupa executia comenzii ROLLBACK TO SAVEPOINT, precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 28, "categorie": "PL/SQL", "enunt": "Precizati care dintre urmatoarele afirmatii referitoare la pseudo-inregistrarile :OLD\nsi :NEW din declansatoare (triggere) este corecta:", "variante": {"a": ":OLD si :NEW sunt accesibile numai in triggerele la nivel de RAND (definite cu FOR EACH ROW), nu si in cele la nivel de comanda (statement)", "b": ":OLD si :NEW sunt accesibile in orice trigger, indiferent daca este la nivel de rand sau de comanda", "c": ":OLD si :NEW pot fi folosite doar in triggerele BEFORE, niciodata in AFTER", "d": ":NEW este disponibil la orice tip de operatie (INSERT, UPDATE, DELETE) cu aceleasi valori"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Pseudo-inregistrarile :OLD si :NEW se refera la randul curent afectat de operatia DML, deci au sens NUMAI intr-un trigger care se declanseaza per rand, adica unul definit cu FOR EACH ROW (trigger la nivel de rand). Intr-un trigger la nivel de comanda (statement-level, fara FOR EACH ROW), care se declanseaza o singura data pentru intreaga comanda, nu exista notiunea de \"rand curent\", deci :OLD si :NEW nu sunt disponibile. Deci a. b este falsa: nu sunt disponibile in triggerele la nivel de comanda. c este falsa: :OLD si :NEW pot fi CITITE si in triggerele AFTER (restrictia priveste doar MODIFICAREA lui :NEW, permisa doar in BEFORE). d este falsa: :NEW nu are valori la DELETE (randul dispare), iar :OLD nu are valori la INSERT - disponibilitatea depinde de operatie.", "enunt_html": "<p>Precizati care dintre urmatoarele afirmatii referitoare la pseudo-inregistrarile :OLD si :NEW din declansatoare (triggere) este corecta:</p>"}, {"nr": 29, "categorie": "OOP (C++)", "enunt": "Pentru ca operatorul de indexare supraincarcat (operator[]) al unei clase de tip\ncontainer simplu sa poata fi folosit atat pentru CITIREA, cat si pentru SCRIEREA unui\nelement (de exemplu, atat \"x = obiect[i];\" cat si \"obiect[i] = valoare;\"), metoda\noperator[] trebuie sa returneze:", "variante": {"a": "o referinta catre element (de exemplu int&), astfel incat rezultatul apelului sa fie un lvalue modificabil", "b": "elementul prin valoare (de exemplu int), deoarece o copie este suficienta pentru ambele operatii", "c": "un pointer de tip void*", "d": "tipul bool, indicand daca indexul este valid"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Pentru a permite atat citirea cat si scrierea prin obiect[i], apelul operator[] trebuie sa produca un lvalue - o entitate care desemneaza o locatie de memorie reala, ce poate aparea in partea stanga a unei atribuiri. Acest lucru se obtine returnand o REFERINTA catre elementul intern (de exemplu int&): la citire, referinta se converteste implicit la valoare; la scriere, atribuirea obiect[i] = valoare modifica direct elementul referit. Deci a. b este falsa: returnarea prin valoare produce o COPIE temporara (rvalue), care poate fi citita, dar NU poate fi tinta unei atribuiri - \"obiect[i] = valoare\" ar da eroare de compilare (lvalue required). c este falsa: un void* nu permite indexarea naturala si nici atribuirea directa a valorii dorite. d este falsa: returnarea unui bool nu ofera acces la element.", "enunt_html": "<p>Pentru ca operatorul de indexare supraincarcat (operator[]) al unei clase de tip container simplu sa poata fi folosit atat pentru CITIREA, cat si pentru SCRIEREA unui</p><pre class=\"code\">element (de exemplu, atat \"x = obiect[i];\" cat si \"obiect[i] = valoare;\"), metoda\noperator[] trebuie sa returneze:</pre>"}, {"nr": 30, "categorie": "OOP (C++)", "enunt": "Referitor la supraincarcarea operatorilor in C++, precizati care dintre urmatoarele\nafirmatii este corecta:", "variante": {"a": "operatorii relationali (<, >, ==, !=, <=, >=) pot fi supraincarcati, dar exista operatori care NU pot fi supraincarcati niciodata, precum operatorul de rezolutie a domeniului (::), operatorul de selectie a membrului (.) si operatorul conditional (?:)", "b": "in C++ pot fi supraincarcati absolut toti operatorii, fara nicio exceptie", "c": "supraincarcarea unui operator ii poate modifica aritatea (numarul de operanzi) si prioritatea (precedenta) fata de forma predefinita", "d": "un operator poate fi supraincarcat doar daca toti operanzii sai sunt de tipuri predefinite (int, double etc.)"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "In C++ majoritatea operatorilor pot fi supraincarcati, inclusiv toti operatorii relationali (<, >, ==, !=, <=, >=), aritmetici, de atribuire, [], () s.a.m.d. Exista insa un set restrans de operatori care NU pot fi supraincarcati niciodata: :: (rezolutia domeniului), . (selectia membrului), .* (selectia membrului prin pointer), ?: (operatorul conditional ternar) si sizeof. Deci a. b este falsa: exista exact aceste exceptii. c este falsa: supraincarcarea NU poate schimba aritatea, prioritatea (precedenta) sau asociativitatea unui operator - acestea raman cele ale operatorului predefinit; se poate schimba doar semnificatia (codul executat). d este falsa: dimpotriva, supraincarcarea operatorilor are sens tocmai pentru TIPURI DEFINITE DE UTILIZATOR (clase); cel putin un operand trebuie sa fie de tip clasa/enumerare (nu se pot redefini operatorii pentru tipuri exclusiv predefinite).", "enunt_html": "<p>Referitor la supraincarcarea operatorilor in C++, precizati care dintre urmatoarele afirmatii este corecta:</p>"}]};
+
+/* ---------- theme ---------- */
+(function(){
+  const saved = localStorage.getItem('csie3-theme');
+  if(saved) document.documentElement.setAttribute('data-theme', saved);
+  document.getElementById('themeToggle').addEventListener('click', function(){
+    const cur = document.documentElement.getAttribute('data-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light');
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('csie3-theme', next);
+  });
+})();
+
+/* ---------- helpers ---------- */
+function escapeHtml(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+function letters(str){
+  return str.split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);
+}
+
+/* ---------- state ---------- */
+const SECONDS_PER_QUESTION = 80; // raport 40 min / 30 intrebari, ca la testul real
+const state = {
+  pool: [],
+  shuffleQ: true,
+  shuffleA: true,
+  selectedCats: new Set(DATA.questions.map(q=>q.categorie)),
+  index: 0,
+  score: 0,
+  order: [],
+  results: [],
+  timeLeft: SECONDS_PER_QUESTION * 30,
+  timerId: null
+};
+
+function formatTime(sec){
+  const s = Math.max(0, sec);
+  const m = Math.floor(s/60);
+  const r = s%60;
+  return String(m).padStart(2,'0')+':'+String(r).padStart(2,'0');
+}
+function renderTimer(){
+  const el = document.getElementById('quizTimer');
+  el.textContent = 'Timp: '+formatTime(state.timeLeft);
+  el.classList.toggle('timer-warn', state.timeLeft <= 300);
+}
+function stopTimer(){
+  if(state.timerId){ clearInterval(state.timerId); state.timerId = null; }
+}
+function startTimer(){
+  stopTimer();
+  state.timeLeft = Math.round(SECONDS_PER_QUESTION * state.pool.length);
+  renderTimer();
+  state.timerId = setInterval(()=>{
+    state.timeLeft--;
+    renderTimer();
+    if(state.timeLeft <= 0){ handleTimeUp(); }
+  }, 1000);
+}
+function handleTimeUp(){
+  stopTimer();
+  const optsEl = document.getElementById('quizOptions');
+  const alreadyAnswered = optsEl.dataset.locked === '1';
+  const startFrom = alreadyAnswered ? state.index + 1 : state.index;
+  for(let i = startFrom; i < state.pool.length; i++){
+    const q = state.pool[i];
+    const correctSet = letters(q.raspuns_corect);
+    const baremSet = letters(q.raspuns_barem);
+    state.results.push({
+      nr: q.nr, categorie: q.categorie, sursa_tag: q.sursa_tag, chosen: '—', correctSet, isCorrect:false,
+      variante: q.variante, explicatie: q.explicatie, status_verificare: q.status_verificare,
+      baremSet
+    });
+  }
+  renderResults();
+  showView('results');
+}
+
+const categories = Array.from(new Set(DATA.questions.map(q=>q.categorie)));
+
+function catCount(cat){ return DATA.questions.filter(q=>q.categorie===cat).length; }
+
+function renderChips(){
+  const el = document.getElementById('categoryChips');
+  el.innerHTML = '';
+  categories.forEach(cat=>{
+    const chip = document.createElement('div');
+    chip.className = 'chip active';
+    chip.innerHTML = escapeHtml(cat)+' <span class="count">'+catCount(cat)+'</span>';
+    chip.addEventListener('click', ()=>{
+      if(state.selectedCats.has(cat)){
+        if(state.selectedCats.size>1){ state.selectedCats.delete(cat); chip.classList.remove('active'); }
+      } else {
+        state.selectedCats.add(cat); chip.classList.add('active');
+      }
+      updateStartBtn();
+    });
+    el.appendChild(chip);
+  });
+}
+
+function updateStartBtn(){
+  const n = DATA.questions.filter(q=>state.selectedCats.has(q.categorie)).length;
+  document.getElementById('startBtn').textContent = 'Începe testul ('+n+' întrebări)';
+  document.getElementById('startBtn').disabled = n===0;
+}
+
+document.getElementById('toggleShuffleQ').addEventListener('click', function(){
+  state.shuffleQ = !state.shuffleQ; this.classList.toggle('on', state.shuffleQ);
+});
+document.getElementById('toggleShuffleA').addEventListener('click', function(){
+  state.shuffleA = !state.shuffleA; this.classList.toggle('on', state.shuffleA);
+});
+
+function showView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+}
+
+function bestScoreKey(){ return 'csie3-best-'+DATA.year; }
+function loadBest(){
+  const raw = localStorage.getItem(bestScoreKey());
+  return raw ? JSON.parse(raw) : null;
+}
+function renderBestNote(){
+  const b = loadBest();
+  const el = document.getElementById('bestScoreNote');
+  el.textContent = b ? ('Cel mai bun scor anterior: '+b.score+'/'+b.total+' ('+b.pct+'%)') : '';
+}
+
+document.getElementById('startBtn').addEventListener('click', startQuiz);
+document.getElementById('quitBtn').addEventListener('click', ()=>{ stopTimer(); showView('setup'); renderBestNote(); });
+document.getElementById('restartBtn').addEventListener('click', ()=>{ showView('setup'); renderBestNote(); });
+document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+
+function startQuiz(){
+  let pool = DATA.questions.filter(q=>state.selectedCats.has(q.categorie));
+  if(state.shuffleQ) pool = shuffle(pool);
+  state.pool = pool;
+  state.index = 0;
+  state.score = 0;
+  state.results = [];
+  state.order = pool.map(q=>{
+    const opts = ['a','b','c','d'];
+    return state.shuffleA ? shuffle(opts) : opts;
+  });
+  showView('quiz');
+  renderQuestion();
+  startTimer();
+}
+
+function renderQuestion(){
+  const q = state.pool[state.index];
+  const dispOrder = state.order[state.index];
+  document.getElementById('progressBar').style.width = Math.round(100*state.index/state.pool.length)+'%';
+  document.getElementById('quizPos').textContent = 'Întrebarea '+(state.index+1)+' din '+state.pool.length;
+  document.getElementById('quizCat').textContent = q.sursa_tag ? (q.categorie+' · '+q.sursa_tag) : q.categorie;
+  document.getElementById('quizScore').textContent = 'Scor: '+state.score;
+  document.getElementById('quizEnunt').innerHTML = q.enunt_html;
+  document.getElementById('nextBtn').style.display = 'none';
+  const fb = document.getElementById('quizFeedback');
+  fb.classList.remove('show','ok','ko');
+  document.getElementById('fbBaremWarn').style.display = 'none';
+
+  const optsEl = document.getElementById('quizOptions');
+  optsEl.innerHTML = '';
+  optsEl.dataset.locked = '0';
+  const displayLetters = ['A','B','C','D'];
+  dispOrder.forEach((origLetter, i)=>{
+    const btn = document.createElement('div');
+    btn.className = 'opt';
+    btn.dataset.orig = origLetter;
+    btn.innerHTML = '<span class="letter">'+displayLetters[i]+')</span><span class="txt">'+escapeHtml(q.variante[origLetter])+'</span>';
+    btn.addEventListener('click', ()=>selectOption(origLetter));
+    optsEl.appendChild(btn);
+  });
+}
+
+function selectOption(chosenLetter){
+  const q = state.pool[state.index];
+  const optsEl = document.getElementById('quizOptions');
+  if(optsEl.dataset.locked === '1') return;
+  optsEl.dataset.locked = '1';
+
+  const correctSet = letters(q.raspuns_corect);
+  const baremSet = letters(q.raspuns_barem);
+  const isCorrect = correctSet.includes(chosenLetter);
+  if(isCorrect) state.score++;
+
+  Array.from(optsEl.children).forEach(btn=>{
+    btn.classList.add('locked');
+    const l = btn.dataset.orig;
+    if(correctSet.includes(l)) btn.classList.add('correct');
+    else if(l === chosenLetter) btn.classList.add('incorrect');
+    else btn.classList.add('dim');
+    let tag = 'sursă: '+l.toUpperCase();
+    if(q.status_verificare === 'EROARE_BAREM' && baremSet.includes(l) && !correctSet.includes(l)){
+      tag += ' · alegerea baremului oficial';
+    }
+    const span = document.createElement('span');
+    span.className = 'tag';
+    span.textContent = tag;
+    btn.appendChild(span);
+  });
+
+  const fb = document.getElementById('quizFeedback');
+  fb.classList.add('show', isCorrect ? 'ok':'ko');
+  const title = document.getElementById('fbTitle');
+  title.className = 'fb-title '+(isCorrect?'ok-txt':'ko-txt');
+  title.textContent = isCorrect ? '✓ Corect' : ('✗ Greșit — răspunsul corect: '+correctSet.join(', ').toUpperCase());
+
+  const warnEl = document.getElementById('fbBaremWarn');
+  if(q.status_verificare === 'EROARE_BAREM'){
+    warnEl.style.display = 'block';
+    warnEl.textContent = '⚠ Barem oficial eronat: documentul original indică "'+baremSet.join(', ').toUpperCase()+'", dar răspunsul corect verificat este "'+correctSet.join(', ').toUpperCase()+'". Detalii mai jos.';
+  } else {
+    warnEl.style.display = 'none';
+  }
+  document.getElementById('fbExplic').textContent = q.explicatie;
+  document.getElementById('nextBtn').style.display = 'inline-flex';
+  document.getElementById('quizScore').textContent = 'Scor: '+state.score;
+
+  state.results.push({
+    nr: q.nr, categorie: q.categorie, sursa_tag: q.sursa_tag, chosen: chosenLetter, correctSet, isCorrect,
+    variante: q.variante, explicatie: q.explicatie, status_verificare: q.status_verificare,
+    baremSet
+  });
+}
+
+function nextQuestion(){
+  state.index++;
+  if(state.index >= state.pool.length){ stopTimer(); renderResults(); showView('results'); }
+  else renderQuestion();
+}
+
+function renderResults(){
+  const total = state.results.length;
+  const score = state.results.filter(r=>r.isCorrect).length;
+  const pct = total ? Math.round(100*score/total) : 0;
+  document.getElementById('resScoreN').textContent = score+'/'+total;
+  document.getElementById('resPercent').textContent = pct+'%';
+  document.getElementById('resPunctaj').textContent = 'Punctaj estimat: '+(score*3)+' puncte (din '+(total*3)+')';
+
+  const best = loadBest();
+  if(!best || score/total > best.score/best.total){
+    localStorage.setItem(bestScoreKey(), JSON.stringify({score, total, pct}));
+  }
+
+  const catStats = {};
+  state.results.forEach(r=>{
+    catStats[r.categorie] = catStats[r.categorie] || {ok:0,total:0};
+    catStats[r.categorie].total++;
+    if(r.isCorrect) catStats[r.categorie].ok++;
+  });
+  const catBarsEl = document.getElementById('resCatBars');
+  catBarsEl.innerHTML = '';
+  Object.keys(catStats).forEach(cat=>{
+    const s = catStats[cat];
+    const p = Math.round(100*s.ok/s.total);
+    const row = document.createElement('div');
+    row.className = 'cat-bar-row';
+    row.innerHTML = '<div class="cat-bar-label"><span>'+escapeHtml(cat)+'</span><span>'+s.ok+'/'+s.total+'</span></div>'+
+      '<div class="cat-bar-outer"><div class="cat-bar-inner" style="width:'+p+'%"></div></div>';
+    catBarsEl.appendChild(row);
+  });
+
+  const tbody = document.getElementById('resTableBody');
+  tbody.innerHTML = '';
+  state.results.forEach((r, idx)=>{
+    const tr = document.createElement('tr');
+    tr.className = r.isCorrect ? 'hit':'miss';
+    const catCell = r.sursa_tag ? (r.categorie+' · '+r.sursa_tag) : r.categorie;
+    tr.innerHTML = '<td>'+(r.isCorrect?'✓':'✗')+' '+r.nr+'</td><td>'+escapeHtml(catCell)+'</td><td>'+r.chosen.toUpperCase()+'</td><td>'+r.correctSet.join(',').toUpperCase()+'</td>';
+    const detail = document.createElement('tr');
+    detail.className = 'review-detail';
+    const td = document.createElement('td');
+    td.colSpan = 4;
+    let warnHtml = '';
+    if(r.status_verificare === 'EROARE_BAREM'){
+      warnHtml = '<div class="barem-warn" style="display:block;margin-bottom:8px">⚠ Barem oficial eronat (indica '+r.baremSet.join(',').toUpperCase()+')</div>';
+    }
+    td.innerHTML = warnHtml + escapeHtml(r.explicatie).replace(/\n/g,'<br>');
+    detail.appendChild(td);
+    tr.addEventListener('click', ()=>{ detail.classList.toggle('show'); });
+    tbody.appendChild(tr);
+    tbody.appendChild(detail);
+  });
+}
+
+renderChips();
+updateStartBtn();
+renderBestNote();
+</script>
+</body>
+</html>

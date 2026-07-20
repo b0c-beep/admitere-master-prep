@@ -1,0 +1,744 @@
+=== ADMITERE MASTER CSIE3 - TEST SIMULARE 9 ===
+Sursă: generat original, pe baza tiparelor din subiectele 2024-2025
+Format sursă original: intrebari noi, verificate prin compilare (C/C++, OOP) si
+  rationament riguros (SQL, PL/SQL)
+Număr total întrebări: 30
+Punctaj: 3 puncte/întrebare corectă, punctaj maxim 90 puncte
+
+##### ÎNTREBAREA 1 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa urmatorul program C?
+#include <stdio.h>
+int main() {
+    int a[3][3] = {{1,2,3},{4,5,6},{7,8,9}};
+    int s = 0, i;
+    for (i = 0; i < 3; i++) s += a[i][i];
+    printf("%d", s);
+    return 0;
+}
+
+VARIANTE:
+a) 15
+b) 16
+c) 45
+d) 25
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Bucla parcurge diagonala PRINCIPALA a matricei patratice, adica elementele pentru care indicele de linie este egal cu indicele de coloana: a[i][i]. Pentru matricea data acestea sunt a[0][0]=1, a[1][1]=5, a[2][2]=9, iar suma lor este 1+5+9=15. Deci a. b=16 este suma diagonalei SECUNDARE (a[0][2]+a[1][1]+a[2][0]=3+5+7), nu a celei principale. c=45 este suma TUTUROR elementelor matricei (1+2+...+9). d=25 nu corespunde niciunei parcurgeri corecte. Verificat prin compilare si rulare (gcc): programul afiseaza 15.
+
+##### ÎNTREBAREA 2 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce va afisa la rulare urmatorul program C++?
+
+#include <iostream>
+using namespace std;
+class Punct {
+   int x, y;
+public:
+   Punct(int a, int b) { x = a; y = b; }
+   bool operator==(const Punct& p) {
+      return (x*x + y*y) == (p.x*p.x + p.y*p.y);
+   }
+};
+int main() {
+   Punct a(3, 4), b(5, 0);
+   cout << (a == b);
+   return 0;
+}
+
+VARIANTE:
+a) 0
+b) 1
+c) afiseaza coordonatele celor doua puncte
+d) eroare de compilare deoarece operator== nu poate accesa membrii privati ai lui p
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Operatorul == este supraincarcat ca metoda membru si compara cele doua puncte dupa criteriul distantei fata de origine (mai exact dupa patratul acesteia, x^2+y^2, pentru a evita radicalul). Pentru a(3,4): 3*3+4*4=9+16=25; pentru b(5,0): 5*5+0*0=25. Cele doua valori sunt egale, deci operator== returneaza true, iar cout afiseaza 1 (valoarea booleana true se tipareste ca 1). Deci b. a=0 ar aparea daca punctele ar fi considerate diferite. c este falsa: se afiseaza rezultatul comparatiei, nu coordonatele. d este falsa: operator==, fiind metoda a clasei Punct, are acces la membrii privati ai ORICARUI obiect Punct, inclusiv la p.x si p.y (accesul privat este la nivel de clasa, nu de obiect). Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza 1.
+
+##### ÎNTREBAREA 3 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume
+VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3))
+cu cel putin 200 de randuri (inregistrari).
+Intr-o singura sesiune se executa, in ordine, comenzile SQL-Oracle:
+UPDATE angajati SET salariul = salariul + 100 WHERE id_departament = 10;
+SAVEPOINT sp1;
+UPDATE angajati SET salariul = salariul + 500 WHERE id_departament = 20;
+ROLLBACK TO SAVEPOINT sp1;
+COMMIT;
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) raman salvate definitiv doar maririle de 100 pentru departamentul 10; maririle de 500 pentru departamentul 20 sunt anulate
+b) sunt anulate ambele modificari, deoarece ROLLBACK anuleaza intreaga tranzactie
+c) raman salvate definitiv ambele modificari (si +100 si +500)
+d) raman salvate definitiv doar maririle de 500 pentru departamentul 20
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: ROLLBACK TO SAVEPOINT sp1 anuleaza numai modificarile efectuate DUPA marcajul sp1, pastrand intacte modificarile de dinaintea lui si mentinand tranzactia deschisa. Cronologie: primul UPDATE (+100 pentru departamentul 10) se face INAINTE de sp1; se stabileste sp1; al doilea UPDATE (+500 pentru departamentul 20) se face DUPA sp1; ROLLBACK TO SAVEPOINT sp1 anuleaza doar acest al doilea UPDATE; COMMIT face permanente modificarile ramase, adica doar +100 pentru departamentul 10. Deci a. b este falsa: aceasta ar fi comportamentul unui ROLLBACK complet (fara TO SAVEPOINT), care anuleaza toata tranzactia; aici s-a folosit ROLLBACK TO SAVEPOINT, care este partial. c este falsa: al doilea UPDATE a fost anulat. d inverseaza situatia (tocmai a doua modificare este cea anulata).
+
+##### ÎNTREBAREA 4 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Fie tabelele:
+ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30),
+salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3))
+JURNAL (id_ang NUMBER(5), operatie VARCHAR2(10), data_op DATE)
+Se considera declansatorul (trigger):
+CREATE OR REPLACE TRIGGER trg_audit
+AFTER INSERT ON angajati
+FOR EACH ROW
+BEGIN
+   INSERT INTO jurnal(id_ang, operatie, data_op)
+   VALUES (:NEW.id_angajat, 'INSERT', SYSDATE);
+END;
+/
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) la fiecare rand nou inserat in ANGAJATI se adauga automat un rand corespunzator in tabela JURNAL, cu id-ul noului angajat, textul 'INSERT' si data curenta
+b) triggerul genereaza eroare deoarece nu se poate insera intr-o alta tabela din corpul unui trigger
+c) triggerul se declanseaza o singura data pentru intreaga comanda INSERT, indiferent cate randuri se insereaza
+d) triggerul genereaza eroare deoarece :NEW nu poate fi folosit intr-un trigger AFTER
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Este un declansator la nivel de RAND (FOR EACH ROW), de tip AFTER INSERT pe tabela ANGAJATI. Fiind la nivel de rand, corpul lui se executa o data pentru FIECARE rand inserat, iar :NEW ofera acces la valorile randului tocmai inserat. Corpul realizeaza un INSERT intr-o ALTA tabela (JURNAL), scriind id-ul noului angajat, eticheta 'INSERT' si SYSDATE - un mecanism clasic de audit/jurnalizare. Deci a. b este falsa: un trigger poate face DML asupra altor tabele (restrictia priveste doar tabela mutating - cea pe care este definit triggerul, aici ANGAJATI, pe care nu ar trebui interogata/modificata din trigger; JURNAL este o alta tabela, deci este perfect valid). c este falsa: FOR EACH ROW inseamna declansare per rand, nu o singura data (aceea ar fi un trigger la nivel de comanda, fara FOR EACH ROW). d este falsa: :NEW este pe deplin disponibil in triggerele AFTER INSERT (doar ca in AFTER valorile :NEW sunt read-only, nu pot fi modificate - dar aici sunt doar citite).
+
+##### ÎNTREBAREA 5 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce va afisa la rulare urmatorul program C++?
+
+#include <iostream>
+using namespace std;
+class Produs {
+   int pret;
+public:
+   Produs(int p) { pret = p; }
+   bool operator<(const Produs& x) { return pret < x.pret; }
+};
+int main() {
+   Produs a(10), b(25);
+   cout << (a < b) << (b < a);
+   return 0;
+}
+
+VARIANTE:
+a) 10
+b) 01
+c) 1
+d) 00
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Operatorul < este supraincarcat ca metoda membru si compara doua produse dupa pret: a < b este echivalent cu a.operator<(b), care returneaza (a.pret < b.pret). Se evalueaza doua expresii: (a < b) inseamna 10 < 25 = true -> se tipareste 1; (b < a) inseamna 25 < 10 = false -> se tipareste 0. Cele doua valori se afiseaza una dupa alta (operatorul << are asociativitate la stanga), deci rezultatul concatenat este "10". Deci a. b=01 inverseaza rezultatele. c=1 ar aparea daca s-ar afisa o singura comparatie. d=00 ar insemna ca ambele comparatii sunt false, ceea ce nu e cazul. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza 10.
+
+##### ÎNTREBAREA 6 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa urmatorul program C?
+#include <stdio.h>
+void schimba(int *x, int *y) {
+    int t = *x; *x = *y; *y = t;
+}
+int main() {
+    int a = 3, b = 8;
+    schimba(&a, &b);
+    printf("%d %d", a, b);
+    return 0;
+}
+
+VARIANTE:
+a) 3 8
+b) 8 3
+c) 3 3
+d) 8 8
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia schimba primeste ADRESELE variabilelor a si b (transmitere prin pointer). In interior, prin dereferentiere, se interschimba efectiv VALORILE de la adresele respective: t retine vechea valoare a lui *x (3), apoi *x primeste *y (8), iar *y primeste t (3). Deoarece x si y pointeaza chiar catre a si b din main, modificarile sunt vizibile in main: a devine 8, b devine 3. Deci se afiseaza "8 3", varianta b. a=3 8 ar fi rezultatul daca schimbul nu ar avea efect (ex. transmitere prin valoare, fara pointeri). c si d sunt gresite - un swap corect prin variabila temporara nu pierde niciuna dintre valori. Verificat prin compilare si rulare (gcc): programul afiseaza "8 3".
+
+##### ÎNTREBAREA 7 #####
+CATEGORIE: SQL
+ENUNT:
+Referitor la comenzile de control al tranzactiilor in Oracle, precizati care dintre
+urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) ROLLBACK TO SAVEPOINT sp anuleaza doar modificarile efectuate dupa marcajul sp si lasa tranzactia deschisa, in timp ce ROLLBACK (fara TO SAVEPOINT) anuleaza toate modificarile tranzactiei curente si o incheie
+b) ROLLBACK TO SAVEPOINT sp si ROLLBACK produc exact acelasi efect, ambele anuleaza intreaga tranzactie
+c) ROLLBACK TO SAVEPOINT sp face permanente (COMMIT) modificarile de pana la savepoint
+d) dupa un ROLLBACK TO SAVEPOINT nu se mai poate executa niciun COMMIT in aceeasi tranzactie
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: SAVEPOINT stabileste un marcaj intermediar in interiorul unei tranzactii. ROLLBACK TO SAVEPOINT sp este o anulare PARTIALA: reface starea de la momentul marcajului sp, anuland doar modificarile de dupa el, dar tranzactia RAMANE deschisa si se poate continua (inclusiv cu un COMMIT sau ROLLBACK ulterior). ROLLBACK (complet, fara TO SAVEPOINT) anuleaza TOATE modificarile tranzactiei curente si o incheie. Deci a. b este falsa: cele doua difera fundamental (partial vs total). c este falsa: ROLLBACK TO SAVEPOINT NU face COMMIT - nu confirma nimic definitiv, doar anuleaza pana la marcaj; modificarile raman nepermanentizate pana la un COMMIT explicit. d este falsa: tranzactia continua dupa ROLLBACK TO SAVEPOINT, deci se poate face COMMIT ulterior pentru a permanentiza ce a ramas.
+
+##### ÎNTREBAREA 8 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Fie tabelele:
+ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30),
+salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3))
+ISTORIC_SAL (id_ang NUMBER(5), sal_vechi NUMBER(10,2), sal_nou NUMBER(10,2), data_op DATE)
+Se considera declansatorul:
+CREATE OR REPLACE TRIGGER trg_sal
+AFTER UPDATE OF salariul ON angajati
+FOR EACH ROW
+BEGIN
+   INSERT INTO istoric_sal(id_ang, sal_vechi, sal_nou, data_op)
+   VALUES (:OLD.id_angajat, :OLD.salariul, :NEW.salariul, SYSDATE);
+END;
+/
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) la fiecare modificare a coloanei salariul, se adauga in ISTORIC_SAL un rand cu id-ul angajatului, salariul dinainte (:OLD.salariul) si salariul de dupa modificare (:NEW.salariul)
+b) triggerul genereaza eroare deoarece :OLD si :NEW nu pot fi folosite in acelasi trigger
+c) in ISTORIC_SAL, coloanele sal_vechi si sal_nou vor avea intotdeauna aceeasi valoare
+d) triggerul se declanseaza la orice UPDATE pe tabela ANGAJATI, chiar daca nu se modifica salariul
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Triggerul este AFTER UPDATE OF salariul FOR EACH ROW - se declanseaza la nivel de rand, doar cand comanda UPDATE modifica coloana salariul. Intr-un trigger de UPDATE, :OLD contine valorile randului INAINTE de modificare, iar :NEW valorile DUPA modificare. Astfel se jurnalizeaza in ISTORIC_SAL id-ul angajatului, salariul vechi (:OLD.salariul) si cel nou (:NEW.salariul) - un mecanism tipic de istoric al salariilor. Deci a. b este falsa: intr-un trigger de UPDATE ambele pseudo-inregistrari :OLD si :NEW sunt disponibile simultan (tocmai comparatia vechi/nou este scopul lor). c este falsa: sal_vechi (:OLD.salariul) si sal_nou (:NEW.salariul) reflecta valori diferite atunci cand salariul chiar se schimba. d este falsa: clauza OF salariul restrange declansarea DOAR la modificarile care ating coloana salariul, nu la orice UPDATE.
+
+##### ÎNTREBAREA 9 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce va afisa la rulare urmatorul program C++?
+
+#include <iostream>
+using namespace std;
+class Vector {
+   int v[5];
+public:
+   Vector() { for (int i = 0; i < 5; i++) v[i] = i * 10; }
+   int& operator[](int i) { return v[i]; }
+};
+int main() {
+   Vector a;
+   a[2] = 99;
+   cout << a[2] + a[3];
+   return 0;
+}
+
+VARIANTE:
+a) 129
+b) 50
+c) 99
+d) eroare de compilare deoarece operator[] nu poate fi folosit in partea stanga a unei atribuiri
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Constructorul initializeaza v[i]=i*10, deci v = {0, 10, 20, 30, 40}. Operatorul [] este supraincarcat sa returneze o REFERINTA la element (int&), ceea ce permite folosirea lui atat pentru citire, cat si pentru SCRIERE. Instructiunea a[2] = 99 modifica prin referinta elementul v[2], care devine 99. La afisare: a[2] este acum 99, iar a[3] este 30 (neschimbat), deci suma este 99 + 30 = 129. Deci a. b=50 ar fi 20+30 (valorile initiale, ignorand atribuirea). c=99 ia doar a[2]. d este falsa: tocmai pentru ca operator[] returneaza int& (referinta, deci un lvalue), expresia a[2] poate aparea in partea stanga a unei atribuiri - acesta este scopul returnarii prin referinta. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza 129.
+
+##### ÎNTREBAREA 10 #####
+CATEGORIE: Baze de date (teorie)
+ENUNT:
+O asociere (relatie) de tip M:N (many-to-many, "multi-la-multi") intre doua entitati -
+de exemplu STUDENT si DISCIPLINA, unde un student urmeaza mai multe discipline si o
+disciplina este urmata de mai multi studenti - se implementeaza in modelul relational
+prin:
+
+VARIANTE:
+a) adaugarea unei singure chei straine in una dintre cele doua tabele
+b) o tabela de legatura (asociativa) suplimentara, care contine cheile straine catre ambele tabele (de regula formand impreuna cheia primara compusa)
+c) fuzionarea celor doua entitati intr-o singura tabela
+d) o asociere M:N nu poate fi reprezentata deloc in modelul relational
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: In modelul relational nu se poate reprezenta direct o asociere M:N doar prin chei straine in tabelele entitatilor, deoarece fiecare rand poate fi legat de mai multe randuri din cealalta tabela (o coloana nu poate contine mai multe valori). Solutia standard este introducerea unei TABELE DE LEGATURA (asociative / de jonctiune), de exemplu STUDENT_DISCIPLINA, care contine cate o cheie straina catre fiecare dintre cele doua tabele; combinatia celor doua chei straine formeaza de obicei cheia primara compusa a tabelei de legatura, iar fiecare rand reprezinta o pereche concreta (student, disciplina). Astfel o asociere M:N se descompune in doua asocieri 1:N catre tabela asociativa. Deci b. a este falsa: o singura cheie straina poate modela doar o asociere 1:N, nu M:N. c este falsa: fuzionarea entitatilor ar duce la redundanta masiva si nu rezolva multiplicitatea pe ambele parti. d este falsa: M:N se implementeaza uzual, tocmai prin tabela asociativa.
+
+##### ÎNTREBAREA 11 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa urmatorul program C?
+#include <stdio.h>
+int main() {
+    int a[3][3] = {{2,4,6},{1,3,5},{7,8,9}};
+    int s = 0, i, n = 3;
+    for (i = 0; i < n; i++) s += a[i][n-1-i];
+    printf("%d", s);
+    return 0;
+}
+
+VARIANTE:
+a) 14
+b) 16
+c) 15
+d) 45
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Expresia a[i][n-1-i] parcurge diagonala SECUNDARA a matricei patratice de ordin n=3: pentru fiecare linie i se ia coloana n-1-i. Elementele sunt: i=0 -> a[0][2]=6; i=1 -> a[1][1]=3; i=2 -> a[2][0]=7. Suma este 6+3+7=16. Deci b. a=14 (=2+3+9) este suma diagonalei PRINCIPALE a[i][i], nu a celei secundare. c=15 nu corespunde. d=45 este suma tuturor elementelor. Verificat prin compilare si rulare (gcc): programul afiseaza 16.
+
+##### ÎNTREBAREA 12 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume
+VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3))
+cu cel putin 200 de randuri (inregistrari).
+Sesiunea A executa comanda:
+UPDATE angajati SET salariul = salariul * 2 WHERE id_departament = 30;
+(fara a executa inca COMMIT).
+Intre timp, sesiunea B (alt utilizator) executa:
+SELECT salariul FROM angajati WHERE id_departament = 30;
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) sesiunea B vede salariile VECHI (nemodificate), deoarece modificarile facute de sesiunea A devin vizibile altor sesiuni doar dupa COMMIT
+b) sesiunea B vede salariile deja dublate, deoarece modificarile UPDATE sunt vizibile imediat tuturor sesiunilor
+c) comanda SELECT a sesiunii B genereaza eroare deoarece randurile sunt blocate de sesiunea A
+d) sesiunea B ramane blocata (asteapta) pana cand sesiunea A face COMMIT
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Oracle asigura consistenta la citire (read consistency) si izolarea tranzactiilor: modificarile efectuate de o tranzactie necomise (fara COMMIT) sunt vizibile DOAR in propria sesiune. O alta sesiune care doar CITESTE (SELECT) vede versiunea "de dinainte" a datelor (imaginea consistenta), reconstruita din segmentele de undo, pana cand sesiunea A face COMMIT. Deci sesiunea B vede salariile vechi. Deci a. b este falsa: modificarile necomise nu sunt vizibile in exterior (nu exista "dirty read" in Oracle). c este falsa: un SELECT (cititorii) nu este blocat de un UPDATE (scriitorii) - "cititorii nu blocheaza scriitorii si scriitorii nu blocheaza cititorii". d este falsa: sesiunea B nu asteapta pentru un simplu SELECT; ar astepta doar daca ar incerca sa MODIFICE aceleasi randuri blocate.
+
+##### ÎNTREBAREA 13 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Fie tabelele:
+ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30),
+salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3))
+ANGAJATI_STERSI (id_ang NUMBER(5), nume VARCHAR2(30), data_stergere DATE)
+Se considera declansatorul:
+CREATE OR REPLACE TRIGGER trg_del
+AFTER DELETE ON angajati
+FOR EACH ROW
+BEGIN
+   INSERT INTO angajati_stersi(id_ang, nume, data_stergere)
+   VALUES (:OLD.id_angajat, :OLD.nume, SYSDATE);
+END;
+/
+De ce se foloseste :OLD (si nu :NEW) pentru a prelua datele randului sters? Precizati
+afirmatia corecta:
+
+VARIANTE:
+a) intr-un trigger de DELETE, :NEW nu are valori (randul dispare), iar :OLD contine valorile randului ce urmeaza a fi/tocmai a fost sters
+b) :OLD si :NEW sunt interschimbabile intr-un trigger de DELETE, se putea folosi oricare
+c) :NEW ar fi fost corect, iar :OLD genereaza eroare in triggerele de DELETE
+d) intr-un trigger de DELETE nu se poate accesa niciun fel de valoare a randului sters
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Disponibilitatea pseudo-inregistrarilor :OLD si :NEW depinde de operatia care declanseaza triggerul. La INSERT exista doar :NEW (randul nou), :OLD fiind NULL. La DELETE exista doar :OLD (randul care este eliminat), :NEW fiind NULL - logic, deoarece dupa stergere nu mai exista o "valoare noua". La UPDATE exista ambele. Prin urmare, pentru a arhiva datele unui angajat sters, singura sursa valida este :OLD (id_angajat, nume vechi), care retine valorile randului inainte de disparitie. Deci a. b este falsa: nu sunt interschimbabile - :NEW este NULL la DELETE. c inverseaza situatia (tocmai :NEW nu contine date la DELETE). d este falsa: :OLD ofera acces complet la valorile randului sters, ceea ce face posibila arhivarea/auditul.
+
+##### ÎNTREBAREA 14 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+In C++, atunci cand operatorul relational < este supraincarcat ca FUNCTIE MEMBRU
+(metoda) a unei clase pentru a compara doua obiecte de acel tip (de forma obiect1 <
+obiect2), numarul de parametri EXPLICITI ai metodei operator< este:
+
+VARIANTE:
+a) 1 (operandul din dreapta; operandul din stanga este obiectul curent, accesat prin this)
+b) 2 (ambii operanzi sunt transmisi ca parametri)
+c) 0 (ambii operanzi sunt accesati prin this)
+d) 3 (cei doi operanzi plus un parametru pentru rezultat)
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Cand un operator binar (cum este <) este supraincarcat ca metoda membru, operandul din STANGA al expresiei este chiar obiectul pentru care se apeleaza metoda (adica *this), iar operandul din DREAPTA se transmite ca UNIC parametru explicit. Astfel, expresia a < b este interpretata de compilator ca a.operator<(b): a este obiectul curent (this), iar b este singurul argument. Prin urmare metoda membru operator< are exact 1 parametru explicit. Deci a. b=2 este cazul in care operatorul e supraincarcat ca functie GLOBALA/prietena (friend), nu ca membru - acolo ambii operanzi sunt parametri. c=0 este gresit: operandul din dreapta trebuie transmis undeva. d=3 nu are sens: rezultatul comparatiei este returnat (uzual bool), nu primit ca parametru.
+
+##### ÎNTREBAREA 15 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa urmatorul program C?
+#include <stdio.h>
+int main() {
+    int a[3][3] = {{1,2,3},{4,5,6},{7,8,9}};
+    int s = 0, i, c = 1;
+    for (i = 0; i < 3; i++) s += a[i][c];
+    printf("%d", s);
+    return 0;
+}
+
+VARIANTE:
+a) 6
+b) 15
+c) 12
+d) 18
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Indicele de coloana este fixat la c=1, iar bucla variaza indicele de linie i de la 0 la 2, deci se aduna elementele de pe COLOANA 1 (a doua coloana): a[0][1]=2, a[1][1]=5, a[2][1]=8. Suma este 2+5+8=15. Deci b. a=6 (=1+2+3) ar fi suma primei LINII, nu a coloanei 1. c=12 (=1+4+7) este suma coloanei 0. d=18 (=3+6+9) este suma coloanei 2. Trebuie distins clar: la fixarea coloanei si variatia liniei se obtine suma pe coloana. Verificat prin compilare si rulare (gcc): programul afiseaza 15.
+
+##### ÎNTREBAREA 16 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume
+VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3))
+cu cel putin 200 de randuri (inregistrari).
+Intr-o singura tranzactie se executa, in ordine:
+UPDATE angajati SET salariul = salariul + 100 WHERE id_angajat = 1;
+SAVEPOINT a;
+UPDATE angajati SET salariul = salariul + 200 WHERE id_angajat = 2;
+SAVEPOINT b;
+UPDATE angajati SET salariul = salariul + 300 WHERE id_angajat = 3;
+ROLLBACK TO SAVEPOINT a;
+COMMIT;
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) se pastreaza doar mararirea de 100 (angajatul 1); maririle de 200 (angajatul 2) si de 300 (angajatul 3) sunt anulate, iar savepoint-ul b este eliminat
+b) se pastreaza maririle de 100 si de 200, se anuleaza doar cea de 300, deoarece savepoint b este ulterior lui a
+c) se pastreaza toate cele trei mariri (100, 200, 300)
+d) comanda ROLLBACK TO SAVEPOINT a genereaza eroare deoarece exista si savepoint-ul b definit dupa a
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: ROLLBACK TO SAVEPOINT a anuleaza TOATE modificarile efectuate dupa marcajul a, indiferent cate savepoint-uri intermediare exista intre a si momentul curent. Modificarea de +100 (angajatul 1) este anterioara lui a, deci se pastreaza. Modificarile de +200 (angajatul 2) si +300 (angajatul 3) sunt ulterioare lui a, deci se anuleaza ambele. In plus, orice savepoint stabilit DUPA a (aici, savepoint b) este eliminat (devine invalid) in urma revenirii la a. COMMIT permanentizeaza ce a ramas: doar +100. Deci a. b este falsa: revenirea la a anuleaza tot ce e dupa a, deci si +200. c este falsa: doua dintre mariri se anuleaza. d este falsa: prezenta savepoint-ului b nu impiedica revenirea la un savepoint anterior (a); b este pur si simplu inlaturat.
+
+##### ÎNTREBAREA 17 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera o vedere (view) care combina, printr-o jonctiune, date din doua tabele
+(ANGAJATI si DEPARTAMENTE) si care, din aceasta cauza, nu este direct actualizabila
+prin comenzi INSERT/UPDATE/DELETE. Precizati care dintre urmatoarele afirmatii despre
+declansatoarele INSTEAD OF este corecta:
+
+VARIANTE:
+a) un trigger INSTEAD OF, definit pe vedere, intercepteaza operatiile DML asupra vederii si executa in locul lor cod propriu (de regula DML pe tabelele de baza), facand astfel posibila "actualizarea" unei vederi altfel neactualizabile
+b) triggerele INSTEAD OF se pot defini pe orice tabela, pentru a inlocui comportamentul implicit al comenzilor DML
+c) un trigger INSTEAD OF ruleaza suplimentar, pe langa operatia DML normala a vederii, nu in locul ei
+d) triggerele INSTEAD OF nu pot contine comenzi INSERT/UPDATE/DELETE in corpul lor
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Vederile complexe (cu jonctiuni, functii de grup, DISTINCT etc.) nu sunt direct actualizabile, deoarece Oracle nu poate deduce univoc cum sa propage o modificare a vederii catre tabelele de baza. Solutia este un trigger INSTEAD OF, care se defineste EXCLUSIV pe VEDERI: cand se incearca un INSERT/UPDATE/DELETE asupra vederii, Oracle nu executa operatia direct, ci ruleaza IN LOCUL EI (instead of) corpul triggerului, in care programatorul scrie explicit DML-ul asupra tabelelor de baza corespunzatoare. Astfel vederea devine "actualizabila". Deci a. b este falsa: INSTEAD OF se poate defini DOAR pe vederi, nu pe tabele (pe tabele exista BEFORE/AFTER). c este falsa: prin definitie, INSTEAD OF inlocuieste operatia (instead of = "in loc de"), nu se adauga la ea. d este falsa: exact contrariul - corpul unui trigger INSTEAD OF contine de regula comenzi INSERT/UPDATE/DELETE catre tabelele de baza, ele fiind ratiunea lui de a exista.
+
+##### ÎNTREBAREA 18 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce va afisa la rulare urmatorul program C++?
+
+#include <iostream>
+using namespace std;
+class Nota {
+   int val;
+public:
+   Nota(int v) { val = v; }
+   bool operator>(const Nota& n) { return val > n.val; }
+   int get() { return val; }
+};
+int main() {
+   Nota a(7), b(9);
+   Nota mx = (a > b) ? a : b;
+   cout << mx.get();
+   return 0;
+}
+
+VARIANTE:
+a) 9
+b) 7
+c) 1
+d) 16
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Operatorul > este supraincarcat sa compare doua obiecte Nota dupa membrul val. Expresia (a > b) inseamna a.operator>(b), adica 7 > 9, care este false. In operatorul ternar conditie ? x : y, cand conditia este false se alege ramura y, deci mx primeste o copie a lui b (Nota cu val=9). Apoi mx.get() returneaza 9. Deci a. b=7 ar aparea daca s-ar alege a (adica daca a > b ar fi fost true). c=1 confunda rezultatul comparatiei booleene (dar aici se afiseaza get(), nu comparatia; in plus a>b este oricum false=0). d=16 ar fi suma 7+9, dar operatorul ternar selecteaza un obiect, nu insumeaza. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza 9.
+
+##### ÎNTREBAREA 19 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa urmatorul program C?
+#include <stdio.h>
+void proceseaza(int m[][2], int n) {
+    int i, j;
+    for (i = 0; i < n; i++)
+        for (j = 0; j < 2; j++)
+            m[i][j] *= 2;
+}
+int main() {
+    int a[2][2] = {{1,2},{3,4}};
+    proceseaza(a, 2);
+    printf("%d", a[1][1]);
+    return 0;
+}
+
+VARIANTE:
+a) 8
+b) 4
+c) 2
+d) 16
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Cand o matrice este transmisa unei functii, se transmite de fapt adresa ei (matricea nu se copiaza), asa incat modificarile din functie afecteaza matricea originala din main. Antetul int m[][2] este forma corecta: a doua dimensiune (numarul de coloane, 2) TREBUIE specificata pentru ca indexarea m[i][j] sa calculeze corect adresa. Functia dubleaza fiecare element: din {{1,2},{3,4}} rezulta {{2,4},{6,8}}. Dupa apel, a[1][1] este 4*2=8. Deci a. b=4 este valoarea INITIALA a lui a[1][1] (inainte de dublare) - ar fi corect doar daca modificarile nu s-ar propaga in main, ceea ce nu e cazul la matrice. c=2 este a[0][0] dublat. d=16 ar fi o dublare aplicata de doua ori. Verificat prin compilare si rulare (gcc): programul afiseaza 8.
+
+##### ÎNTREBAREA 20 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume
+VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3))
+cu cel putin 200 de randuri (inregistrari).
+Intr-o sesiune se executa, in ordine:
+INSERT INTO angajati (id_angajat, nume, salariul) VALUES (999, 'Test', 5000);
+CREATE TABLE temp_backup (id NUMBER);
+ROLLBACK;
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) randul cu id_angajat = 999 RAMANE in tabela ANGAJATI, deoarece comanda CREATE TABLE (DDL) a produs un COMMIT implicit care a permanentizat si INSERT-ul anterior, iar ROLLBACK nu mai are ce anula
+b) randul cu id_angajat = 999 este anulat de ROLLBACK, ca orice INSERT necomis
+c) comanda ROLLBACK genereaza eroare deoarece dupa un CREATE TABLE nu se mai poate face ROLLBACK
+d) atat INSERT-ul cat si crearea tabelei temp_backup sunt anulate de ROLLBACK
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Comenzile DDL (CREATE, ALTER, DROP, TRUNCATE) provoaca un COMMIT IMPLICIT: Oracle executa automat un COMMIT inainte si dupa comanda DDL. In secventa data, INSERT-ul (o comanda DML necomisa) este urmat de CREATE TABLE, al carui COMMIT implicit permanentizeaza TOATE modificarile necomise de pana atunci, inclusiv INSERT-ul angajatului 999. Cand se ajunge la ROLLBACK, nu mai exista nicio modificare necomisa de anulat, deci randul 999 ramane definitiv in tabela. Deci a. b este falsa tocmai din cauza COMMIT-ului implicit al DDL-ului. c este falsa: ROLLBACK nu da eroare, doar ca nu are ce anula (tranzactia anterioara a fost deja comisa). d este falsa: o comanda DDL (crearea tabelei) nu poate fi oricum anulata prin ROLLBACK, iar INSERT-ul a fost deja comis.
+
+##### ÎNTREBAREA 21 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Precizati care dintre urmatoarele afirmatii referitoare la declansatoarele (triggerele)
+de tip INSTEAD OF in Oracle este corecta:
+
+VARIANTE:
+a) un trigger INSTEAD OF poate fi definit numai pe o VEDERE (view), nu pe o tabela; incercarea de a-l crea pe o tabela genereaza eroare
+b) un trigger INSTEAD OF poate fi definit atat pe tabele cat si pe vederi, fara restrictii
+c) un trigger INSTEAD OF se defineste pe o tabela pentru a inlocui declansatoarele BEFORE si AFTER ale acesteia
+d) triggerele INSTEAD OF se declanseaza la nivel de comanda (statement), nu la nivel de rand
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Triggerele INSTEAD OF au un domeniu de aplicare strict: se pot defini EXCLUSIV pe VEDERI (in special pe cele complexe, neactualizabile direct). Scopul lor este de a intercepta operatiile DML (INSERT/UPDATE/DELETE) asupra vederii si de a le inlocui cu cod propriu ce actioneaza asupra tabelelor de baza. Incercarea de a defini un INSTEAD OF pe o TABELA genereaza eroare de compilare (pentru tabele se folosesc BEFORE si AFTER). Deci a. b este falsa: nu se pot defini pe tabele. c este falsa: pe tabele NU se pune INSTEAD OF; el nu inlocuieste BEFORE/AFTER, ci este un tip complet diferit, specific vederilor. d este falsa: triggerele INSTEAD OF sunt intrinsec la nivel de RAND (se comporta ca FOR EACH ROW pentru fiecare rand afectat al vederii), nu la nivel de comanda.
+
+##### ÎNTREBAREA 22 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce se intampla la compilarea urmatorului program C++?
+
+#include <iostream>
+using namespace std;
+class Sir {
+   int v[4];
+public:
+   Sir() { for (int i = 0; i < 4; i++) v[i] = i + 1; }
+   int operator[](int i) { return v[i]; }
+};
+int main() {
+   Sir s;
+   s[0] = 100;
+   cout << s[0];
+   return 0;
+}
+
+VARIANTE:
+a) genereaza eroare de compilare la "s[0] = 100;", deoarece operator[] returneaza int (o valoare), nu o referinta, deci rezultatul nu poate fi folosit ca destinatie a atribuirii
+b) compileaza si afiseaza 100
+c) compileaza si afiseaza 1
+d) compileaza si afiseaza 0
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Aici operator[] este declarat sa returneze int (prin VALOARE), nu int& (prin referinta). Expresia s[0] apeleaza operator[] si produce o COPIE temporara a valorii lui v[0] - un rvalue (valoare temporara), nu un lvalue care sa desemneze o locatie de memorie modificabila. Instructiunea s[0] = 100 incearca sa atribuie unei asemenea valori temporare, ceea ce este ilegal si genereaza eroarea de compilare "lvalue required as left operand of assignment". Deci a. Pentru a permite scrierea (s[0] = 100), operator[] ar fi trebuit sa returneze o referinta (int&). b, c, d presupun gresit ca programul compileaza; el nici nu ajunge la executie. Verificat prin compilare (g++ -std=c++11): compilatorul raporteaza "error: lvalue required as left operand of assignment" la linia s[0] = 100.
+
+##### ÎNTREBAREA 23 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa urmatorul program C?
+#include <stdio.h>
+int main() {
+    int a[3][3] = {{1,2,3},{4,5,6},{7,8,9}};
+    int s = 0, i, j;
+    for (i = 0; i < 3; i++)
+        for (j = 0; j < 3; j++)
+            if (i < j) s += a[i][j];
+    printf("%d", s);
+    return 0;
+}
+
+VARIANTE:
+a) 11
+b) 24
+c) 15
+d) 45
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Conditia if (i < j) selecteaza elementele situate STRICT DEASUPRA diagonalei principale (indicele de linie mai mic decat cel de coloana). Pentru matricea data, aceste elemente sunt: a[0][1]=2, a[0][2]=3 si a[1][2]=6 (perechile (i,j) cu i<j: (0,1),(0,2),(1,2)). Suma este 2+3+6=11. Deci a. b=24 este suma elementelor de SUB diagonala (i>j: a[1][0]+a[2][0]+a[2][1]=4+7+8). c=15 este suma diagonalei principale (i==j). d=45 este suma tuturor elementelor. Verificat prin compilare si rulare (gcc): programul afiseaza 11.
+
+##### ÎNTREBAREA 24 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume
+VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3)).
+Pentru angajatul cu id_angajat = 100, salariul curent este 2000. Se executa, in ordine:
+UPDATE angajati SET salariul = 3000 WHERE id_angajat = 100;
+SAVEPOINT s1;
+UPDATE angajati SET salariul = 5000 WHERE id_angajat = 100;
+ROLLBACK TO SAVEPOINT s1;
+COMMIT;
+Care va fi valoarea coloanei salariul pentru angajatul cu id_angajat = 100 dupa
+executia acestei secvente?
+
+VARIANTE:
+a) 3000
+b) 5000
+c) 2000
+d) 4000
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Urmarim valoarea coloanei salariul pentru angajatul 100 pas cu pas: initial 2000; primul UPDATE o aduce la 3000; se stabileste marcajul s1 (in acest moment salariul = 3000); al doilea UPDATE o aduce la 5000; ROLLBACK TO SAVEPOINT s1 reface starea de la marcajul s1, deci anuleaza doar al doilea UPDATE si readuce salariul la 3000 (NU la 2000, pentru ca primul UPDATE este anterior lui s1 si ramane valabil); COMMIT permanentizeaza valoarea curenta, 3000. Deci a. b=5000 ar fi valoarea daca nu s-ar fi facut ROLLBACK TO s1. c=2000 ar fi rezultatul unui ROLLBACK COMPLET (care ar anula si primul UPDATE), dar aici s-a folosit ROLLBACK TO SAVEPOINT (partial). d=4000 nu corespunde niciunui pas.
+
+##### ÎNTREBAREA 25 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera urmatoarea incercare de declansator pe tabela ANGAJATI (id_angajat
+NUMBER(5), nume VARCHAR2(30), salariul NUMBER(10,2), ...):
+CREATE OR REPLACE TRIGGER trg_x
+AFTER INSERT ON angajati
+FOR EACH ROW
+BEGIN
+   :NEW.salariul := :NEW.salariul * 1.1;
+END;
+/
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) triggerul genereaza eroare, deoarece valorile :NEW pot fi MODIFICATE (atribuite) numai intr-un trigger BEFORE la nivel de rand, nu intr-unul AFTER
+b) triggerul functioneaza corect si mareste salariul noului angajat cu 10%
+c) triggerul functioneaza, dar modificarea lui :NEW.salariul nu are niciun efect asupra randului inserat
+d) triggerul genereaza eroare deoarece nu se poate folosi inmultirea (*) intr-un corp de trigger
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Pseudo-inregistrarea :NEW poate fi CITITA in triggerele BEFORE si AFTER la nivel de rand, dar poate fi MODIFICATA (i se pot atribui valori) DOAR intr-un trigger BEFORE la nivel de rand - pentru ca doar atunci modificarea mai poate influenta randul inainte ca acesta sa fie scris efectiv in tabela. Intr-un trigger AFTER randul a fost deja inserat, deci :NEW este read-only; incercarea de a-i atribui o valoare (:NEW.salariul := ...) produce eroare de compilare (ORA-04084: cannot change NEW values for this trigger type). Deci a. b este falsa: aceasta ar functiona doar daca triggerul ar fi BEFORE INSERT, nu AFTER. c este falsa: nu este vorba de "fara efect", ci de eroare efectiva. d este falsa: operatorul de inmultire este perfect valid in PL/SQL; problema este exclusiv tipul triggerului (AFTER vs BEFORE).
+
+##### ÎNTREBAREA 26 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce va afisa la rulare urmatorul program C++?
+
+#include <iostream>
+using namespace std;
+class Fractie {
+   int nr, num;
+public:
+   Fractie(int a, int b) { nr = a; num = b; }
+   bool operator==(const Fractie& f) {
+      return nr * f.num == f.nr * num;
+   }
+};
+int main() {
+   Fractie a(1, 2), b(2, 4);
+   if (a == b) cout << "egale"; else cout << "diferite";
+   return 0;
+}
+
+VARIANTE:
+a) egale
+b) diferite
+c) 1
+d) eroare de compilare deoarece operator== trebuie sa returneze int, nu bool
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Operatorul == este supraincarcat sa compare doua fractii dupa criteriul echivalentei valorice, evitand impartirea: doua fractii nr/num si f.nr/f.num sunt egale daca nr*f.num == f.nr*num (produsul in cruce). Pentru a = 1/2 si b = 2/4: nr*f.num = 1*4 = 4, iar f.nr*num = 2*2 = 4; cele doua produse sunt egale, deci operator== returneaza true, iar ramura if afiseaza "egale". Deci a. b=diferite ar aparea daca produsele in cruce ar fi inegale. c=1 este gresit: se afiseaza textul din ramurile if/else, nu valoarea booleana. d este falsa: un operator de comparatie poate returna orice tip, iar bool este chiar cel firesc si corect pentru == (poate fi folosit direct intr-un if). Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza "egale".
+
+##### ÎNTREBAREA 27 #####
+CATEGORIE: SQL
+ENUNT:
+Referitor la comportamentul unui SAVEPOINT dupa executia comenzii ROLLBACK TO SAVEPOINT,
+precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) dupa ROLLBACK TO SAVEPOINT sp, tranzactia ramane deschisa, savepoint-ul sp continua sa existe (se poate reveni din nou la el), iar modificarile pastrate pot fi ulterior confirmate cu COMMIT sau anulate complet cu ROLLBACK
+b) ROLLBACK TO SAVEPOINT sp incheie automat tranzactia, ca un COMMIT
+c) dupa ROLLBACK TO SAVEPOINT sp, savepoint-ul sp este sters si nu se mai poate reveni la el
+d) o tranzactie poate contine cel mult un singur SAVEPOINT
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: ROLLBACK TO SAVEPOINT sp este o operatie de anulare PARTIALA care nu incheie tranzactia. Dupa executia ei: tranzactia ramane deschisa si activa; marcajul sp NU se sterge - se poate reveni din nou la acelasi savepoint (ceea ce se elimina sunt doar savepoint-urile stabilite DUPA sp); modificarile ramase (cele de dinainte de sp) pot fi apoi permanentizate cu COMMIT sau anulate integral cu un ROLLBACK complet. Deci a. b este falsa: nu are efect de COMMIT si nu incheie tranzactia. c este falsa: exact savepoint-ul la care se revine ramane valabil (spre deosebire de cele ulterioare, care se pierd). d este falsa: o tranzactie poate contine oricate savepoint-uri, cu nume distincte (iar reutilizarea aceluiasi nume muta marcajul in noua pozitie).
+
+##### ÎNTREBAREA 28 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Precizati care dintre urmatoarele afirmatii referitoare la pseudo-inregistrarile :OLD
+si :NEW din declansatoare (triggere) este corecta:
+
+VARIANTE:
+a) :OLD si :NEW sunt accesibile numai in triggerele la nivel de RAND (definite cu FOR EACH ROW), nu si in cele la nivel de comanda (statement)
+b) :OLD si :NEW sunt accesibile in orice trigger, indiferent daca este la nivel de rand sau de comanda
+c) :OLD si :NEW pot fi folosite doar in triggerele BEFORE, niciodata in AFTER
+d) :NEW este disponibil la orice tip de operatie (INSERT, UPDATE, DELETE) cu aceleasi valori
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Pseudo-inregistrarile :OLD si :NEW se refera la randul curent afectat de operatia DML, deci au sens NUMAI intr-un trigger care se declanseaza per rand, adica unul definit cu FOR EACH ROW (trigger la nivel de rand). Intr-un trigger la nivel de comanda (statement-level, fara FOR EACH ROW), care se declanseaza o singura data pentru intreaga comanda, nu exista notiunea de "rand curent", deci :OLD si :NEW nu sunt disponibile. Deci a. b este falsa: nu sunt disponibile in triggerele la nivel de comanda. c este falsa: :OLD si :NEW pot fi CITITE si in triggerele AFTER (restrictia priveste doar MODIFICAREA lui :NEW, permisa doar in BEFORE). d este falsa: :NEW nu are valori la DELETE (randul dispare), iar :OLD nu are valori la INSERT - disponibilitatea depinde de operatie.
+
+##### ÎNTREBAREA 29 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Pentru ca operatorul de indexare supraincarcat (operator[]) al unei clase de tip
+container simplu sa poata fi folosit atat pentru CITIREA, cat si pentru SCRIEREA unui
+element (de exemplu, atat "x = obiect[i];" cat si "obiect[i] = valoare;"), metoda
+operator[] trebuie sa returneze:
+
+VARIANTE:
+a) o referinta catre element (de exemplu int&), astfel incat rezultatul apelului sa fie un lvalue modificabil
+b) elementul prin valoare (de exemplu int), deoarece o copie este suficienta pentru ambele operatii
+c) un pointer de tip void*
+d) tipul bool, indicand daca indexul este valid
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Pentru a permite atat citirea cat si scrierea prin obiect[i], apelul operator[] trebuie sa produca un lvalue - o entitate care desemneaza o locatie de memorie reala, ce poate aparea in partea stanga a unei atribuiri. Acest lucru se obtine returnand o REFERINTA catre elementul intern (de exemplu int&): la citire, referinta se converteste implicit la valoare; la scriere, atribuirea obiect[i] = valoare modifica direct elementul referit. Deci a. b este falsa: returnarea prin valoare produce o COPIE temporara (rvalue), care poate fi citita, dar NU poate fi tinta unei atribuiri - "obiect[i] = valoare" ar da eroare de compilare (lvalue required). c este falsa: un void* nu permite indexarea naturala si nici atribuirea directa a valorii dorite. d este falsa: returnarea unui bool nu ofera acces la element.
+
+##### ÎNTREBAREA 30 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Referitor la supraincarcarea operatorilor in C++, precizati care dintre urmatoarele
+afirmatii este corecta:
+
+VARIANTE:
+a) operatorii relationali (<, >, ==, !=, <=, >=) pot fi supraincarcati, dar exista operatori care NU pot fi supraincarcati niciodata, precum operatorul de rezolutie a domeniului (::), operatorul de selectie a membrului (.) si operatorul conditional (?:)
+b) in C++ pot fi supraincarcati absolut toti operatorii, fara nicio exceptie
+c) supraincarcarea unui operator ii poate modifica aritatea (numarul de operanzi) si prioritatea (precedenta) fata de forma predefinita
+d) un operator poate fi supraincarcat doar daca toti operanzii sai sunt de tipuri predefinite (int, double etc.)
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: In C++ majoritatea operatorilor pot fi supraincarcati, inclusiv toti operatorii relationali (<, >, ==, !=, <=, >=), aritmetici, de atribuire, [], () s.a.m.d. Exista insa un set restrans de operatori care NU pot fi supraincarcati niciodata: :: (rezolutia domeniului), . (selectia membrului), .* (selectia membrului prin pointer), ?: (operatorul conditional ternar) si sizeof. Deci a. b este falsa: exista exact aceste exceptii. c este falsa: supraincarcarea NU poate schimba aritatea, prioritatea (precedenta) sau asociativitatea unui operator - acestea raman cele ale operatorului predefinit; se poate schimba doar semnificatia (codul executat). d este falsa: dimpotriva, supraincarcarea operatorilor are sens tocmai pentru TIPURI DEFINITE DE UTILIZATOR (clase); cel putin un operand trebuie sa fie de tip clasa/enumerare (nu se pot redefini operatorii pentru tipuri exclusiv predefinite).

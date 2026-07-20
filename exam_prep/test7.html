@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CSIE3 Test de simulare 7 — Test grilă admitere master</title>
+<meta name="description" content="Test grilă interactiv admitere master CSIE Test de simulare 7 — C/C++, SQL, PL/SQL, baze de date">
+<style>
+:root{
+  --bg:#f5f6fa; --surface:#ffffff; --surface-2:#eef0f6; --border:#dde1ea;
+  --text:#1a2030; --text-dim:#5c6579; --accent:#4a55d6; --accent-ink:#ffffff;
+  --good:#177a4c; --good-bg:#e2f6ec; --good-bd:#a9e3c3;
+  --bad:#a8271f; --bad-bg:#fbeae8; --bad-bd:#f0b8b2;
+  --warn:#8a6100; --warn-bg:#fff3d6; --warn-bd:#f0d998;
+  --code-bg:#eef0f7; --code-text:#2a3040;
+  --radius:14px; --shadow:0 2px 14px rgba(20,25,45,.07);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#10131c; --surface:#171b28; --surface-2:#1e2332; --border:#2a3042;
+    --text:#e8eaf2; --text-dim:#9aa2b8; --accent:#8b93ff; --accent-ink:#0d0f18;
+    --good:#3ddb92; --good-bg:#123326; --good-bd:#1f5c3f;
+    --bad:#ff8a80; --bad-bg:#3a1614; --bad-bd:#6e2a25;
+    --warn:#ffce6b; --warn-bg:#382b0a; --warn-bd:#6b4f14;
+    --code-bg:#12151f; --code-text:#d7dbe8;
+    --shadow:0 2px 18px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="light"]{
+  --bg:#f5f6fa; --surface:#ffffff; --surface-2:#eef0f6; --border:#dde1ea;
+  --text:#1a2030; --text-dim:#5c6579; --accent:#4a55d6; --accent-ink:#ffffff;
+  --good:#177a4c; --good-bg:#e2f6ec; --good-bd:#a9e3c3;
+  --bad:#a8271f; --bad-bg:#fbeae8; --bad-bd:#f0b8b2;
+  --warn:#8a6100; --warn-bg:#fff3d6; --warn-bd:#f0d998;
+  --code-bg:#eef0f7; --code-text:#2a3040;
+}
+:root[data-theme="dark"]{
+  --bg:#10131c; --surface:#171b28; --surface-2:#1e2332; --border:#2a3042;
+  --text:#e8eaf2; --text-dim:#9aa2b8; --accent:#8b93ff; --accent-ink:#0d0f18;
+  --good:#3ddb92; --good-bg:#123326; --good-bd:#1f5c3f;
+  --bad:#ff8a80; --bad-bg:#3a1614; --bad-bd:#6e2a25;
+  --warn:#ffce6b; --warn-bg:#382b0a; --warn-bd:#6b4f14;
+  --code-bg:#12151f; --code-text:#d7dbe8;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.55; min-height:100vh;
+}
+.wrap{max-width:840px;margin:0 auto;padding:20px 16px 64px}
+header.top{
+  display:flex;align-items:center;gap:12px;justify-content:space-between;
+  padding:14px 0;margin-bottom:18px;border-bottom:1px solid var(--border);
+}
+.brand{display:flex;flex-direction:column;gap:2px;min-width:0}
+.brand a{color:var(--text-dim);text-decoration:none;font-size:13px}
+.brand a:hover{color:var(--accent)}
+.brand h1{font-size:19px;margin:0;font-weight:700;letter-spacing:.2px}
+.brand .sub{font-size:12.5px;color:var(--text-dim)}
+.iconbtn{
+  border:1px solid var(--border);background:var(--surface);color:var(--text);
+  width:38px;height:38px;border-radius:10px;cursor:pointer;font-size:16px;
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+}
+.iconbtn:hover{border-color:var(--accent)}
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:22px;margin-bottom:16px;
+}
+h2.section-title{font-size:16px;margin:0 0 12px;color:var(--text)}
+.muted{color:var(--text-dim)}
+.small{font-size:12.5px}
+
+/* setup screen */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 18px}
+.chip{
+  border:1px solid var(--border);background:var(--surface-2);color:var(--text);
+  padding:8px 14px;border-radius:999px;cursor:pointer;font-size:13.5px;user-select:none;
+  display:flex;align-items:center;gap:7px;transition:border-color .15s,background .15s;
+}
+.chip .count{color:var(--text-dim);font-size:12px}
+.chip.active{border-color:var(--accent);background:color-mix(in srgb, var(--accent) 14%, var(--surface-2));}
+.chip.active .count{color:var(--accent)}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border)}
+.toggle-row:last-of-type{border-bottom:none}
+.toggle-row .label{font-size:14px}
+.toggle-row .desc{font-size:12.5px;color:var(--text-dim);margin-top:2px}
+.switch{
+  position:relative;width:44px;height:26px;border-radius:999px;background:var(--surface-2);
+  border:1px solid var(--border);cursor:pointer;flex:0 0 auto;
+}
+.switch::after{
+  content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;
+  background:var(--text-dim);transition:transform .18s ease, background .18s ease;
+}
+.switch.on{background:color-mix(in srgb, var(--accent) 30%, var(--surface-2));border-color:var(--accent)}
+.switch.on::after{transform:translateX(18px);background:var(--accent)}
+.btn{
+  appearance:none;border:none;border-radius:11px;padding:13px 22px;font-size:15px;font-weight:600;
+  cursor:pointer;display:inline-flex;align-items:center;gap:8px;justify-content:center;
+}
+.btn-primary{background:var(--accent);color:var(--accent-ink);width:100%;margin-top:6px}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.btn-secondary{background:var(--surface-2);color:var(--text);border:1px solid var(--border)}
+.best-score{font-size:13px;color:var(--text-dim);margin-top:10px}
+
+/* quiz screen */
+.progress-outer{height:7px;border-radius:999px;background:var(--surface-2);overflow:hidden;margin-bottom:16px}
+.progress-inner{height:100%;background:var(--accent);transition:width .25s ease}
+.quiz-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:13px;color:var(--text-dim)}
+.badge{
+  display:inline-block;padding:3px 10px;border-radius:999px;background:var(--surface-2);
+  border:1px solid var(--border);font-size:12px;color:var(--text-dim);
+}
+#quizTimer{font-variant-numeric:tabular-nums;font-weight:700;color:var(--text)}
+#quizTimer.timer-warn{color:var(--bad)}
+.enunt p{margin:0 0 10px;font-size:15.5px}
+.enunt pre.code{
+  background:var(--code-bg);color:var(--code-text);border:1px solid var(--border);
+  border-radius:10px;padding:12px 14px;overflow-x:auto;font-size:13.5px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;margin:0 0 12px;
+  white-space:pre;line-height:1.5;
+}
+.options{display:flex;flex-direction:column;gap:9px;margin-top:14px}
+.opt{
+  text-align:left;border:1px solid var(--border);background:var(--surface-2);color:var(--text);
+  border-radius:11px;padding:12px 14px;cursor:pointer;font-size:14.5px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  display:flex;gap:10px;align-items:flex-start;transition:border-color .12s, background .12s;
+}
+.opt:hover:not(.locked){border-color:var(--accent)}
+.opt .letter{font-weight:700;flex:0 0 auto;color:var(--text-dim)}
+.opt .txt{white-space:pre-wrap;word-break:break-word}
+.opt .tag{margin-left:auto;font-size:11px;color:var(--text-dim);font-family:inherit;flex:0 0 auto;padding-left:8px}
+.opt.correct{background:var(--good-bg);border-color:var(--good-bd);color:var(--good)}
+.opt.correct .letter,.opt.correct .tag{color:var(--good)}
+.opt.incorrect{background:var(--bad-bg);border-color:var(--bad-bd);color:var(--bad)}
+.opt.incorrect .letter,.opt.incorrect .tag{color:var(--bad)}
+.opt.locked{cursor:default}
+.opt.dim{opacity:.55}
+
+.feedback{margin-top:16px;border-radius:12px;padding:14px 16px;font-size:14.5px;display:none}
+.feedback.show{display:block}
+.feedback.ok{background:var(--good-bg);border:1px solid var(--good-bd);color:var(--text)}
+.feedback.ko{background:var(--bad-bg);border:1px solid var(--bad-bd);color:var(--text)}
+.feedback .fb-title{font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.feedback .fb-title.ok-txt{color:var(--good)}
+.feedback .fb-title.ko-txt{color:var(--bad)}
+.barem-warn{
+  background:var(--warn-bg);border:1px solid var(--warn-bd);color:var(--warn);
+  border-radius:10px;padding:10px 12px;margin:10px 0;font-size:13.5px;font-weight:600;
+}
+.explic{margin-top:10px;white-space:pre-wrap;font-size:14px;color:var(--text)}
+.quiz-actions{display:flex;justify-content:flex-end;margin-top:18px;gap:10px}
+
+/* results screen */
+.score-hero{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.score-circle{
+  width:104px;height:104px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  flex-direction:column;border:6px solid var(--accent);flex:0 0 auto;
+}
+.score-circle .n{font-size:26px;font-weight:800}
+.score-circle .d{font-size:11px;color:var(--text-dim)}
+.cat-bar-row{margin:8px 0}
+.cat-bar-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}
+.cat-bar-outer{height:8px;border-radius:999px;background:var(--surface-2);overflow:hidden}
+.cat-bar-inner{height:100%;background:var(--accent)}
+table.review{width:100%;border-collapse:collapse;margin-top:8px;font-size:13.5px}
+table.review th, table.review td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--border)}
+table.review tr.miss td:first-child{color:var(--bad);font-weight:700}
+table.review tr.hit td:first-child{color:var(--good);font-weight:700}
+table.review tr{cursor:pointer}
+table.review tr:hover td{background:var(--surface-2)}
+.review-detail{display:none;padding:10px 6px 16px;font-size:13.5px;white-space:pre-wrap;border-bottom:1px solid var(--border)}
+.review-detail.show{display:table-row}
+.footer-note{font-size:12px;color:var(--text-dim);text-align:center;margin-top:26px}
+.view{display:none}
+.view.active{display:block}
+.hint{font-size:12.5px;color:var(--text-dim);margin-top:4px}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <a href="../index.html">&larr; Toate anii</a>
+      <h1>CSIE3 &middot; Admitere master &middot; Test de simulare 7</h1>
+      <div class="sub">generat original, pe baza tiparelor din subiectele 2024-2025 &nbsp;&bull;&nbsp; 3 puncte/întrebare corectă, punctaj maxim 90 puncte</div>
+    </div>
+    <button class="iconbtn" id="themeToggle" title="Comută tema">&#9788;</button>
+  </header>
+
+  <div id="view-setup" class="view active">
+    <div class="card">
+      <h2 class="section-title">Categorii incluse</h2>
+      <div class="chips" id="categoryChips"></div>
+
+      <h2 class="section-title">Opțiuni</h2>
+      <div class="toggle-row">
+        <div>
+          <div class="label">Amestecă ordinea întrebărilor</div>
+          <div class="desc">Întrebările apar într-o ordine aleatorie la fiecare start</div>
+        </div>
+        <div class="switch on" id="toggleShuffleQ"></div>
+      </div>
+      <div class="toggle-row">
+        <div>
+          <div class="label">Amestecă ordinea variantelor</div>
+          <div class="desc">Variantele a/b/c/d sunt reordonate aleator</div>
+        </div>
+        <div class="switch on" id="toggleShuffleA"></div>
+      </div>
+
+      <button class="btn btn-primary" id="startBtn">Începe testul (30 întrebări)</button>
+      <div class="best-score" id="bestScoreNote"></div>
+    </div>
+  </div>
+
+  <div id="view-quiz" class="view">
+    <div class="progress-outer"><div class="progress-inner" id="progressBar" style="width:0%"></div></div>
+    <div class="quiz-meta">
+      <span id="quizPos">Întrebarea 1 din 30</span>
+      <span class="badge" id="quizCat">—</span>
+      <span id="quizTimer">Timp: 40:00</span>
+      <span id="quizScore">Scor: 0</span>
+    </div>
+    <div class="card">
+      <div class="enunt" id="quizEnunt"></div>
+      <div class="options" id="quizOptions"></div>
+      <div class="feedback" id="quizFeedback">
+        <div class="fb-title" id="fbTitle"></div>
+        <div class="barem-warn" id="fbBaremWarn" style="display:none"></div>
+        <div class="explic" id="fbExplic"></div>
+      </div>
+      <div class="quiz-actions">
+        <button class="btn btn-secondary" id="quitBtn">Renunță</button>
+        <button class="btn btn-primary" id="nextBtn" style="display:none;width:auto">Următoarea &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="view-results" class="view">
+    <div class="card">
+      <h2 class="section-title">Rezultat final</h2>
+      <div class="score-hero">
+        <div class="score-circle"><div class="n" id="resScoreN">0/0</div><div class="d">corecte</div></div>
+        <div>
+          <div style="font-size:20px;font-weight:700" id="resPercent">0%</div>
+          <div class="muted small" id="resPunctaj">Punctaj estimat: 0 puncte</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Pe categorii</h2>
+      <div id="resCatBars"></div>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Recapitulare (click pe un rând pentru detalii)</h2>
+      <table class="review" id="resTable">
+        <thead><tr><th>#</th><th>Categorie</th><th>Răspunsul tău</th><th>Corect</th></tr></thead>
+        <tbody id="resTableBody"></tbody>
+      </table>
+    </div>
+    <button class="btn btn-primary" id="restartBtn">Înapoi la opțiuni</button>
+  </div>
+
+  <div class="footer-note">Grile extrase din subiectele oficiale de anii anteriori și verificate independent. Explicațiile marcate „barem oficial eronat” indică o discrepanță identificată față de baremul original — verifică și tu raționamentul.</div>
+</div>
+
+<script>
+const DATA = {"year": "test7", "sursa": "generat original, pe baza tiparelor din subiectele 2024-2025", "punctaj": "3 puncte/întrebare corectă, punctaj maxim 90 puncte", "questions": [{"nr": 1, "categorie": "C/C++", "enunt": "Ce va afisa urmatorul program C?\n#include <stdio.h>\nint main() {\n    float f = 7.9;\n    int i = (int)f;\n    printf(\"%d\", i * 2);\n    return 0;\n}", "variante": {"a": "14", "b": "16", "c": "15", "d": "15.8"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Conversia explicita (cast) (int)f transforma valoarea reala 7.9 intr-un intreg prin TRUNCHIERE catre zero, nu prin rotunjire: partea zecimala este pur si simplu eliminata, deci i = 7 (nu 8). Apoi i * 2 = 7 * 2 = 14, iar printf cu %d afiseaza 14. Deci a. b=16 ar rezulta daca 7.9 s-ar rotunji la 8 (8*2), dar castul catre int nu rotunjeste. c=15 nu corespunde. d=15.8 ar fi 7.9*2 fara cast, dar variabila i este de tip int, iar %d afiseaza un intreg. Verificat prin compilare si rulare (gcc): programul afiseaza 14.", "enunt_html": "<p>Ce va afisa urmatorul program C?</p><pre class=\"code\">#include &lt;stdio.h&gt;\nint main() {\n    float f = 7.9;\n    int i = (int)f;\n    printf(\"%d\", i * 2);\n    return 0;\n}</pre>"}, {"nr": 2, "categorie": "OOP (C++)", "enunt": "Ce va afisa la rulare urmatorul program C++?\n\n#include <iostream>\nusing namespace std;\nclass Metri {\n   int m;\npublic:\n   Metri(int x) { m = x; }\n   int get() { return m; }\n};\nvoid afis(Metri d) { cout << d.get(); }\nint main() {\n   afis(5);\n   return 0;\n}", "variante": {"a": "5", "b": "0", "c": "eroare de compilare deoarece functia afis asteapta un obiect Metri, nu un int", "d": "o valoare nedefinita"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Constructorul Metri(int x) cu un SINGUR parametru este un CONSTRUCTOR DE CONVERSIE: el permite conversia implicita a unei valori de tip int intr-un obiect Metri. La apelul afis(5), compilatorul observa ca functia asteapta un Metri, dar primeste un int; folosind constructorul de conversie, construieste automat un obiect temporar Metri(5) (cu m=5) si il transmite functiei. Astfel d.get() returneaza 5. Deci a. c este falsa: tocmai existenta constructorului cu un singur parametru (neprecedat de explicit) face conversia posibila, deci nu apare eroare. b si d sunt false: obiectul temporar este initializat corect cu 5. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza 5.", "enunt_html": "<p>Ce va afisa la rulare urmatorul program C++?</p><pre class=\"code\">#include &lt;iostream&gt;\nusing namespace std;\nclass Metri {\n    int m;\npublic:\n    Metri(int x) { m = x; }\n    int get() { return m; }\n};\nvoid afis(Metri d) { cout &lt;&lt; d.get(); }\nint main() {\n    afis(5);\n    return 0;\n}</pre>"}, {"nr": 3, "categorie": "SQL", "enunt": "Se considera tabelele create astfel in Oracle:\nCREATE TABLE departamente (\n   id_departament NUMBER(5) PRIMARY KEY,\n   denumire_departament VARCHAR2(30));\nCREATE TABLE angajati (\n   id_angajat NUMBER(5) PRIMARY KEY,\n   nume VARCHAR2(30),\n   salariul NUMBER(10,2),\n   id_departament NUMBER(5) REFERENCES departamente(id_departament) ON DELETE CASCADE);\nPresupunem ca departamentul cu id_departament = 30 exista si are 4 angajati asociati.\nSe executa comanda:\nDELETE FROM departamente WHERE id_departament = 30;\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "se sterge departamentul 30 si, automat, cei 4 angajati care apartineau acestuia", "b": "se sterge departamentul 30, iar cei 4 angajati raman in tabela cu id_departament = NULL", "c": "comanda genereaza eroare deoarece exista angajati care refera departamentul 30", "d": "se sterg cei 4 angajati, dar randul departamentului 30 ramane in tabela"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Cheia straina din tabela ANGAJATI este definita cu clauza ON DELETE CASCADE. Aceasta clauza spune ca, la stergerea unui rand PARINTE (un departament din DEPARTAMENTE), toate randurile COPIL care il refera (angajatii cu acel id_departament) sunt sterse AUTOMAT, in cascada. Prin urmare stergerea departamentului 30 antreneaza stergerea celor 4 angajati ai lui. Deci a. b descrie comportamentul clauzei ON DELETE SET NULL (nu CASCADE). c ar fi comportamentul IMPLICIT (fara nicio clauza ON DELETE - restrictie), care ar bloca stergerea cu eroarea ORA-02292; dar aici avem CASCADE, deci stergerea reuseste. d este imposibil: parintele nu poate fi sters lasand copiii care il refera - integritatea referentiala nu ar mai fi respectata.", "enunt_html": "<p>Se considera tabelele create astfel in Oracle:</p><pre class=\"code\">CREATE TABLE departamente (\nid_departament NUMBER(5) PRIMARY KEY,\ndenumire_departament VARCHAR2(30));\nCREATE TABLE angajati (\nid_angajat NUMBER(5) PRIMARY KEY,\nnume VARCHAR2(30),\nsalariul NUMBER(10,2),\nid_departament NUMBER(5) REFERENCES departamente(id_departament) ON DELETE CASCADE);</pre><p>Presupunem ca departamentul cu id_departament = 30 exista si are 4 angajati asociati. Se executa comanda:</p><pre class=\"code\">DELETE FROM departamente WHERE id_departament = 30;</pre><p>Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 4, "categorie": "PL/SQL", "enunt": "Se considera functia Oracle:\nCREATE OR REPLACE FUNCTION categorie(p_sal NUMBER) RETURN VARCHAR2 IS\nBEGIN\n   IF p_sal < 2000 THEN\n      RETURN 'mic';\n   ELSIF p_sal < 5000 THEN\n      RETURN 'mediu';\n   ELSIF p_sal < 10000 THEN\n      RETURN 'mare';\n   ELSE\n      RETURN 'foarte mare';\n   END IF;\nEND;\nCe valoare returneaza apelul categorie(5000)?", "variante": {"a": "'mic'", "b": "'mediu'", "c": "'mare'", "d": "'foarte mare'"}, "raspuns_barem": "c", "raspuns_corect": "c", "status_verificare": "CONFIRMAT", "explicatie": "Structura IF-ELSIF evalueaza conditiile IN ORDINE si executa prima ramura al carei test este adevarat. Pentru p_sal = 5000: prima conditie 5000 < 2000 este FALSA; a doua conditie 5000 < 5000 este FALSA (5000 nu este strict mai mic decat 5000); a treia conditie 5000 < 10000 este ADEVARATA, deci se returneaza 'mare' si functia se termina. Deci c. b='mediu' ar rezulta doar daca a doua conditie ar fi <= (mai mic sau egal), dar operatorul este < strict, iar 5000 pica exact pe limita si \"cade\" in ramura urmatoare - aceasta este capcana clasica a limitelor la IF-ELSIF. a si d nu corespund pasilor de evaluare.", "enunt_html": "<p>Se considera functia Oracle:</p><pre class=\"code\">CREATE OR REPLACE FUNCTION categorie(p_sal NUMBER) RETURN VARCHAR2 IS\n    BEGIN\n        IF p_sal &lt; 2000 THEN\n            RETURN 'mic';\n        ELSIF p_sal &lt; 5000 THEN\n            RETURN 'mediu';\n        ELSIF p_sal &lt; 10000 THEN\n            RETURN 'mare';\n        ELSE\n            RETURN 'foarte mare';\n        END IF;\n    END;</pre><p>Ce valoare returneaza apelul categorie(5000)?</p>"}, {"nr": 5, "categorie": "OOP (C++)", "enunt": "Ce se intampla la compilarea urmatorului program C++?\n\n#include <iostream>\nusing namespace std;\nclass Metri {\n   int m;\npublic:\n   explicit Metri(int x) { m = x; }\n   int get() { return m; }\n};\nvoid afis(Metri d) { cout << d.get(); }\nint main() {\n   afis(5);\n   return 0;\n}", "variante": {"a": "afiseaza 5", "b": "afiseaza 0", "c": "genereaza eroare de compilare deoarece cuvantul cheie explicit blocheaza conversia implicita din int in Metri", "d": "afiseaza o valoare nedefinita"}, "raspuns_barem": "c", "raspuns_corect": "c", "status_verificare": "CONFIRMAT", "explicatie": "Cuvantul cheie explicit aplicat unui constructor cu un singur parametru INTERZICE folosirea acelui constructor pentru conversii IMPLICITE. In consecinta, la apelul afis(5) compilatorul NU mai are voie sa transforme automat int-ul 5 intr-un obiect Metri, iar cum functia afis asteapta un Metri, nu exista nicio conversie disponibila si apare EROARE DE COMPILARE. Deci c. a ar fi rezultatul daca constructorul NU ar fi explicit (ca in intrebarea corespunzatoare fara explicit), caz in care conversia implicita ar functiona. Pentru a compila cu explicit, ar fi nevoie de o conversie EXPLICITA, de exemplu afis(Metri(5)). b si d sunt false: programul nici nu compileaza. Verificat prin compilare (g++ -std=c++11): compilatorul raporteaza \"could not convert '5' from 'int' to 'Metri'\".", "enunt_html": "<p>Ce se intampla la compilarea urmatorului program C++?</p><pre class=\"code\">#include &lt;iostream&gt;\nusing namespace std;\nclass Metri {\n    int m;\npublic:\n    explicit Metri(int x) { m = x; }\n    int get() { return m; }\n};\nvoid afis(Metri d) { cout &lt;&lt; d.get(); }\nint main() {\n    afis(5);\n    return 0;\n}</pre>"}, {"nr": 6, "categorie": "C/C++", "enunt": "Ce va afisa urmatorul program C?\n#include <stdio.h>\nint main() {\n    char c = 'A';\n    printf(\"%d %d\", (int)sizeof(c), (int)sizeof('A'));\n    return 0;\n}", "variante": {"a": "1 1", "b": "1 4", "c": "4 4", "d": "1 2"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Aceasta este o capcana clasica specifica limbajului C. Variabila c este de tip char, deci sizeof(c) = 1 (un char ocupa mereu 1 octet). In schimb, o CONSTANTA de tip caracter scrisa cu apostrof, precum 'A', are in limbajul C tipul int (nu char!), deci sizeof('A') = sizeof(int) = 4 pe o arhitectura obisnuita. Prin urmare programul afiseaza \"1 4\". Deci b. a=1 1 ar fi corect in C++ (unde 'A' are tipul char), dar in C constanta caracter este int. c=4 4 ar presupune gresit ca si c ar avea 4 octeti. d=1 2 nu corespunde niciunei situatii uzuale. Verificat prin compilare si rulare (gcc): programul afiseaza \"1 4\".", "enunt_html": "<p>Ce va afisa urmatorul program C?</p><pre class=\"code\">#include &lt;stdio.h&gt;\nint main() {\n    char c = 'A';\n    printf(\"%d %d\", (int)sizeof(c), (int)sizeof('A'));\n    return 0;\n}</pre>"}, {"nr": 7, "categorie": "SQL", "enunt": "Se considera tabelele create astfel in Oracle:\nCREATE TABLE departamente (\n   id_departament NUMBER(5) PRIMARY KEY,\n   denumire_departament VARCHAR2(30));\nCREATE TABLE angajati (\n   id_angajat NUMBER(5) PRIMARY KEY,\n   nume VARCHAR2(30),\n   salariul NUMBER(10,2),\n   id_departament NUMBER(5) REFERENCES departamente(id_departament) ON DELETE SET NULL);\nPresupunem ca departamentul cu id_departament = 30 exista si are 4 angajati asociati.\nSe executa comanda:\nDELETE FROM departamente WHERE id_departament = 30;\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "departamentul 30 se sterge, iar cei 4 angajati raman in tabela cu id_departament = NULL", "b": "se sterg atat departamentul 30, cat si cei 4 angajati care il refereau", "c": "comanda genereaza eroare deoarece exista angajati care refera departamentul 30", "d": "departamentul 30 se sterge, iar id_departament al celor 4 angajati devine 0"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Cheia straina este definita cu clauza ON DELETE SET NULL. La stergerea unui rand parinte (departamentul 30), aceasta clauza NU sterge randurile copil, ci le PASTREAZA, punand valoarea NULL in coloana cheii straine a acestora (id_departament). Astfel departamentul 30 dispare, iar cei 4 angajati raman in tabela ANGAJATI, dar cu id_departament = NULL (nu mai apartin niciunui departament). Deci a. b descrie comportamentul lui ON DELETE CASCADE (care ar sterge si copiii). c ar fi comportamentul implicit (restrictie, fara clauza ON DELETE). d este falsa: valoarea pusa este NULL (necunoscut/lipsa), nu 0 - Oracle nu inlocuieste cu zero. Observatie: pentru ca SET NULL sa fie posibil, coloana id_departament trebuie sa accepte valori NULL (nu trebuie sa fie NOT NULL).", "enunt_html": "<p>Se considera tabelele create astfel in Oracle:</p><pre class=\"code\">CREATE TABLE departamente (\nid_departament NUMBER(5) PRIMARY KEY,\ndenumire_departament VARCHAR2(30));\nCREATE TABLE angajati (\nid_angajat NUMBER(5) PRIMARY KEY,\nnume VARCHAR2(30),\nsalariul NUMBER(10,2),\nid_departament NUMBER(5) REFERENCES departamente(id_departament) ON DELETE SET NULL);</pre><p>Presupunem ca departamentul cu id_departament = 30 exista si are 4 angajati asociati. Se executa comanda:</p><pre class=\"code\">DELETE FROM departamente WHERE id_departament = 30;</pre><p>Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 8, "categorie": "PL/SQL", "enunt": "Se considera functia Oracle:\nCREATE OR REPLACE FUNCTION zi_text(p_nr NUMBER) RETURN VARCHAR2 IS\n   v_rez VARCHAR2(20);\nBEGIN\n   v_rez := CASE p_nr\n              WHEN 1 THEN 'Luni'\n              WHEN 2 THEN 'Marti'\n              WHEN 3 THEN 'Miercuri'\n              ELSE 'necunoscut'\n            END;\n   RETURN v_rez;\nEND;\nCe valoare returneaza apelul zi_text(6)?", "variante": {"a": "'Luni'", "b": "NULL", "c": "'necunoscut'", "d": "functia genereaza eroare deoarece 6 nu apare in niciun WHEN"}, "raspuns_barem": "c", "raspuns_corect": "c", "status_verificare": "CONFIRMAT", "explicatie": "Expresia CASE de tip simplu compara valoarea p_nr, pe rand, cu fiecare valoare din clauzele WHEN (1, 2, 3). Pentru p_nr = 6 niciuna dintre potriviri nu reuseste, deci se aplica clauza ELSE, care returneaza 'necunoscut'; aceasta se atribuie lui v_rez si se returneaza. Deci c. b=NULL ar aparea DOAR daca expresia CASE nu ar avea clauza ELSE si nicio potrivire (caz in care un CASE fara ELSE intoarce NULL), dar aici ELSE exista. d este falsa: prezenta clauzei ELSE trateaza toate valorile neacoperite, deci nu se produce nicio eroare (un CASE-expresie fara ELSE si fara potrivire ar returna NULL, nu eroare). a corespunde doar valorii 1.", "enunt_html": "<p>Se considera functia Oracle:</p><pre class=\"code\">CREATE OR REPLACE FUNCTION zi_text(p_nr NUMBER) RETURN VARCHAR2 IS\n    v_rez VARCHAR2(20);\n    BEGIN\n        v_rez := CASE p_nr\n    WHEN 1 THEN 'Luni'\nWHEN 2 THEN 'Marti'\nWHEN 3 THEN 'Miercuri'\nELSE 'necunoscut'\nEND;\nRETURN v_rez;\nEND;</pre><p>Ce valoare returneaza apelul zi_text(6)?</p>"}, {"nr": 9, "categorie": "OOP (C++)", "enunt": "Ce se intampla la compilarea urmatorului program C++?\n\n#include <iostream>\nusing namespace std;\nclass Contor {\n   int x;\npublic:\n   Contor(int a) { x = a; }\n   int citeste() const { x++; return x; }\n};\nint main() {\n   Contor c(5);\n   cout << c.citeste();\n   return 0;\n}", "variante": {"a": "afiseaza 6", "b": "afiseaza 5", "c": "genereaza eroare de compilare deoarece o metoda const nu are voie sa modifice membrii obiectului", "d": "afiseaza o valoare nedefinita"}, "raspuns_barem": "c", "raspuns_corect": "c", "status_verificare": "CONFIRMAT", "explicatie": "O metoda declarata const (aici int citeste() const) promite ca NU va modifica starea obiectului pe care este apelata; in interiorul ei pointerul this este de tip pointer catre obiect constant, deci membrii de date sunt tratati ca \"read-only\". Instructiunea x++ incearca sa modifice membrul x in interiorul unei metode const, ceea ce INCALCA aceasta promisiune si produce EROARE DE COMPILARE. Deci c. a=6 ar presupune ca x++ se executa, dar codul nici nu compileaza. b=5 ar presupune ca x++ este ignorat, ceea ce nu se intampla. Pentru a permite modificarea unui membru chiar si dintr-o metoda const, acel membru ar trebui declarat mutable. Verificat prin compilare (g++ -std=c++11): compilatorul raporteaza \"increment of member 'Contor::x' in read-only object\".", "enunt_html": "<p>Ce se intampla la compilarea urmatorului program C++?</p><pre class=\"code\">#include &lt;iostream&gt;\nusing namespace std;\nclass Contor {\n    int x;\npublic:\n    Contor(int a) { x = a; }\n    int citeste() const { x++; return x; }\n};\nint main() {\n    Contor c(5);\n    cout &lt;&lt; c.citeste();\n    return 0;\n}</pre>"}, {"nr": 10, "categorie": "Baze de date (teorie)", "enunt": "Precizati care dintre urmatoarele afirmatii referitoare la chei (candidata, primara, alternativa)\neste corecta:", "variante": {"a": "cheia primara este aleasa dintre cheile candidate, iar cheile candidate neselectate ca primara devin chei alternative", "b": "o tabela (relatie) poate avea simultan mai multe chei primare", "c": "cheia alternativa este acea cheie candidata care a fost aleasa drept cheie primara", "d": "o cheie candidata poate contine valori NULL, deoarece nu identifica in mod unic randurile"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "O CHEIE CANDIDATA este un set minimal de atribute care identifica in mod UNIC fiecare rand al relatiei. O tabela poate avea mai multe chei candidate. Dintre acestea, proiectantul alege UNA singura ca si CHEIE PRIMARA, iar celelalte chei candidate ramase (neselectate) se numesc CHEI ALTERNATIVE (sau secundare). Deci a. b este falsa: o tabela poate avea o SINGURA cheie primara (dar mai multe chei candidate/alternative). c inverseaza definitia: cheia alternativa este exact cea care NU a fost aleasa ca primara. d este falsa: prin definitie o cheie candidata identifica UNIC randurile, deci trebuie sa fie unica si sa nu contina valori NULL (in plus, cheia primara nu accepta niciodata NULL).", "enunt_html": "<p>Precizati care dintre urmatoarele afirmatii referitoare la chei (candidata, primara, alternativa) este corecta:</p>"}, {"nr": 11, "categorie": "C/C++", "enunt": "Ce va afisa urmatorul program C?\n#include <stdio.h>\nint main() {\n    int v[10];\n    printf(\"%d\", (int)(sizeof(v) / sizeof(v[0])));\n    return 0;\n}", "variante": {"a": "10", "b": "40", "c": "1", "d": "4"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Aceasta este formula standard de calcul al NUMARULUI DE ELEMENTE dintr-un vector static. sizeof(v) da dimensiunea TOTALA in octeti a vectorului: 10 elemente * 4 octeti/int = 40 octeti. sizeof(v[0]) da dimensiunea unui singur element (un int) = 4 octeti. Raportul 40 / 4 = 10, adica exact numarul de elemente. Deci a. b=40 este dimensiunea totala in octeti (rezultatul lui sizeof(v) singur), nu numarul de elemente. d=4 este dimensiunea unui element. c=1 ar aparea daca v ar fi un pointer (nu un vector), caz in care sizeof ar da dimensiunea pointerului - dar aici v este un vector adevarat, cu dimensiunea completa cunoscuta la compilare. Verificat prin compilare si rulare (gcc): programul afiseaza 10.", "enunt_html": "<p>Ce va afisa urmatorul program C?</p><pre class=\"code\">#include &lt;stdio.h&gt;\nint main() {\n    int v[10];\n    printf(\"%d\", (int)(sizeof(v) / sizeof(v[0])));\n    return 0;\n}</pre>"}, {"nr": 12, "categorie": "SQL", "enunt": "Se considera tabelele create astfel in Oracle:\nCREATE TABLE departamente (\n   id_departament NUMBER(5) PRIMARY KEY,\n   denumire_departament VARCHAR2(30));\nCREATE TABLE angajati (\n   id_angajat NUMBER(5) PRIMARY KEY,\n   nume VARCHAR2(30),\n   id_departament NUMBER(5) REFERENCES departamente(id_departament));\nCheia straina a fost definita FARA nicio clauza ON DELETE. Presupunem ca departamentul 30\nexista si are angajati asociati. Se executa:\nDELETE FROM departamente WHERE id_departament = 30;\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "comanda genereaza eroare (integritate referentiala incalcata - exista randuri copil), iar departamentul nu se sterge", "b": "departamentul 30 se sterge, iar angajatii lui primesc id_departament = NULL", "c": "departamentul 30 se sterge impreuna cu angajatii lui, in cascada", "d": "departamentul 30 se sterge, iar angajatii raman neschimbati, cu id_departament = 30"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Cand o cheie straina este definita FARA clauza ON DELETE (nici CASCADE, nici SET NULL), comportamentul IMPLICIT in Oracle este de RESTRICTIE (NO ACTION): stergerea unui rand parinte care mai are randuri copil ce il refera este INTERZISA. Incercarea de a sterge departamentul 30, care are angajati asociati, incalca constrangerea de integritate referentiala si genereaza eroarea ORA-02292 (\"integrity constraint violated - child record found\"); stergerea este anulata, departamentul ramane. Deci a. b (SET NULL) si c (CASCADE) descriu comportamente care necesita clauze ON DELETE explicite, absente aici. d este imposibil: nu se poate lasa un angajat care refera un departament inexistent. Pentru a sterge departamentul, ar trebui mai intai reasignati/stersi angajatii sau definita o clauza ON DELETE.", "enunt_html": "<p>Se considera tabelele create astfel in Oracle:</p><pre class=\"code\">CREATE TABLE departamente (\nid_departament NUMBER(5) PRIMARY KEY,\ndenumire_departament VARCHAR2(30));\nCREATE TABLE angajati (\nid_angajat NUMBER(5) PRIMARY KEY,\nnume VARCHAR2(30),\nid_departament NUMBER(5) REFERENCES departamente(id_departament));</pre><p>Cheia straina a fost definita FARA nicio clauza ON DELETE. Presupunem ca departamentul 30 exista si are angajati asociati. Se executa:</p><pre class=\"code\">DELETE FROM departamente WHERE id_departament = 30;</pre><p>Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 13, "categorie": "PL/SQL", "enunt": "Se considera functia Oracle, care nu contine nicio comanda DML:\nCREATE OR REPLACE FUNCTION taxa(p_sal NUMBER) RETURN NUMBER IS\nBEGIN\n   RETURN p_sal * 0.1;\nEND;\nsi tabela ANGAJATI(id_angajat, nume, salariul, id_departament). Se executa interogarea:\nSELECT nume FROM angajati WHERE taxa(salariul) > 500;\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "interogarea ruleaza corect si selecteaza angajatii pentru care taxa(salariul) > 500 (adica salariul > 5000)", "b": "interogarea genereaza eroare deoarece o functie definita de utilizator nu poate fi apelata in clauza WHERE", "c": "interogarea genereaza eroarea ORA-14551 deoarece orice functie apelata dintr-un SELECT este interzisa", "d": "interogarea ruleaza, dar ignora apelul functiei si returneaza toti angajatii"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "O functie definita de utilizator POATE fi apelata intr-o interogare SQL (in SELECT, WHERE, ORDER BY etc.) daca respecta anumite reguli - in principal daca NU contine comenzi DML (INSERT/UPDATE/DELETE) sau instructiuni de control al tranzactiei (COMMIT/ROLLBACK) si primeste doar parametri IN. Functia taxa doar calculeaza p_sal * 0.1 si returneaza rezultatul, fara niciun efect secundar, deci este perfect apelabila in WHERE. Interogarea pastreaza angajatii pentru care taxa(salariul) > 500, echivalent cu salariul * 0.1 > 500, adica salariul > 5000. Deci a. b este falsa: functiile \"curate\" (fara DML) sunt frecvent folosite in WHERE. c este falsa: ORA-14551 apare doar cand functia CONTINE DML - nu este cazul aici. d este falsa: apelul functiei chiar filtreaza randurile.", "enunt_html": "<p>Se considera functia Oracle, care nu contine nicio comanda DML:</p><pre class=\"code\">CREATE OR REPLACE FUNCTION taxa(p_sal NUMBER) RETURN NUMBER IS\n    BEGIN\n        RETURN p_sal * 0.1;\n    END;</pre><p>si tabela ANGAJATI(id_angajat, nume, salariul, id_departament). Se executa interogarea:</p><pre class=\"code\">SELECT nume FROM angajati WHERE taxa(salariul) &gt; 500;</pre><p>Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 14, "categorie": "OOP (C++)", "enunt": "Ce se intampla la compilarea urmatorului program C++?\n\n#include <iostream>\nusing namespace std;\nclass Punct {\n   int x;\npublic:\n   Punct(int a) { x = a; }\n   int getX() { return x; }\n};\nint main() {\n   const Punct p(7);\n   cout << p.getX();\n   return 0;\n}", "variante": {"a": "afiseaza 7", "b": "afiseaza 0", "c": "genereaza eroare de compilare deoarece pe un obiect const nu se poate apela o metoda care nu este declarata const", "d": "afiseaza o valoare nedefinita"}, "raspuns_barem": "c", "raspuns_corect": "c", "status_verificare": "CONFIRMAT", "explicatie": "Obiectul p este declarat const, deci pe el se pot apela DOAR metode care garanteaza ca nu il modifica, adica metode declarate const. Metoda getX() NU este declarata const (lipseste cuvantul cheie const dupa lista de parametri), deci compilatorul presupune ca ar putea modifica obiectul si INTERZICE apelul ei pe un obiect constant - rezulta EROARE DE COMPILARE. Deci c. a=7 ar fi rezultatul daca metoda ar fi fost declarata \"int getX() const\". b si d sunt false: programul nici nu compileaza. Regula generala: un obiect const isi poate invoca numai metodele const. Verificat prin compilare (g++ -std=c++11): compilatorul raporteaza \"passing 'const Punct' as 'this' argument discards qualifiers\".", "enunt_html": "<p>Ce se intampla la compilarea urmatorului program C++?</p><pre class=\"code\">#include &lt;iostream&gt;\nusing namespace std;\nclass Punct {\n    int x;\npublic:\n    Punct(int a) { x = a; }\n    int getX() { return x; }\n};\nint main() {\n    const Punct p(7);\n    cout &lt;&lt; p.getX();\n    return 0;\n}</pre>"}, {"nr": 15, "categorie": "SQL", "enunt": "Se considera tabela creata astfel in Oracle:\nCREATE TABLE produse (\n   id_produs NUMBER(5) PRIMARY KEY,\n   denumire_produs VARCHAR2(32),\n   pret_lista NUMBER(8,2) CONSTRAINT ck_pret CHECK (pret_lista > 0));\nSe executa comanda:\nINSERT INTO produse VALUES (1, 'Mouse', -50);\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "inserarea esueaza cu eroare deoarece constrangerea CHECK (pret_lista > 0) este incalcata de valoarea -50", "b": "inserarea reuseste, iar constrangerea CHECK doar afiseaza un avertisment", "c": "inserarea reuseste, iar valoarea -50 este convertita automat la 0", "d": "comanda genereaza eroare de sintaxa deoarece CHECK nu poate fi definit pe o coloana numerica"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "O constrangere CHECK impune ca fiecare rand sa satisfaca conditia specificata; orice operatie INSERT sau UPDATE care ar produce un rand ce incalca conditia este RESPINSA. Aici CHECK (pret_lista > 0) cere ca pretul sa fie strict pozitiv. Valoarea inserata -50 nu satisface -50 > 0 (conditia este FALSE), deci Oracle respinge inserarea cu eroarea ORA-02290 (\"check constraint violated\"). Deci a. b este falsa: CHECK nu este un simplu avertisment, ci blocheaza efectiv operatia. c este falsa: Oracle nu \"corecteaza\" valorile care incalca un CHECK, ci refuza randul. d este falsa: CHECK se poate defini fara probleme pe o coloana numerica (chiar este cazul tipic).", "enunt_html": "<p>Se considera tabela creata astfel in Oracle:</p><pre class=\"code\">CREATE TABLE produse (\nid_produs NUMBER(5) PRIMARY KEY,\ndenumire_produs VARCHAR2(32),\npret_lista NUMBER(8,2) CONSTRAINT ck_pret CHECK (pret_lista &gt; 0));</pre><p>Se executa comanda:</p><pre class=\"code\">INSERT INTO produse VALUES (1, 'Mouse', -50);</pre><p>Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 16, "categorie": "C/C++", "enunt": "Ce va afisa urmatorul program C?\n#include <stdio.h>\n#define DUBLU(x) x + x\nint main() {\n    printf(\"%d\", DUBLU(3) * 2);\n    return 0;\n}", "variante": {"a": "9", "b": "12", "c": "6", "d": "18"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Directiva #define realizeaza o SUBSTITUTIE TEXTUALA (la nivel de preprocesare), fara a evalua expresia si fara a adauga paranteze. DUBLU(x) se inlocuieste cu textul \"x + x\", deci DUBLU(3) devine \"3 + 3\". Expresia DUBLU(3) * 2 devine, dupa substitutie, \"3 + 3 * 2\". Se aplica apoi regulile de precedenta a operatorilor: inmultirea are prioritate mai mare decat adunarea, deci 3 * 2 = 6, apoi 3 + 6 = 9. Deci a. b=12 ar fi rezultatul asteptat \"intuitiv\" (2*3)*2 daca macro-ul ar fi fost protejat cu paranteze: #define DUBLU(x) ((x)+(x)); tocmai lipsa parantezelor produce rezultatul neasteptat 9 - capcana clasica a macrodefinitiilor. c si d nu corespund. Verificat prin compilare si rulare (gcc): programul afiseaza 9.", "enunt_html": "<p>Ce va afisa urmatorul program C?</p><pre class=\"code\">#include &lt;stdio.h&gt;\n#define DUBLU(x) x + x\nint main() {\n    printf(\"%d\", DUBLU(3) * 2);\n    return 0;\n}</pre>"}, {"nr": 17, "categorie": "PL/SQL", "enunt": "Se considera functia Oracle, care contine o comanda DML:\nCREATE OR REPLACE FUNCTION mareste(p_id NUMBER) RETURN NUMBER IS\nBEGIN\n   UPDATE angajati SET salariul = salariul + 1 WHERE id_angajat = p_id;\n   RETURN p_id;\nEND;\nSe executa apoi interogarea:\nSELECT mareste(id_angajat) FROM angajati;\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "interogarea genereaza eroarea ORA-14551 deoarece nu se poate executa o comanda DML (UPDATE) in interiorul unei interogari SELECT", "b": "interogarea ruleaza corect si mareste salariul fiecarui angajat cu 1", "c": "interogarea ruleaza, dar comanda UPDATE din functie este ignorata in context SELECT", "d": "interogarea genereaza eroare deoarece o functie nu poate returna un NUMBER"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "O functie apelata din interiorul unei interogari SELECT NU are voie sa modifice tabelele bazei de date (sa contina comenzi DML: INSERT, UPDATE, DELETE), deoarece ar produce efecte secundare in timpul evaluarii interogarii. Functia mareste executa un UPDATE pe tabela ANGAJATI, iar la apelul ei din SELECT Oracle arunca eroarea ORA-14551 (\"cannot perform a DML operation inside a query\"). Deci a. b este falsa: interogarea nu ajunge sa se execute cu succes tocmai din cauza restrictiei. c este falsa: comanda DML nu este \"ignorata\", ci provoaca oprirea cu eroare. d este falsa: o functie poate returna perfect un NUMBER; problema nu e tipul returnat, ci prezenta DML-ului. Observatie: o astfel de functie ar putea fi apelata dintr-un bloc PL/SQL obisnuit (nu dintr-un SELECT).", "enunt_html": "<p>Se considera functia Oracle, care contine o comanda DML:</p><pre class=\"code\">CREATE OR REPLACE FUNCTION mareste(p_id NUMBER) RETURN NUMBER IS\n    BEGIN\n        UPDATE angajati SET salariul = salariul + 1 WHERE id_angajat = p_id;\n        RETURN p_id;\n    END;</pre><p>Se executa apoi interogarea:</p><pre class=\"code\">SELECT mareste(id_angajat) FROM angajati;</pre><p>Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 18, "categorie": "OOP (C++)", "enunt": "Ce va afisa la rulare urmatorul program C++?\n\n#include <iostream>\nusing namespace std;\nclass Cont {\n   double sold;\npublic:\n   Cont(double s) { sold = s; }\n   double getSold() const { return sold; }\n};\nint main() {\n   const Cont c(250.0);\n   cout << c.getSold();\n   return 0;\n}", "variante": {"a": "250", "b": "0", "c": "eroare de compilare deoarece obiectul c este const", "d": "o valoare nedefinita"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Obiectul c este declarat const, deci pe el se pot apela numai metode const. Metoda getSold() ESTE declarata const (are cuvantul cheie const dupa lista de parametri) si doar CITESTE membrul sold, fara sa il modifice - deci apelul c.getSold() pe obiectul constant este perfect legal. Constructorul a initializat sold cu 250.0, prin urmare se afiseaza 250. Deci a. c este falsa: exact pentru ca metoda este const, apelul pe un obiect const NU produce eroare (spre deosebire de situatia in care metoda ar fi fost non-const). b si d sunt false: valoarea este initializata corect la 250. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza 250.", "enunt_html": "<p>Ce va afisa la rulare urmatorul program C++?</p><pre class=\"code\">#include &lt;iostream&gt;\nusing namespace std;\nclass Cont {\n    double sold;\npublic:\n    Cont(double s) { sold = s; }\n    double getSold() const { return sold; }\n};\nint main() {\n    const Cont c(250.0);\n    cout &lt;&lt; c.getSold();\n    return 0;\n}</pre>"}, {"nr": 19, "categorie": "SQL", "enunt": "Se considera tabela creata astfel in Oracle:\nCREATE TABLE angajati (\n   id_angajat NUMBER(5) PRIMARY KEY,\n   nume VARCHAR2(30),\n   salariul NUMBER(10,2) CONSTRAINT ck_sal CHECK (salariul >= 1000 AND salariul <= 20000));\nSe executa comanda:\nINSERT INTO angajati VALUES (1, 'Popescu', 25000);\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "inserarea esueaza deoarece 25000 nu respecta a doua parte a conditiei compuse (salariul <= 20000)", "b": "inserarea reuseste deoarece 25000 respecta prima parte a conditiei (salariul >= 1000)", "c": "inserarea reuseste deoarece intr-un CHECK compus este suficient ca o singura conditie sa fie adevarata", "d": "comanda genereaza eroare de sintaxa deoarece un CHECK nu poate contine operatorul AND"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Constrangerea CHECK contine o conditie COMPUSA legata prin AND: (salariul >= 1000 AND salariul <= 20000). Pentru ca randul sa fie acceptat, INTREAGA expresie trebuie sa fie adevarata, adica AMBELE conditii trebuie satisfacute simultan. Valoarea 25000 satisface prima conditie (25000 >= 1000, TRUE) dar NU o satisface pe a doua (25000 <= 20000 este FALSE); cum TRUE AND FALSE = FALSE, conditia CHECK este incalcata si inserarea esueaza cu eroarea ORA-02290. Deci a. b si c interpreteaza gresit AND ca si cum ar fi suficienta o singura conditie (asta ar fi valabil pentru OR, nu pentru AND). d este falsa: operatorul AND (ca si OR, BETWEEN, IN) este perfect permis intr-o conditie CHECK.", "enunt_html": "<p>Se considera tabela creata astfel in Oracle:</p><pre class=\"code\">CREATE TABLE angajati (\nid_angajat NUMBER(5) PRIMARY KEY,\nnume VARCHAR2(30),\nsalariul NUMBER(10,2) CONSTRAINT ck_sal CHECK (salariul &gt;= 1000 AND salariul &lt;= 20000));</pre><p>Se executa comanda:</p><pre class=\"code\">INSERT INTO angajati VALUES (1, 'Popescu', 25000);</pre><p>Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 20, "categorie": "C/C++", "enunt": "Ce va afisa urmatorul program C?\n#include <stdio.h>\nint main() {\n    char c = 'A';\n    int x = c + 4;\n    printf(\"%c\", (char)x);\n    return 0;\n}", "variante": {"a": "E", "b": "A4", "c": "69", "d": "4"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Intr-o expresie aritmetica, caracterul c este promovat (convertit implicit) la valoarea sa numerica (codul ASCII). Litera 'A' are codul ASCII 65, deci x = c + 4 = 65 + 4 = 69. Prin conversia explicita (char)x se transforma valoarea intreaga 69 inapoi intr-un caracter, iar codul ASCII 69 corespunde literei 'E'; specificatorul %c afiseaza deci caracterul E. Deci a. c=69 ar fi rezultatul daca s-ar afisa x cu %d (valoarea numerica), dar aici se converteste la char si se afiseaza cu %c. b=A4 si d=4 nu corespund: nu are loc o concatenare, ci o aritmetica pe coduri ASCII urmata de reconversie la caracter. Verificat prin compilare si rulare (gcc): programul afiseaza E.", "enunt_html": "<p>Ce va afisa urmatorul program C?</p><pre class=\"code\">#include &lt;stdio.h&gt;\nint main() {\n    char c = 'A';\n    int x = c + 4;\n    printf(\"%c\", (char)x);\n    return 0;\n}</pre>"}, {"nr": 21, "categorie": "PL/SQL", "enunt": "O functie definita de utilizator urmeaza sa fie apelata direct in clauza WHERE a unei\ninterogari SELECT asupra unei tabele Oracle. Precizati care dintre urmatoarele afirmatii\ndescrie corect ce este PERMIS pentru o astfel de functie:", "variante": {"a": "functia poate avea doar parametri de tip IN si nu are voie sa contina comenzi DML (INSERT/UPDATE/DELETE) sau de control al tranzactiei (COMMIT/ROLLBACK)", "b": "functia poate avea parametri de tip OUT, ale caror valori sunt returnate interogarii", "c": "functia poate contine o comanda COMMIT pentru a-si salva propriile modificari", "d": "functia poate executa un UPDATE asupra tabelei interogate, deoarece SELECT-ul o apeleaza automat"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Pentru a putea fi apelata dintr-o comanda SQL (de exemplu in WHERE, SELECT sau ORDER BY), o functie definita de utilizator trebuie sa respecte regulile de \"puritate\": sa aiba DOAR parametri de tip IN si sa NU modifice starea bazei de date sau a tranzactiei - adica sa nu contina comenzi DML (INSERT, UPDATE, DELETE) si nici comenzi de control al tranzactiei (COMMIT, ROLLBACK, SAVEPOINT). Deci a. b este falsa: parametrii OUT/IN OUT nu sunt permisi la o functie apelata din SQL. c este falsa: COMMIT/ROLLBACK in interiorul unei functii apelate din SQL sunt interzise (ar controla tranzactia din care se face interogarea). d este falsa: un UPDATE in functie ar declansa eroarea ORA-14551 la apelul din SELECT.", "enunt_html": "<p>O functie definita de utilizator urmeaza sa fie apelata direct in clauza WHERE a unei interogari SELECT asupra unei tabele Oracle. Precizati care dintre urmatoarele afirmatii descrie corect ce este PERMIS pentru o astfel de functie:</p>"}, {"nr": 22, "categorie": "OOP (C++)", "enunt": "Ce va afisa la rulare urmatorul program C++?\n\n#include <iostream>\nusing namespace std;\nclass Fractie {\n   int n;\npublic:\n   Fractie(int x) { n = x; cout << \"conv\"; }\n};\nint main() {\n   Fractie f = 3;\n   return 0;\n}", "variante": {"a": "conv", "b": "programul nu afiseaza nimic", "c": "eroare de compilare deoarece nu se poate atribui un int unui obiect Fractie", "d": "3"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Declaratia \"Fractie f = 3;\" este o initializare prin copiere (copy-initialization). Deoarece 3 este un int, iar f este de tip Fractie, compilatorul cauta o modalitate de conversie: gaseste constructorul de conversie Fractie(int x) (constructor cu un singur parametru, fara explicit) si il foloseste pentru a construi obiectul f direct din valoarea 3. In corpul constructorului se executa cout << \"conv\", deci programul afiseaza \"conv\". Deci a. Sintaxa \"Fractie f = 3;\" NU este o atribuire, ci o initializare care apeleaza constructorul de conversie - de aceea c este falsa. b este falsa: constructorul se executa si tipareste \"conv\". d este falsa: nu se afiseaza valoarea 3, ci textul din constructor. Observatie: daca constructorul ar fi fost declarat explicit, aceasta initializare implicita ar fi generat eroare. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza \"conv\".", "enunt_html": "<p>Ce va afisa la rulare urmatorul program C++?</p><pre class=\"code\">#include &lt;iostream&gt;\nusing namespace std;\nclass Fractie {\n    int n;\npublic:\n    Fractie(int x) { n = x; cout &lt;&lt; \"conv\"; }\n};\nint main() {\n    Fractie f = 3;\n    return 0;\n}</pre>"}, {"nr": 23, "categorie": "SQL", "enunt": "Se considera tabela creata astfel in Oracle:\nCREATE TABLE produse (\n   id_produs NUMBER(5) PRIMARY KEY,\n   denumire_produs VARCHAR2(32),\n   pret_lista NUMBER(8,2) CONSTRAINT ck_pret CHECK (pret_lista > 0));\nSe executa comanda (fara a preciza o valoare pentru pret_lista):\nINSERT INTO produse (id_produs, denumire_produs) VALUES (1, 'Cablu');\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "randul se insereaza cu pret_lista = NULL, deoarece o conditie CHECK evaluata la NULL (necunoscut) nu este considerata incalcata", "b": "inserarea esueaza deoarece NULL nu satisface conditia pret_lista > 0", "c": "inserarea esueaza deoarece o coloana pe care s-a definit un CHECK nu poate primi valoarea NULL", "d": "randul se insereaza, dar pret_lista este pus automat la 0 pentru a respecta CHECK-ul"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Aceasta este o capcana clasica legata de interactiunea dintre CHECK si valorile NULL. Coloana pret_lista nu este declarata NOT NULL, deci poate ramane neprecizata (NULL). O constrangere CHECK respinge un rand DOAR daca conditia se evalueaza explicit la FALSE. Cand pret_lista este NULL, conditia NULL > 0 se evalueaza la NULL (necunoscut), NU la FALSE; iar regula Oracle este ca un CHECK este incalcat numai daca rezultatul este FALSE, nu si cand este NULL. Prin urmare randul cu pret_lista = NULL TRECE de verificare si se insereaza. Deci a. b este falsa tocmai din cauza acestei reguli (NULL nu este FALSE). c este falsa: un CHECK nu implica NOT NULL - pentru a interzice NULL ar trebui adaugata separat constrangerea NOT NULL. d este falsa: Oracle nu substituie NULL cu 0.", "enunt_html": "<p>Se considera tabela creata astfel in Oracle:</p><pre class=\"code\">CREATE TABLE produse (\nid_produs NUMBER(5) PRIMARY KEY,\ndenumire_produs VARCHAR2(32),\npret_lista NUMBER(8,2) CONSTRAINT ck_pret CHECK (pret_lista &gt; 0));</pre><p>Se executa comanda (fara a preciza o valoare pentru pret_lista):</p><pre class=\"code\">INSERT INTO produse (id_produs, denumire_produs) VALUES (1, 'Cablu');</pre><p>Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 24, "categorie": "PL/SQL", "enunt": "Se considera functia Oracle:\nCREATE OR REPLACE FUNCTION bonus(p_sal NUMBER) RETURN NUMBER IS\nBEGIN\n   IF p_sal > 3000 THEN\n      RETURN 100;\n   ELSE\n      RETURN 0;\n   END IF;\nEND;\nCe valoare returneaza apelul bonus(NULL)?", "variante": {"a": "0", "b": "100", "c": "NULL", "d": "functia genereaza eroare deoarece p_sal este NULL"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Cand p_sal este NULL, conditia p_sal > 3000 devine NULL > 3000, iar orice comparatie cu NULL da rezultatul NULL (necunoscut), nu TRUE. Intr-o instructiune IF, o conditie evaluata la NULL este tratata ca NEadevarata (ca FALSE) la executie, deci NU se intra pe ramura THEN, ci pe ramura ELSE, care returneaza 0. Deci a. b=100 ar presupune ca s-ar intra pe THEN, dar conditia nu este adevarata. c=NULL ar presupune ca functia intoarce NULL, insa functia intoarce explicit 0 pe ramura ELSE. d este falsa: transmiterea unei valori NULL ca parametru nu produce eroare - doar dirijeaza executia catre ELSE. Aceasta este capcana clasica \"IF cu conditie NULL ia ramura ELSE\".", "enunt_html": "<p>Se considera functia Oracle:</p><pre class=\"code\">CREATE OR REPLACE FUNCTION bonus(p_sal NUMBER) RETURN NUMBER IS\n    BEGIN\n        IF p_sal &gt; 3000 THEN\n            RETURN 100;\n        ELSE\n            RETURN 0;\n        END IF;\n    END;</pre><p>Ce valoare returneaza apelul bonus(NULL)?</p>"}, {"nr": 25, "categorie": "OOP (C++)", "enunt": "In C++, declararea unei metode a unei clase cu cuvantul cheie const dupa lista de parametri\n(de exemplu: int getValoare() const;) inseamna ca:", "variante": {"a": "metoda se angajeaza sa nu modifice membrii de date (nestatici) ai obiectului si poate fi apelata inclusiv pe obiecte const", "b": "metoda nu poate fi apelata decat o singura data pe durata de viata a obiectului", "c": "metoda devine automat statica si nu mai are acces la membrii obiectului", "d": "toti parametrii metodei devin constanti si nu pot fi folositi in corpul ei"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Cuvantul cheie const plasat dupa lista de parametri a unei metode o transforma intr-o \"metoda constanta\": in interiorul ei, pointerul this este tratat ca pointer catre un obiect constant, deci metoda NU are voie sa modifice membrii de date nestatici ai obiectului (poate doar sa ii citeasca). Un avantaj esential este ca o astfel de metoda POATE fi apelata si pe obiecte declarate const (care isi pot invoca doar metodele const). Deci a. b este falsa: const nu limiteaza numarul de apeluri. c este falsa: o metoda const NU este statica - are in continuare acces la membrii obiectului (dar numai in citire) prin this. d este falsa: const de dupa paranteze se refera la obiect (this), nu la parametrii metodei; parametrii pot fi folositi si modificati normal in corp.", "enunt_html": "<p>In C++, declararea unei metode a unei clase cu cuvantul cheie const dupa lista de parametri</p><pre class=\"code\">(de exemplu: int getValoare() const;) inseamna ca:</pre>"}, {"nr": 26, "categorie": "C/C++", "enunt": "Ce va afisa urmatorul program C?\n#include <stdio.h>\nint main() {\n    const double FACTOR = 3.0;\n    int r = 2;\n    printf(\"%d\", (int)(FACTOR * r * r));\n    return 0;\n}", "variante": {"a": "12", "b": "3", "c": "6", "d": "12.0"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "FACTOR este o constanta de tip double, initializata cu 3.0 (valoarea ei nu poate fi modificata ulterior, fiind declarata const). Expresia FACTOR * r * r se calculeaza in aritmetica reala: 3.0 * 2 * 2 = 12.0. Conversia explicita (int) transforma rezultatul 12.0 intr-un intreg, 12, iar %d il afiseaza ca 12. Deci a. b=3 ar fi doar valoarea lui FACTOR. c=6 ar fi 3*2 (doar un factor r). d=12.0 nu poate aparea deoarece dupa cast valoarea este de tip int si se afiseaza cu %d ca numar intreg, fara zecimale. Verificat prin compilare si rulare (gcc): programul afiseaza 12.", "enunt_html": "<p>Ce va afisa urmatorul program C?</p><pre class=\"code\">#include &lt;stdio.h&gt;\nint main() {\n    const double FACTOR = 3.0;\n    int r = 2;\n    printf(\"%d\", (int)(FACTOR * r * r));\n    return 0;\n}</pre>"}, {"nr": 27, "categorie": "SQL", "enunt": "Fie tabela ANGAJATI(id_angajat, nume, salariul, data_angajare, id_departament) in Oracle.\nPrecizati care dintre urmatoarele constrangeri CHECK este VALIDA (acceptata de Oracle la\ncrearea tabelei):", "variante": {"a": "CHECK (salariul >= 1000 AND salariul <= 50000)", "b": "CHECK (salariul > (SELECT AVG(salariul) FROM angajati))", "c": "CHECK (data_angajare <= SYSDATE)", "d": "CHECK (id_departament IN (SELECT id_departament FROM departamente))"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "O constrangere CHECK in Oracle poate contine doar o conditie care se evalueaza pe baza VALORILOR RANDULUI CURENT, folosind constante, operatori si coloane ale aceleiasi tabele. Varianta a - CHECK (salariul >= 1000 AND salariul <= 50000) - foloseste doar coloana salariul si constante, deci este perfect valida. Deci a. b este INVALIDA: o conditie CHECK NU poate contine SUBCERERI (SELECT). c este INVALIDA: CHECK NU poate folosi functii nedeterministe / dependente de sesiune precum SYSDATE, USER, SYSTIMESTAMP (valoarea lor s-ar putea schimba). d este INVALIDA: din nou o subcerere - integritatea referentiala intre tabele se implementeaza prin CHEIE STRAINA (FOREIGN KEY), nu printr-un CHECK cu SELECT.", "enunt_html": "<p>Fie tabela ANGAJATI(id_angajat, nume, salariul, data_angajare, id_departament) in Oracle. Precizati care dintre urmatoarele constrangeri CHECK este VALIDA (acceptata de Oracle la crearea tabelei):</p>"}, {"nr": 28, "categorie": "PL/SQL", "enunt": "Se considera functia Oracle:\nCREATE OR REPLACE FUNCTION calcul(p_x IN NUMBER) RETURN NUMBER IS\nBEGIN\n   p_x := p_x + 1;\n   RETURN p_x;\nEND;\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "functia genereaza eroare de compilare deoarece un parametru de tip IN nu poate fi modificat in corpul subprogramului", "b": "functia se compileaza si returneaza p_x + 1", "c": "functia se compileaza, dar la apel valoarea parametrului actual creste cu 1", "d": "functia genereaza eroare deoarece o functie nu poate avea parametri de tip IN"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Un parametru declarat IN (modul implicit) este considerat o CONSTANTA in interiorul subprogramului: valoarea lui poate fi doar CITITA, nu si modificata. Instructiunea p_x := p_x + 1 incearca sa ATRIBUIE o noua valoare parametrului IN p_x, ceea ce este interzis si produce o eroare de COMPILARE (PLS-00363: \"expression 'P_X' cannot be used as an assignment target\"). Deci a. b si c sunt false: functia nici nu se compileaza, deci nu returneaza nimic si nu modifica parametrul actual. Pentru a putea modifica parametrul in corp, ar trebui declarat IN OUT (sau OUT), sau ar trebui folosita o variabila locala auxiliara. d este falsa: parametrii IN sunt perfect permisi (chiar sunt modul obisnuit); problema este exclusiv incercarea de a-l modifica.", "enunt_html": "<p>Se considera functia Oracle:</p><pre class=\"code\">CREATE OR REPLACE FUNCTION calcul(p_x IN NUMBER) RETURN NUMBER IS\n    BEGIN\n        p_x := p_x + 1;\n        RETURN p_x;\n    END;</pre><p>Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 29, "categorie": "OOP (C++)", "enunt": "In C++, scopul principal al cuvantului cheie explicit aplicat unui constructor cu un singur\nparametru este:", "variante": {"a": "sa impiedice folosirea acelui constructor pentru conversii implicite (automate) de tip, permitand doar conversii/constructii explicite", "b": "sa faca obligatorie initializarea tuturor membrilor clasei in constructor", "c": "sa transforme constructorul intr-o metoda statica a clasei", "d": "sa permita apelarea constructorului fara a crea vreun obiect"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Un constructor cu un singur parametru poate fi folosit implicit de compilator pentru a converti automat o valoare a tipului parametrului intr-un obiect al clasei (constructor de conversie). Uneori aceste conversii implicite sunt nedorite si pot ascunde erori. Cuvantul cheie explicit dezactiveaza aceasta conversie AUTOMATA: constructorul nu mai poate fi folosit implicit (de exemplu \"Clasa obj = valoare;\" sau la transmiterea unui argument de alt tip), ci doar in constructii/conversii EXPLICITE (de exemplu \"Clasa obj(valoare);\" sau \"Clasa(valoare)\"). Deci a. b este falsa: explicit nu are legatura cu obligativitatea initializarii membrilor. c este falsa: explicit nu transforma constructorul in metoda statica. d este falsa: un constructor serveste tocmai la crearea unui obiect - explicit nu schimba acest lucru.", "enunt_html": "<p>In C++, scopul principal al cuvantului cheie explicit aplicat unui constructor cu un singur parametru este:</p>"}, {"nr": 30, "categorie": "OOP (C++)", "enunt": "Ce va afisa la rulare urmatorul program C++?\n\n#include <iostream>\nusing namespace std;\nclass Bani {\n   int lei;\npublic:\n   Bani(int x = 0) { lei = x; }\n   int suma(const Bani &b) const { return lei + b.lei; }\n   int get() const { return lei; }\n};\nint main() {\n   Bani a(10);\n   cout << a.suma(5);\n   return 0;\n}", "variante": {"a": "15", "b": "10", "c": "5", "d": "eroare de compilare deoarece metoda suma asteapta un obiect Bani, nu un int"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Constructorul Bani(int x = 0) are un singur parametru (cu valoare implicita), deci este un CONSTRUCTOR DE CONVERSIE si nu este marcat explicit. La apelul a.suma(5), metoda suma asteapta un parametru de tip const Bani&, dar primeste un int (5); compilatorul foloseste constructorul de conversie pentru a construi un obiect temporar Bani(5) (cu lei=5), care se leaga la referinta const. Metoda suma (declarata const, deci nu modifica obiectul a) calculeaza lei + b.lei = 10 + 5 = 15. Deci a. d este falsa tocmai pentru ca exista conversia implicita din int in Bani (constructorul nu este explicit). b=10 si c=5 iau in calcul o singura valoare. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza 15.", "enunt_html": "<p>Ce va afisa la rulare urmatorul program C++?</p><pre class=\"code\">#include &lt;iostream&gt;\nusing namespace std;\nclass Bani {\n    int lei;\npublic:\n    Bani(int x = 0) { lei = x; }\n    int suma(const Bani &amp;b) const { return lei + b.lei; }\n    int get() const { return lei; }\n};\nint main() {\n    Bani a(10);\n    cout &lt;&lt; a.suma(5);\n    return 0;\n}</pre>"}]};
+
+/* ---------- theme ---------- */
+(function(){
+  const saved = localStorage.getItem('csie3-theme');
+  if(saved) document.documentElement.setAttribute('data-theme', saved);
+  document.getElementById('themeToggle').addEventListener('click', function(){
+    const cur = document.documentElement.getAttribute('data-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light');
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('csie3-theme', next);
+  });
+})();
+
+/* ---------- helpers ---------- */
+function escapeHtml(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+function letters(str){
+  return str.split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);
+}
+
+/* ---------- state ---------- */
+const SECONDS_PER_QUESTION = 80; // raport 40 min / 30 intrebari, ca la testul real
+const state = {
+  pool: [],
+  shuffleQ: true,
+  shuffleA: true,
+  selectedCats: new Set(DATA.questions.map(q=>q.categorie)),
+  index: 0,
+  score: 0,
+  order: [],
+  results: [],
+  timeLeft: SECONDS_PER_QUESTION * 30,
+  timerId: null
+};
+
+function formatTime(sec){
+  const s = Math.max(0, sec);
+  const m = Math.floor(s/60);
+  const r = s%60;
+  return String(m).padStart(2,'0')+':'+String(r).padStart(2,'0');
+}
+function renderTimer(){
+  const el = document.getElementById('quizTimer');
+  el.textContent = 'Timp: '+formatTime(state.timeLeft);
+  el.classList.toggle('timer-warn', state.timeLeft <= 300);
+}
+function stopTimer(){
+  if(state.timerId){ clearInterval(state.timerId); state.timerId = null; }
+}
+function startTimer(){
+  stopTimer();
+  state.timeLeft = Math.round(SECONDS_PER_QUESTION * state.pool.length);
+  renderTimer();
+  state.timerId = setInterval(()=>{
+    state.timeLeft--;
+    renderTimer();
+    if(state.timeLeft <= 0){ handleTimeUp(); }
+  }, 1000);
+}
+function handleTimeUp(){
+  stopTimer();
+  const optsEl = document.getElementById('quizOptions');
+  const alreadyAnswered = optsEl.dataset.locked === '1';
+  const startFrom = alreadyAnswered ? state.index + 1 : state.index;
+  for(let i = startFrom; i < state.pool.length; i++){
+    const q = state.pool[i];
+    const correctSet = letters(q.raspuns_corect);
+    const baremSet = letters(q.raspuns_barem);
+    state.results.push({
+      nr: q.nr, categorie: q.categorie, sursa_tag: q.sursa_tag, chosen: '—', correctSet, isCorrect:false,
+      variante: q.variante, explicatie: q.explicatie, status_verificare: q.status_verificare,
+      baremSet
+    });
+  }
+  renderResults();
+  showView('results');
+}
+
+const categories = Array.from(new Set(DATA.questions.map(q=>q.categorie)));
+
+function catCount(cat){ return DATA.questions.filter(q=>q.categorie===cat).length; }
+
+function renderChips(){
+  const el = document.getElementById('categoryChips');
+  el.innerHTML = '';
+  categories.forEach(cat=>{
+    const chip = document.createElement('div');
+    chip.className = 'chip active';
+    chip.innerHTML = escapeHtml(cat)+' <span class="count">'+catCount(cat)+'</span>';
+    chip.addEventListener('click', ()=>{
+      if(state.selectedCats.has(cat)){
+        if(state.selectedCats.size>1){ state.selectedCats.delete(cat); chip.classList.remove('active'); }
+      } else {
+        state.selectedCats.add(cat); chip.classList.add('active');
+      }
+      updateStartBtn();
+    });
+    el.appendChild(chip);
+  });
+}
+
+function updateStartBtn(){
+  const n = DATA.questions.filter(q=>state.selectedCats.has(q.categorie)).length;
+  document.getElementById('startBtn').textContent = 'Începe testul ('+n+' întrebări)';
+  document.getElementById('startBtn').disabled = n===0;
+}
+
+document.getElementById('toggleShuffleQ').addEventListener('click', function(){
+  state.shuffleQ = !state.shuffleQ; this.classList.toggle('on', state.shuffleQ);
+});
+document.getElementById('toggleShuffleA').addEventListener('click', function(){
+  state.shuffleA = !state.shuffleA; this.classList.toggle('on', state.shuffleA);
+});
+
+function showView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+}
+
+function bestScoreKey(){ return 'csie3-best-'+DATA.year; }
+function loadBest(){
+  const raw = localStorage.getItem(bestScoreKey());
+  return raw ? JSON.parse(raw) : null;
+}
+function renderBestNote(){
+  const b = loadBest();
+  const el = document.getElementById('bestScoreNote');
+  el.textContent = b ? ('Cel mai bun scor anterior: '+b.score+'/'+b.total+' ('+b.pct+'%)') : '';
+}
+
+document.getElementById('startBtn').addEventListener('click', startQuiz);
+document.getElementById('quitBtn').addEventListener('click', ()=>{ stopTimer(); showView('setup'); renderBestNote(); });
+document.getElementById('restartBtn').addEventListener('click', ()=>{ showView('setup'); renderBestNote(); });
+document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+
+function startQuiz(){
+  let pool = DATA.questions.filter(q=>state.selectedCats.has(q.categorie));
+  if(state.shuffleQ) pool = shuffle(pool);
+  state.pool = pool;
+  state.index = 0;
+  state.score = 0;
+  state.results = [];
+  state.order = pool.map(q=>{
+    const opts = ['a','b','c','d'];
+    return state.shuffleA ? shuffle(opts) : opts;
+  });
+  showView('quiz');
+  renderQuestion();
+  startTimer();
+}
+
+function renderQuestion(){
+  const q = state.pool[state.index];
+  const dispOrder = state.order[state.index];
+  document.getElementById('progressBar').style.width = Math.round(100*state.index/state.pool.length)+'%';
+  document.getElementById('quizPos').textContent = 'Întrebarea '+(state.index+1)+' din '+state.pool.length;
+  document.getElementById('quizCat').textContent = q.sursa_tag ? (q.categorie+' · '+q.sursa_tag) : q.categorie;
+  document.getElementById('quizScore').textContent = 'Scor: '+state.score;
+  document.getElementById('quizEnunt').innerHTML = q.enunt_html;
+  document.getElementById('nextBtn').style.display = 'none';
+  const fb = document.getElementById('quizFeedback');
+  fb.classList.remove('show','ok','ko');
+  document.getElementById('fbBaremWarn').style.display = 'none';
+
+  const optsEl = document.getElementById('quizOptions');
+  optsEl.innerHTML = '';
+  optsEl.dataset.locked = '0';
+  const displayLetters = ['A','B','C','D'];
+  dispOrder.forEach((origLetter, i)=>{
+    const btn = document.createElement('div');
+    btn.className = 'opt';
+    btn.dataset.orig = origLetter;
+    btn.innerHTML = '<span class="letter">'+displayLetters[i]+')</span><span class="txt">'+escapeHtml(q.variante[origLetter])+'</span>';
+    btn.addEventListener('click', ()=>selectOption(origLetter));
+    optsEl.appendChild(btn);
+  });
+}
+
+function selectOption(chosenLetter){
+  const q = state.pool[state.index];
+  const optsEl = document.getElementById('quizOptions');
+  if(optsEl.dataset.locked === '1') return;
+  optsEl.dataset.locked = '1';
+
+  const correctSet = letters(q.raspuns_corect);
+  const baremSet = letters(q.raspuns_barem);
+  const isCorrect = correctSet.includes(chosenLetter);
+  if(isCorrect) state.score++;
+
+  Array.from(optsEl.children).forEach(btn=>{
+    btn.classList.add('locked');
+    const l = btn.dataset.orig;
+    if(correctSet.includes(l)) btn.classList.add('correct');
+    else if(l === chosenLetter) btn.classList.add('incorrect');
+    else btn.classList.add('dim');
+    let tag = 'sursă: '+l.toUpperCase();
+    if(q.status_verificare === 'EROARE_BAREM' && baremSet.includes(l) && !correctSet.includes(l)){
+      tag += ' · alegerea baremului oficial';
+    }
+    const span = document.createElement('span');
+    span.className = 'tag';
+    span.textContent = tag;
+    btn.appendChild(span);
+  });
+
+  const fb = document.getElementById('quizFeedback');
+  fb.classList.add('show', isCorrect ? 'ok':'ko');
+  const title = document.getElementById('fbTitle');
+  title.className = 'fb-title '+(isCorrect?'ok-txt':'ko-txt');
+  title.textContent = isCorrect ? '✓ Corect' : ('✗ Greșit — răspunsul corect: '+correctSet.join(', ').toUpperCase());
+
+  const warnEl = document.getElementById('fbBaremWarn');
+  if(q.status_verificare === 'EROARE_BAREM'){
+    warnEl.style.display = 'block';
+    warnEl.textContent = '⚠ Barem oficial eronat: documentul original indică "'+baremSet.join(', ').toUpperCase()+'", dar răspunsul corect verificat este "'+correctSet.join(', ').toUpperCase()+'". Detalii mai jos.';
+  } else {
+    warnEl.style.display = 'none';
+  }
+  document.getElementById('fbExplic').textContent = q.explicatie;
+  document.getElementById('nextBtn').style.display = 'inline-flex';
+  document.getElementById('quizScore').textContent = 'Scor: '+state.score;
+
+  state.results.push({
+    nr: q.nr, categorie: q.categorie, sursa_tag: q.sursa_tag, chosen: chosenLetter, correctSet, isCorrect,
+    variante: q.variante, explicatie: q.explicatie, status_verificare: q.status_verificare,
+    baremSet
+  });
+}
+
+function nextQuestion(){
+  state.index++;
+  if(state.index >= state.pool.length){ stopTimer(); renderResults(); showView('results'); }
+  else renderQuestion();
+}
+
+function renderResults(){
+  const total = state.results.length;
+  const score = state.results.filter(r=>r.isCorrect).length;
+  const pct = total ? Math.round(100*score/total) : 0;
+  document.getElementById('resScoreN').textContent = score+'/'+total;
+  document.getElementById('resPercent').textContent = pct+'%';
+  document.getElementById('resPunctaj').textContent = 'Punctaj estimat: '+(score*3)+' puncte (din '+(total*3)+')';
+
+  const best = loadBest();
+  if(!best || score/total > best.score/best.total){
+    localStorage.setItem(bestScoreKey(), JSON.stringify({score, total, pct}));
+  }
+
+  const catStats = {};
+  state.results.forEach(r=>{
+    catStats[r.categorie] = catStats[r.categorie] || {ok:0,total:0};
+    catStats[r.categorie].total++;
+    if(r.isCorrect) catStats[r.categorie].ok++;
+  });
+  const catBarsEl = document.getElementById('resCatBars');
+  catBarsEl.innerHTML = '';
+  Object.keys(catStats).forEach(cat=>{
+    const s = catStats[cat];
+    const p = Math.round(100*s.ok/s.total);
+    const row = document.createElement('div');
+    row.className = 'cat-bar-row';
+    row.innerHTML = '<div class="cat-bar-label"><span>'+escapeHtml(cat)+'</span><span>'+s.ok+'/'+s.total+'</span></div>'+
+      '<div class="cat-bar-outer"><div class="cat-bar-inner" style="width:'+p+'%"></div></div>';
+    catBarsEl.appendChild(row);
+  });
+
+  const tbody = document.getElementById('resTableBody');
+  tbody.innerHTML = '';
+  state.results.forEach((r, idx)=>{
+    const tr = document.createElement('tr');
+    tr.className = r.isCorrect ? 'hit':'miss';
+    const catCell = r.sursa_tag ? (r.categorie+' · '+r.sursa_tag) : r.categorie;
+    tr.innerHTML = '<td>'+(r.isCorrect?'✓':'✗')+' '+r.nr+'</td><td>'+escapeHtml(catCell)+'</td><td>'+r.chosen.toUpperCase()+'</td><td>'+r.correctSet.join(',').toUpperCase()+'</td>';
+    const detail = document.createElement('tr');
+    detail.className = 'review-detail';
+    const td = document.createElement('td');
+    td.colSpan = 4;
+    let warnHtml = '';
+    if(r.status_verificare === 'EROARE_BAREM'){
+      warnHtml = '<div class="barem-warn" style="display:block;margin-bottom:8px">⚠ Barem oficial eronat (indica '+r.baremSet.join(',').toUpperCase()+')</div>';
+    }
+    td.innerHTML = warnHtml + escapeHtml(r.explicatie).replace(/\n/g,'<br>');
+    detail.appendChild(td);
+    tr.addEventListener('click', ()=>{ detail.classList.toggle('show'); });
+    tbody.appendChild(tr);
+    tbody.appendChild(detail);
+  });
+}
+
+renderChips();
+updateStartBtn();
+renderBestNote();
+</script>
+</body>
+</html>

@@ -138,8 +138,8 @@ h2.section-title{font-size:16px;margin:0 0 14px}
   <div class="section-block">
     <h2 class="section-title">Teste de simulare &mdash; generate AI <span class="badge-ai">NOU</span></h2>
     <p class="disclaimer">
-      Acestea NU sunt subiecte oficiale reale, ci 5 teste de simulare a 30 de întrebări
-      fiecare (150 în total), generate original pe baza tiparelor și stilului din
+      Acestea NU sunt subiecte oficiale reale, ci 10 teste de simulare a 30 de întrebări
+      fiecare (300 în total), generate original pe baza tiparelor și stilului din
       subiectele 2024&ndash;2025 (anii cei mai probabili să prefigureze structura viitorului
       examen). Fiecare întrebare de cod (C/C++, OOP) a fost verificată prin compilare și
       execuție reală, nu doar prin raționament; întrebările SQL/PL-SQL au fost verificate
@@ -147,6 +147,18 @@ h2.section-title{font-size:16px;margin:0 0 14px}
       folosește-le ca supliment la subiectele reale de mai jos, nu ca substitut.
     </p>
     <div class="grid" id="simGrid"></div>
+  </div>
+
+  <div class="section-block">
+    <h2 class="section-title">Seturi tematice &mdash; toate întrebările combinate</h2>
+    <p class="disclaimer">
+      Toate întrebările de acelaşi tip, adunate într-un singur test lung, din toţi cei 17
+      surse (7 ani reali + 10 teste de simulare). Util pentru exersat un singur subiect în
+      profunzime. Cronometrul se scalează proporţional cu numărul de întrebări (acelaşi raport
+      ca la testul real: ~80 secunde/întrebare). Categoria OOP (C++) nu e inclusă aici &mdash;
+      o găseşti separat în fiecare test individual de mai sus/jos.
+    </p>
+    <div class="grid" id="topicGrid"></div>
   </div>
 
   <h2 class="section-title">Subiecte oficiale &mdash; alege anul</h2>
@@ -192,6 +204,16 @@ const SIMTESTS = [
   {id:"test4", label:"Test de simulare 4", theme:"Moștenire, specificatori de acces și constrângeri",
    cats:{"OOP (C++)":9,"SQL":7,"PL/SQL":7,"C/C++":6,"Baze de date (teorie)":1}},
   {id:"test5", label:"Test de simulare 5", theme:"Tablouri, constructor de copiere și tranzacții",
+   cats:{"OOP (C++)":9,"SQL":7,"PL/SQL":7,"C/C++":6,"Baze de date (teorie)":1}},
+  {id:"test6", label:"Test de simulare 6", theme:"Pointeri la funcții și interfețe abstracte",
+   cats:{"OOP (C++)":9,"SQL":7,"PL/SQL":7,"C/C++":6,"Baze de date (teorie)":1}},
+  {id:"test7", label:"Test de simulare 7", theme:"Conversii de tip și integritate referențială",
+   cats:{"OOP (C++)":9,"SQL":7,"PL/SQL":7,"C/C++":6,"Baze de date (teorie)":1}},
+  {id:"test8", label:"Test de simulare 8", theme:"Liste înlănțuite, moștenire multiplă și vederi",
+   cats:{"OOP (C++)":9,"SQL":7,"PL/SQL":7,"C/C++":6,"Baze de date (teorie)":1}},
+  {id:"test9", label:"Test de simulare 9", theme:"Matrice, operatori relaționali suprascriși și tranzacții",
+   cats:{"OOP (C++)":9,"SQL":7,"PL/SQL":7,"C/C++":6,"Baze de date (teorie)":1}},
+  {id:"test10", label:"Test de simulare 10", theme:"Recursivitate cu vectori, polimorfism și subinterogări complexe",
    cats:{"OOP (C++)":9,"SQL":7,"PL/SQL":7,"C/C++":6,"Baze de date (teorie)":1}}
 ];
 
@@ -233,6 +255,30 @@ SIMTESTS.forEach(t=>{
     '<div class="cats">'+catSpans+'</div>'+
     '<div class="go">Deschide testul &rarr;</div>';
   simGrid.appendChild(a);
+});
+
+const TOPICS = [
+  {id:"all_cpp", label:"Toate întrebările C/C++", count:137,
+   cats:{"C/C++":137}},
+  {id:"all_sql", label:"Toate întrebările SQL / PL-SQL / Baze de date", count:255,
+   cats:{"SQL":114,"PL/SQL":117,"Baze de date (teorie)":24}}
+];
+
+const topicGrid = document.getElementById('topicGrid');
+TOPICS.forEach(t=>{
+  const a = document.createElement('a');
+  a.className = 'year-card sim-card';
+  a.href = 'exam_prep/'+t.id+'.html';
+  const catSpans = Object.entries(t.cats).map(([c,n])=>'<span>'+c+' &middot; '+n+'</span>').join('');
+  const best = bestScore(t.id);
+  const bestHtml = best ? '<div class="meta">Cel mai bun scor: '+best.score+'/'+best.total+' ('+best.pct+'%)</div>' : '';
+  a.innerHTML =
+    '<div class="yr">'+t.label+'</div>'+
+    '<div class="meta">'+t.count+' întrebări din toate cele 17 surse</div>'+
+    bestHtml +
+    '<div class="cats">'+catSpans+'</div>'+
+    '<div class="go">Deschide testul &rarr;</div>';
+  topicGrid.appendChild(a);
 });
 </script>
 </body>

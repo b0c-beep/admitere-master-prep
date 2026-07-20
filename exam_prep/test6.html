@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CSIE3 Test de simulare 6 — Test grilă admitere master</title>
+<meta name="description" content="Test grilă interactiv admitere master CSIE Test de simulare 6 — C/C++, SQL, PL/SQL, baze de date">
+<style>
+:root{
+  --bg:#f5f6fa; --surface:#ffffff; --surface-2:#eef0f6; --border:#dde1ea;
+  --text:#1a2030; --text-dim:#5c6579; --accent:#4a55d6; --accent-ink:#ffffff;
+  --good:#177a4c; --good-bg:#e2f6ec; --good-bd:#a9e3c3;
+  --bad:#a8271f; --bad-bg:#fbeae8; --bad-bd:#f0b8b2;
+  --warn:#8a6100; --warn-bg:#fff3d6; --warn-bd:#f0d998;
+  --code-bg:#eef0f7; --code-text:#2a3040;
+  --radius:14px; --shadow:0 2px 14px rgba(20,25,45,.07);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#10131c; --surface:#171b28; --surface-2:#1e2332; --border:#2a3042;
+    --text:#e8eaf2; --text-dim:#9aa2b8; --accent:#8b93ff; --accent-ink:#0d0f18;
+    --good:#3ddb92; --good-bg:#123326; --good-bd:#1f5c3f;
+    --bad:#ff8a80; --bad-bg:#3a1614; --bad-bd:#6e2a25;
+    --warn:#ffce6b; --warn-bg:#382b0a; --warn-bd:#6b4f14;
+    --code-bg:#12151f; --code-text:#d7dbe8;
+    --shadow:0 2px 18px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="light"]{
+  --bg:#f5f6fa; --surface:#ffffff; --surface-2:#eef0f6; --border:#dde1ea;
+  --text:#1a2030; --text-dim:#5c6579; --accent:#4a55d6; --accent-ink:#ffffff;
+  --good:#177a4c; --good-bg:#e2f6ec; --good-bd:#a9e3c3;
+  --bad:#a8271f; --bad-bg:#fbeae8; --bad-bd:#f0b8b2;
+  --warn:#8a6100; --warn-bg:#fff3d6; --warn-bd:#f0d998;
+  --code-bg:#eef0f7; --code-text:#2a3040;
+}
+:root[data-theme="dark"]{
+  --bg:#10131c; --surface:#171b28; --surface-2:#1e2332; --border:#2a3042;
+  --text:#e8eaf2; --text-dim:#9aa2b8; --accent:#8b93ff; --accent-ink:#0d0f18;
+  --good:#3ddb92; --good-bg:#123326; --good-bd:#1f5c3f;
+  --bad:#ff8a80; --bad-bg:#3a1614; --bad-bd:#6e2a25;
+  --warn:#ffce6b; --warn-bg:#382b0a; --warn-bd:#6b4f14;
+  --code-bg:#12151f; --code-text:#d7dbe8;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.55; min-height:100vh;
+}
+.wrap{max-width:840px;margin:0 auto;padding:20px 16px 64px}
+header.top{
+  display:flex;align-items:center;gap:12px;justify-content:space-between;
+  padding:14px 0;margin-bottom:18px;border-bottom:1px solid var(--border);
+}
+.brand{display:flex;flex-direction:column;gap:2px;min-width:0}
+.brand a{color:var(--text-dim);text-decoration:none;font-size:13px}
+.brand a:hover{color:var(--accent)}
+.brand h1{font-size:19px;margin:0;font-weight:700;letter-spacing:.2px}
+.brand .sub{font-size:12.5px;color:var(--text-dim)}
+.iconbtn{
+  border:1px solid var(--border);background:var(--surface);color:var(--text);
+  width:38px;height:38px;border-radius:10px;cursor:pointer;font-size:16px;
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+}
+.iconbtn:hover{border-color:var(--accent)}
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:22px;margin-bottom:16px;
+}
+h2.section-title{font-size:16px;margin:0 0 12px;color:var(--text)}
+.muted{color:var(--text-dim)}
+.small{font-size:12.5px}
+
+/* setup screen */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 18px}
+.chip{
+  border:1px solid var(--border);background:var(--surface-2);color:var(--text);
+  padding:8px 14px;border-radius:999px;cursor:pointer;font-size:13.5px;user-select:none;
+  display:flex;align-items:center;gap:7px;transition:border-color .15s,background .15s;
+}
+.chip .count{color:var(--text-dim);font-size:12px}
+.chip.active{border-color:var(--accent);background:color-mix(in srgb, var(--accent) 14%, var(--surface-2));}
+.chip.active .count{color:var(--accent)}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border)}
+.toggle-row:last-of-type{border-bottom:none}
+.toggle-row .label{font-size:14px}
+.toggle-row .desc{font-size:12.5px;color:var(--text-dim);margin-top:2px}
+.switch{
+  position:relative;width:44px;height:26px;border-radius:999px;background:var(--surface-2);
+  border:1px solid var(--border);cursor:pointer;flex:0 0 auto;
+}
+.switch::after{
+  content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;
+  background:var(--text-dim);transition:transform .18s ease, background .18s ease;
+}
+.switch.on{background:color-mix(in srgb, var(--accent) 30%, var(--surface-2));border-color:var(--accent)}
+.switch.on::after{transform:translateX(18px);background:var(--accent)}
+.btn{
+  appearance:none;border:none;border-radius:11px;padding:13px 22px;font-size:15px;font-weight:600;
+  cursor:pointer;display:inline-flex;align-items:center;gap:8px;justify-content:center;
+}
+.btn-primary{background:var(--accent);color:var(--accent-ink);width:100%;margin-top:6px}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.btn-secondary{background:var(--surface-2);color:var(--text);border:1px solid var(--border)}
+.best-score{font-size:13px;color:var(--text-dim);margin-top:10px}
+
+/* quiz screen */
+.progress-outer{height:7px;border-radius:999px;background:var(--surface-2);overflow:hidden;margin-bottom:16px}
+.progress-inner{height:100%;background:var(--accent);transition:width .25s ease}
+.quiz-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:13px;color:var(--text-dim)}
+.badge{
+  display:inline-block;padding:3px 10px;border-radius:999px;background:var(--surface-2);
+  border:1px solid var(--border);font-size:12px;color:var(--text-dim);
+}
+#quizTimer{font-variant-numeric:tabular-nums;font-weight:700;color:var(--text)}
+#quizTimer.timer-warn{color:var(--bad)}
+.enunt p{margin:0 0 10px;font-size:15.5px}
+.enunt pre.code{
+  background:var(--code-bg);color:var(--code-text);border:1px solid var(--border);
+  border-radius:10px;padding:12px 14px;overflow-x:auto;font-size:13.5px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;margin:0 0 12px;
+  white-space:pre;line-height:1.5;
+}
+.options{display:flex;flex-direction:column;gap:9px;margin-top:14px}
+.opt{
+  text-align:left;border:1px solid var(--border);background:var(--surface-2);color:var(--text);
+  border-radius:11px;padding:12px 14px;cursor:pointer;font-size:14.5px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  display:flex;gap:10px;align-items:flex-start;transition:border-color .12s, background .12s;
+}
+.opt:hover:not(.locked){border-color:var(--accent)}
+.opt .letter{font-weight:700;flex:0 0 auto;color:var(--text-dim)}
+.opt .txt{white-space:pre-wrap;word-break:break-word}
+.opt .tag{margin-left:auto;font-size:11px;color:var(--text-dim);font-family:inherit;flex:0 0 auto;padding-left:8px}
+.opt.correct{background:var(--good-bg);border-color:var(--good-bd);color:var(--good)}
+.opt.correct .letter,.opt.correct .tag{color:var(--good)}
+.opt.incorrect{background:var(--bad-bg);border-color:var(--bad-bd);color:var(--bad)}
+.opt.incorrect .letter,.opt.incorrect .tag{color:var(--bad)}
+.opt.locked{cursor:default}
+.opt.dim{opacity:.55}
+
+.feedback{margin-top:16px;border-radius:12px;padding:14px 16px;font-size:14.5px;display:none}
+.feedback.show{display:block}
+.feedback.ok{background:var(--good-bg);border:1px solid var(--good-bd);color:var(--text)}
+.feedback.ko{background:var(--bad-bg);border:1px solid var(--bad-bd);color:var(--text)}
+.feedback .fb-title{font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.feedback .fb-title.ok-txt{color:var(--good)}
+.feedback .fb-title.ko-txt{color:var(--bad)}
+.barem-warn{
+  background:var(--warn-bg);border:1px solid var(--warn-bd);color:var(--warn);
+  border-radius:10px;padding:10px 12px;margin:10px 0;font-size:13.5px;font-weight:600;
+}
+.explic{margin-top:10px;white-space:pre-wrap;font-size:14px;color:var(--text)}
+.quiz-actions{display:flex;justify-content:flex-end;margin-top:18px;gap:10px}
+
+/* results screen */
+.score-hero{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.score-circle{
+  width:104px;height:104px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  flex-direction:column;border:6px solid var(--accent);flex:0 0 auto;
+}
+.score-circle .n{font-size:26px;font-weight:800}
+.score-circle .d{font-size:11px;color:var(--text-dim)}
+.cat-bar-row{margin:8px 0}
+.cat-bar-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}
+.cat-bar-outer{height:8px;border-radius:999px;background:var(--surface-2);overflow:hidden}
+.cat-bar-inner{height:100%;background:var(--accent)}
+table.review{width:100%;border-collapse:collapse;margin-top:8px;font-size:13.5px}
+table.review th, table.review td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--border)}
+table.review tr.miss td:first-child{color:var(--bad);font-weight:700}
+table.review tr.hit td:first-child{color:var(--good);font-weight:700}
+table.review tr{cursor:pointer}
+table.review tr:hover td{background:var(--surface-2)}
+.review-detail{display:none;padding:10px 6px 16px;font-size:13.5px;white-space:pre-wrap;border-bottom:1px solid var(--border)}
+.review-detail.show{display:table-row}
+.footer-note{font-size:12px;color:var(--text-dim);text-align:center;margin-top:26px}
+.view{display:none}
+.view.active{display:block}
+.hint{font-size:12.5px;color:var(--text-dim);margin-top:4px}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <a href="../index.html">&larr; Toate anii</a>
+      <h1>CSIE3 &middot; Admitere master &middot; Test de simulare 6</h1>
+      <div class="sub">generat original, pe baza tiparelor din subiectele 2024-2025 &nbsp;&bull;&nbsp; 3 puncte/întrebare corectă, punctaj maxim 90 puncte</div>
+    </div>
+    <button class="iconbtn" id="themeToggle" title="Comută tema">&#9788;</button>
+  </header>
+
+  <div id="view-setup" class="view active">
+    <div class="card">
+      <h2 class="section-title">Categorii incluse</h2>
+      <div class="chips" id="categoryChips"></div>
+
+      <h2 class="section-title">Opțiuni</h2>
+      <div class="toggle-row">
+        <div>
+          <div class="label">Amestecă ordinea întrebărilor</div>
+          <div class="desc">Întrebările apar într-o ordine aleatorie la fiecare start</div>
+        </div>
+        <div class="switch on" id="toggleShuffleQ"></div>
+      </div>
+      <div class="toggle-row">
+        <div>
+          <div class="label">Amestecă ordinea variantelor</div>
+          <div class="desc">Variantele a/b/c/d sunt reordonate aleator</div>
+        </div>
+        <div class="switch on" id="toggleShuffleA"></div>
+      </div>
+
+      <button class="btn btn-primary" id="startBtn">Începe testul (30 întrebări)</button>
+      <div class="best-score" id="bestScoreNote"></div>
+    </div>
+  </div>
+
+  <div id="view-quiz" class="view">
+    <div class="progress-outer"><div class="progress-inner" id="progressBar" style="width:0%"></div></div>
+    <div class="quiz-meta">
+      <span id="quizPos">Întrebarea 1 din 30</span>
+      <span class="badge" id="quizCat">—</span>
+      <span id="quizTimer">Timp: 40:00</span>
+      <span id="quizScore">Scor: 0</span>
+    </div>
+    <div class="card">
+      <div class="enunt" id="quizEnunt"></div>
+      <div class="options" id="quizOptions"></div>
+      <div class="feedback" id="quizFeedback">
+        <div class="fb-title" id="fbTitle"></div>
+        <div class="barem-warn" id="fbBaremWarn" style="display:none"></div>
+        <div class="explic" id="fbExplic"></div>
+      </div>
+      <div class="quiz-actions">
+        <button class="btn btn-secondary" id="quitBtn">Renunță</button>
+        <button class="btn btn-primary" id="nextBtn" style="display:none;width:auto">Următoarea &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="view-results" class="view">
+    <div class="card">
+      <h2 class="section-title">Rezultat final</h2>
+      <div class="score-hero">
+        <div class="score-circle"><div class="n" id="resScoreN">0/0</div><div class="d">corecte</div></div>
+        <div>
+          <div style="font-size:20px;font-weight:700" id="resPercent">0%</div>
+          <div class="muted small" id="resPunctaj">Punctaj estimat: 0 puncte</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Pe categorii</h2>
+      <div id="resCatBars"></div>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Recapitulare (click pe un rând pentru detalii)</h2>
+      <table class="review" id="resTable">
+        <thead><tr><th>#</th><th>Categorie</th><th>Răspunsul tău</th><th>Corect</th></tr></thead>
+        <tbody id="resTableBody"></tbody>
+      </table>
+    </div>
+    <button class="btn btn-primary" id="restartBtn">Înapoi la opțiuni</button>
+  </div>
+
+  <div class="footer-note">Grile extrase din subiectele oficiale de anii anteriori și verificate independent. Explicațiile marcate „barem oficial eronat” indică o discrepanță identificată față de baremul original — verifică și tu raționamentul.</div>
+</div>
+
+<script>
+const DATA = {"year": "test6", "sursa": "generat original, pe baza tiparelor din subiectele 2024-2025", "punctaj": "3 puncte/întrebare corectă, punctaj maxim 90 puncte", "questions": [{"nr": 1, "categorie": "C/C++", "enunt": "Ce va afisa urmatorul program C?\n#include <stdio.h>\nint aduna(int a, int b) { return a + b; }\nint inmulteste(int a, int b) { return a * b; }\nint main() {\n    int (*op)(int, int);\n    op = inmulteste;\n    printf(\"%d\", op(4, 5));\n    return 0;\n}", "variante": {"a": "9", "b": "20", "c": "45", "d": "eroare de compilare deoarece nu se poate atribui o functie unui pointer"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "op este declarat ca pointer catre o functie care primeste doi parametri int si returneaza int: int (*op)(int, int). Parantezele din jurul lui *op sunt esentiale - ele fac ca op sa fie un POINTER catre functie (fara ele, int *op(int,int) ar declara o functie care returneaza int*). Atribuirea op = inmulteste memoreaza in op adresa functiei inmulteste (numele unei functii se converteste automat la adresa ei, nefiind nevoie de operatorul &). Apelul indirect op(4, 5) este echivalent cu inmulteste(4, 5) = 4 * 5 = 20. Deci b. a=9 ar fi rezultatul lui aduna(4,5), dar op pointeaza catre inmulteste. c=45 nu corespunde. d este falsa: atribuirea unui nume de functie unui pointer de functie compatibil este perfect legala. Verificat prin compilare si rulare (gcc): programul afiseaza 20.", "enunt_html": "<p>Ce va afisa urmatorul program C?</p><pre class=\"code\">#include &lt;stdio.h&gt;\nint aduna(int a, int b) { return a + b; }\nint inmulteste(int a, int b) { return a * b; }\nint main() {\n    int (*op)(int, int);\n    op = inmulteste;\n    printf(\"%d\", op(4, 5));\n    return 0;\n}</pre>"}, {"nr": 2, "categorie": "OOP (C++)", "enunt": "Ce se intampla la compilarea urmatorului program C++?\n\n#include <iostream>\nusing namespace std;\nclass Forma {\npublic:\n   virtual double arie() = 0;\n   virtual double perimetru() = 0;\n};\nint main() {\n   Forma f;\n   return 0;\n}", "variante": {"a": "compileaza si ruleaza corect, cu arie() si perimetru() returnand 0", "b": "genereaza eroare de compilare deoarece Forma este o clasa abstracta si nu poate fi instantiata", "c": "compileaza, dar arunca o exceptie la executie deoarece metodele nu au corp", "d": "genereaza eroare deoarece o clasa nu poate avea doua metode virtuale pure"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "O metoda virtuala pura (declarata cu = 0) nu are implementare si obliga clasele derivate sa o redefineasca. O clasa care contine cel putin o metoda virtuala pura este o CLASA ABSTRACTA. Regula fundamentala: o clasa abstracta NU poate fi instantiata direct (nu se pot crea obiecte de tipul ei), deoarece ar exista metode fara corp care ar putea fi apelate. Declaratia Forma f; incearca sa creeze un obiect al clasei abstracte, ceea ce produce o EROARE DE COMPILARE. Deci b. Se pot folosi insa pointeri sau referinte de tip Forma* / Forma& catre obiecte ale unor clase derivate concrete. a si c sunt false: programul nu ajunge la executie. d este falsa: o clasa poate avea oricate metode virtuale pure (o \"interfata completa\" le are pe toate pure). Verificat prin compilare (g++ -std=c++11): compilatorul raporteaza \"cannot declare variable 'f' to be of abstract type 'Forma'\".", "enunt_html": "<p>Ce se intampla la compilarea urmatorului program C++?</p><pre class=\"code\">#include &lt;iostream&gt;\nusing namespace std;\nclass Forma {\npublic:\n    virtual double arie() = 0;\n    virtual double perimetru() = 0;\n};\nint main() {\n    Forma f;\n    return 0;\n}</pre>"}, {"nr": 3, "categorie": "SQL", "enunt": "Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume\nVARCHAR2(30), salariul NUMBER(10,2), id_sef NUMBER(5) REFERENCES angajati(id_angajat),\nid_departament NUMBER(3)) cu cel putin 200 de randuri (inregistrari), unde id_sef este\nid_angajat-ul sefului direct (NULL pentru angajatii fara sef).\nSe considera comanda SQL-Oracle:\nSELECT a.nume AS angajat, s.nume AS sef\nFROM angajati a JOIN angajati s ON a.id_sef = s.id_angajat\nWHERE a.salariul > s.salariul;\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "afiseaza perechile (angajat, sef direct) in care angajatul are un salariu mai mare decat seful sau direct", "b": "afiseaza toti angajatii impreuna cu sefii lor, indiferent de salariu", "c": "afiseaza sefii care castiga mai mult decat toti subordonatii lor", "d": "genereaza eroare deoarece o tabela nu poate fi jonctionata cu ea insasi"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Comanda realizeaza un SELF-JOIN (auto-jonctiune) al tabelei ANGAJATI cu ea insasi, folosind doua aliasuri: a pentru \"angajat\" si s pentru \"sef\". Conditia de jonctiune a.id_sef = s.id_angajat leaga fiecare angajat de randul sefului sau direct. Filtrul WHERE a.salariul > s.salariul pastreaza doar perechile in care salariul angajatului depaseste salariul sefului. Rezultatul este lista angajatilor care castiga mai mult decat seful lor direct, alaturi de numele sefului. Deci a. b este falsa: exista filtrul pe salariu, deci nu apar toti; in plus, fiind INNER JOIN, angajatii cu id_sef NULL (fara sef) sunt exclusi. c este falsa: comanda compara fiecare angajat DOAR cu seful sau direct, nu cu toti subordonatii. d este falsa: auto-jonctiunea este perfect valida si standard pentru structuri ierarhice sef-subordonat, aliasurile a si s distingand cele doua utilizari ale tabelei.", "enunt_html": "<p>Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), id_sef NUMBER(5) REFERENCES angajati(id_angajat), id_departament NUMBER(3)) cu cel putin 200 de randuri (inregistrari), unde id_sef este id_angajat-ul sefului direct (NULL pentru angajatii fara sef). Se considera comanda SQL-Oracle:</p><pre class=\"code\">SELECT a.nume AS angajat, s.nume AS sef\nFROM angajati a JOIN angajati s ON a.id_sef = s.id_angajat\nWHERE a.salariul &gt; s.salariul;</pre><p>Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 4, "categorie": "PL/SQL", "enunt": "Se considera urmatorul bloc PL/SQL care valideaza o valoare a salariului:\nSET SERVEROUTPUT ON\nDECLARE\n   v_sal NUMBER := -500;\nBEGIN\n   IF v_sal < 0 THEN\n      RAISE_APPLICATION_ERROR(-20010, 'Salariul nu poate fi negativ');\n   END IF;\n   DBMS_OUTPUT.PUT_LINE('Salariu valid');\nEND;\n/\nPrecizati care dintre urmatoarele afirmatii referitoare la procedura RAISE_APPLICATION_ERROR\neste corecta:", "variante": {"a": "numarul de eroare trebuie sa fie un intreg din intervalul rezervat -20000 .. -20999, iar aici -20010 este valid si blocul opreste executia aruncand eroarea definita de utilizator", "b": "numarul de eroare poate fi orice intreg, iar RAISE_APPLICATION_ERROR doar afiseaza mesajul fara a intrerupe executia", "c": "apelul este incorect deoarece mesajul trebuie transmis inaintea codului de eroare: RAISE_APPLICATION_ERROR('Salariul...', -20010)", "d": "blocul afiseaza 'Salariu valid' deoarece RAISE_APPLICATION_ERROR nu opreste executia ramurii IF"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "RAISE_APPLICATION_ERROR(numar_eroare, mesaj) genereaza o eroare (exceptie) definita de utilizator. Primul argument, numarul de eroare, trebuie sa fie un intreg din intervalul REZERVAT pentru erorile utilizatorului: -20000 pana la -20999. Aici -20010 se afla in acest interval, deci apelul este valid. La executie, deoarece v_sal = -500 < 0, se apeleaza RAISE_APPLICATION_ERROR, care INTRERUPE imediat executia blocului si propaga eroarea (ORA-20010 cu mesajul dat) catre mediul apelant; instructiunea DBMS_OUTPUT.PUT_LINE('Salariu valid') NU se mai executa. Deci a. b este falsa: numarul in afara intervalului -20000..-20999 ar genera chiar el o eroare, iar procedura NU doar afiseaza, ci arunca efectiv exceptia oprind executia. c este falsa: ordinea argumentelor este (numar, mesaj), nu invers. d este falsa: RAISE_APPLICATION_ERROR opreste executia, deci 'Salariu valid' nu apare.", "enunt_html": "<p>Se considera urmatorul bloc PL/SQL care valideaza o valoare a salariului:</p><pre class=\"code\">SET SERVEROUTPUT ON\nDECLARE\n    v_sal NUMBER := -500;\nBEGIN\n    IF v_sal &lt; 0 THEN\n        RAISE_APPLICATION_ERROR(-20010, 'Salariul nu poate fi negativ');\n    END IF;\n    DBMS_OUTPUT.PUT_LINE('Salariu valid');\nEND;\n/</pre><p>Precizati care dintre urmatoarele afirmatii referitoare la procedura RAISE_APPLICATION_ERROR este corecta:</p>"}, {"nr": 5, "categorie": "OOP (C++)", "enunt": "Ce va afisa la rulare urmatorul program C++?\n\n#include <iostream>\nusing namespace std;\nclass Baza {\npublic:\n   void afiseaza() { cout << \"B\"; }\n   virtual void scrie() { cout << \"b\"; }\n};\nclass Derivata : public Baza {\npublic:\n   void afiseaza() { cout << \"D\"; }\n   void scrie() { cout << \"d\"; }\n};\nint main() {\n   Baza *p = new Derivata();\n   p->afiseaza();\n   p->scrie();\n   return 0;\n}", "variante": {"a": "Bd", "b": "Dd", "c": "BB", "d": "DD"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Pointerul p are tipul static Baza*, dar refera un obiect real de tip Derivata. Cele doua apeluri se rezolva DIFERIT: (1) afiseaza() NU este virtuala - apelul p->afiseaza() se rezolva prin LEGARE STATICA, la compilare, dupa TIPUL POINTERULUI (Baza*), deci se apeleaza Baza::afiseaza() -> \"B\"; aceasta este ASCUNDEREA (hiding): Derivata::afiseaza() doar ascunde metoda de baza, fara a o suprascrie. (2) scrie() ESTE virtuala - apelul p->scrie() se rezolva prin LEGARE DINAMICA, la executie, dupa TIPUL OBIECTULUI REAL (Derivata), deci se apeleaza Derivata::scrie() -> \"d\"; aceasta este SUPRASCRIEREA (override). Rezultat: \"Bd\", varianta a. Diferenta esentiala testata: la o metoda NEvirtuala conteaza tipul pointerului (ascundere), la o metoda virtuala conteaza tipul obiectului (suprascriere/polimorfism). b, c, d ignora aceasta distinctie. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza Bd.", "enunt_html": "<p>Ce va afisa la rulare urmatorul program C++?</p><pre class=\"code\">#include &lt;iostream&gt;\nusing namespace std;\nclass Baza {\npublic:\n    void afiseaza() { cout &lt;&lt; \"B\"; }\n    virtual void scrie() { cout &lt;&lt; \"b\"; }\n};\nclass Derivata : public Baza {\npublic:\n    void afiseaza() { cout &lt;&lt; \"D\"; }\n    void scrie() { cout &lt;&lt; \"d\"; }\n};\nint main() {\n    Baza *p = new Derivata();\n    p-&gt;afiseaza();\n    p-&gt;scrie();\n    return 0;\n}</pre>"}, {"nr": 6, "categorie": "C/C++", "enunt": "Ce va afisa urmatorul program C?\n#include <stdio.h>\nint inc(int x) { return x + 1; }\nint dbl(int x) { return x * 2; }\nint sq(int x) { return x * x; }\nint main() {\n    int (*v[3])(int) = { inc, dbl, sq };\n    printf(\"%d\", v[2](v[0](3)));\n    return 0;\n}", "variante": {"a": "16", "b": "8", "c": "49", "d": "36"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "v este un ARRAY de 3 pointeri catre functii care primesc un int si returneaza un int: int (*v[3])(int). Elementele sunt initializate cu adresele functiilor inc, dbl si sq, deci v[0]=inc, v[1]=dbl, v[2]=sq. Expresia v[2](v[0](3)) se evalueaza dinauntru in afara: intai v[0](3) = inc(3) = 3 + 1 = 4; apoi v[2](4) = sq(4) = 4 * 4 = 16. Deci a. b=8 ar fi dbl(4). c=49 ar fi sq(inc(6)) sau sq(7), nu corespunde. d=36 ar fi sq(6). Rezultatul corect combina inc urmat de sq: 16. Verificat prin compilare si rulare (gcc): programul afiseaza 16.", "enunt_html": "<p>Ce va afisa urmatorul program C?</p><pre class=\"code\">#include &lt;stdio.h&gt;\nint inc(int x) { return x + 1; }\nint dbl(int x) { return x * 2; }\nint sq(int x) { return x * x; }\nint main() {\n    int (*v[3])(int) = { inc, dbl, sq };\n    printf(\"%d\", v[2](v[0](3)));\n    return 0;\n}</pre>"}, {"nr": 7, "categorie": "PL/SQL", "enunt": "Se considera urmatorul bloc PL/SQL cu o procedura locala:\nSET SERVEROUTPUT ON\nDECLARE\n   PROCEDURE p IS\n   BEGIN\n      RAISE_APPLICATION_ERROR(-20020, 'Eroare aparuta in p');\n   END;\nBEGIN\n   p;\n   DBMS_OUTPUT.PUT_LINE('Dupa apelul lui p');\nEXCEPTION\n   WHEN OTHERS THEN\n      DBMS_OUTPUT.PUT_LINE('Prins in apelant: ' || SQLERRM);\nEND;\n/\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "exceptia ridicata in p, nefiind tratata in p, se propaga in blocul apelant si este prinsa de WHEN OTHERS; se afiseaza doar 'Prins in apelant: ORA-20020: Eroare aparuta in p'", "b": "se afiseaza atat 'Dupa apelul lui p' cat si mesajul din WHEN OTHERS", "c": "blocul se termina cu eroare netratata deoarece exceptia din p nu poate fi prinsa in blocul apelant", "d": "se afiseaza doar 'Dupa apelul lui p' deoarece RAISE_APPLICATION_ERROR nu opreste procedura p"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Procedura p ridica o exceptie prin RAISE_APPLICATION_ERROR(-20020, ...), dar NU are o sectiune EXCEPTION proprie, deci exceptia nu este tratata local. Regula de PROPAGARE a exceptiilor: o exceptie netratata intr-un subprogram se propaga catre blocul care l-a apelat. Astfel, exceptia iese din p si ajunge in blocul apelant, exact in punctul apelului \"p;\". Cum instructiunea a esuat, urmatoarea instructiune DBMS_OUTPUT.PUT_LINE('Dupa apelul lui p') NU se mai executa; controlul sare direct la sectiunea EXCEPTION a blocului apelant, unde WHEN OTHERS prinde orice exceptie si afiseaza 'Prins in apelant: ' || SQLERRM, adica 'Prins in apelant: ORA-20020: Eroare aparuta in p'. Deci a. b este falsa: 'Dupa apelul lui p' nu se afiseaza (executia normala s-a intrerupt la exceptie). c este falsa: exceptia SE poate prinde in apelant, tocmai prin WHEN OTHERS. d este falsa: RAISE_APPLICATION_ERROR opreste efectiv executia lui p.", "enunt_html": "<p>Se considera urmatorul bloc PL/SQL cu o procedura locala:</p><pre class=\"code\">SET SERVEROUTPUT ON\nDECLARE\n    PROCEDURE p IS\n    BEGIN\n        RAISE_APPLICATION_ERROR(-20020, 'Eroare aparuta in p');\n    END;\n    BEGIN\n        p;\n        DBMS_OUTPUT.PUT_LINE('Dupa apelul lui p');\n    EXCEPTION\n    WHEN OTHERS THEN\n        DBMS_OUTPUT.PUT_LINE('Prins in apelant: ' || SQLERRM);\n    END;\n    /</pre><p>Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 8, "categorie": "SQL", "enunt": "Se considera comanda SQL-Oracle:\nSELECT SUBSTR('ADMITERE', -4, 3) AS rez FROM dual;\nPrecizati care este valoarea afisata in coloana rez:", "variante": {"a": "TER", "b": "MIT", "c": "ERE", "d": "ITE"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Functia SUBSTR(sir, pozitie, lungime) extrage o subsecventa. Cand pozitia de start este NEGATIVA, Oracle numara pozitia de la SFARSITUL sirului spre inceput. Sirul 'ADMITERE' are 8 caractere: A(1) D(2) M(3) I(4) T(5) E(6) R(7) E(8). Pozitia -4 inseamna al 4-lea caracter numarand de la coada: E(-1), R(-2), E(-3), T(-4), deci startul este pe caracterul T (pozitia 5 de la stanga). De acolo se iau 3 caractere consecutive spre dreapta: T, E, R -> 'TER'. Deci a. b='MIT' si d='ITE' ar corespunde unor pozitii de start din zona de mijloc/stanga, nu pozitiei -4. c='ERE' ar fi ultimele 3 caractere (SUBSTR('ADMITERE', -3) sau SUBSTR('ADMITERE', 6)). Capcana: startul negativ se numara de la dreapta, dar EXTRAGEREA se face tot spre dreapta pe lungimea data.", "enunt_html": "<p>Se considera comanda SQL-Oracle:</p><pre class=\"code\">SELECT SUBSTR('ADMITERE', -4, 3) AS rez FROM dual;</pre><p>Precizati care este valoarea afisata in coloana rez:</p>"}, {"nr": 9, "categorie": "OOP (C++)", "enunt": "Ce va afisa la rulare urmatorul program C++?\n\n#include <iostream>\nusing namespace std;\nclass Baza {\npublic:\n   Baza() { init(); }\n   virtual void init() { cout << \"B\"; }\n};\nclass Derivata : public Baza {\npublic:\n   void init() { cout << \"D\"; }\n};\nint main() {\n   Derivata d;\n   return 0;\n}", "variante": {"a": "B", "b": "D", "c": "BD", "d": "DB"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "La crearea obiectului d de tip Derivata, se apeleaza mai intai constructorul clasei de baza, Baza(). Regula speciala a C++: in timpul executiei constructorului clasei de baza, obiectul este considerat inca de tipul bazei (partea derivata nu este inca construita), deci mecanismul de LEGARE DINAMICA (virtual) foloseste tabela virtuala a clasei BAZA. Prin urmare, apelul init() din constructorul Baza() invoca Baza::init() (NU versiunea suprascrisa din Derivata), afisand \"B\". Deci a. Aceasta este o capcana clasica: apelarea unei metode virtuale din constructor NU produce comportament polimorfic catre clasa derivata, ci apeleaza versiunea din clasa curent construita. b='D' ar aparea DOAR daca apelul s-ar face dupa construirea completa a obiectului, din afara constructorului. c si d presupun gresit doua apeluri. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza B.", "enunt_html": "<p>Ce va afisa la rulare urmatorul program C++?</p><pre class=\"code\">#include &lt;iostream&gt;\nusing namespace std;\nclass Baza {\npublic:\n    Baza() { init(); }\n    virtual void init() { cout &lt;&lt; \"B\"; }\n};\nclass Derivata : public Baza {\npublic:\n    void init() { cout &lt;&lt; \"D\"; }\n};\nint main() {\n    Derivata d;\n    return 0;\n}</pre>"}, {"nr": 10, "categorie": "Baze de date (teorie)", "enunt": "Fie relatia R(cod_produs, denumire, pret) in care fiecare produs are un cod unic, iar din\ncodul produsului se determina univoc atat denumirea cat si pretul (exista dependentele\nfunctionale cod_produs -> denumire si cod_produs -> pret).\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "cod_produs este cheie candidata a relatiei, deoarece determina functional toate celelalte atribute ale relatiei", "b": "denumire este cheie candidata deoarece apare in partea dreapta a unei dependente functionale", "c": "relatia nu are nicio cheie candidata deoarece exista mai multe dependente functionale", "d": "dependenta cod_produs -> denumire implica automat si dependenta inversa denumire -> cod_produs"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "O dependenta functionala X -> Y intr-o relatie inseamna ca oricaror doua tupluri cu aceeasi valoare pentru X le corespunde obligatoriu aceeasi valoare pentru Y (X determina univoc Y). Un atribut (sau grup de atribute) este CHEIE CANDIDATA daca determina functional TOATE celelalte atribute ale relatiei si este minimal. Aici cod_produs -> denumire si cod_produs -> pret arata ca din cod_produs se deduc univoc si denumire, si pret, adica cod_produs -> {denumire, pret}; fiind un singur atribut, este si minimal. Deci cod_produs este cheie candidata - varianta a. b este falsa: aparitia unui atribut in partea DREAPTA a unei dependente (ca atribut DETERMINAT) nu il face cheie; dimpotriva, cheia se afla in partea stanga (determinant). c este falsa: existenta mai multor dependente nu impiedica existenta unei chei - tocmai aceste dependente stabilesc cheia. d este falsa: dependentele functionale NU sunt in general simetrice - din cod_produs -> denumire nu rezulta denumire -> cod_produs (doua produse diferite ar putea, in principiu, avea aceeasi denumire).", "enunt_html": "<p>Fie relatia R(cod_produs, denumire, pret) in care fiecare produs are un cod unic, iar din codul produsului se determina univoc atat denumirea cat si pretul (exista dependentele functionale cod_produs -&gt; denumire si cod_produs -&gt; pret). Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 11, "categorie": "C/C++", "enunt": "Ce va afisa urmatorul program C?\n#include <stdio.h>\nint aplica(int x, int (*f)(int)) { return f(f(x)); }\nint neg(int x) { return -x; }\nint main() {\n    printf(\"%d\", aplica(7, neg));\n    return 0;\n}", "variante": {"a": "-7", "b": "7", "c": "-14", "d": "14"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Functia aplica primeste un intreg x si un POINTER catre o functie f (de tip int (*f)(int) - functie care ia un int si returneaza un int), apoi returneaza f(f(x)), adica aplica functia f de doua ori consecutiv. La apelul aplica(7, neg), pointerul f primeste adresa functiei neg (schimbarea semnului). Se calculeaza f(f(7)) = neg(neg(7)) = neg(-7) = -(-7) = 7. Aplicarea de doua ori a negarii readuce valoarea initiala. Deci b. a=-7 ar fi rezultatul unei singure aplicari neg(7). c si d nu corespund niciunei compuneri corecte (nu exista inmultire cu 2). Aceasta ilustreaza transmiterea unei functii ca parametru (callback) prin pointer de functie. Verificat prin compilare si rulare (gcc): programul afiseaza 7.", "enunt_html": "<p>Ce va afisa urmatorul program C?</p><pre class=\"code\">#include &lt;stdio.h&gt;\nint aplica(int x, int (*f)(int)) { return f(f(x)); }\nint neg(int x) { return -x; }\nint main() {\n    printf(\"%d\", aplica(7, neg));\n    return 0;\n}</pre>"}, {"nr": 12, "categorie": "SQL", "enunt": "Se considera comanda SQL-Oracle:\nSELECT INSTR('ABRACADABRA', 'A', 1, 3) AS rez FROM dual;\nPrecizati care este valoarea afisata in coloana rez:", "variante": {"a": "6", "b": "4", "c": "8", "d": "3"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Functia INSTR(sir, subsir, pozitie_start, nr_aparitie) returneaza POZITIA (indexul, incepand de la 1) la care se gaseste a n-a aparitie a subsirului cautat, pornind cautarea de la pozitia data. Aici se cauta caracterul 'A' in 'ABRACADABRA', incepand de la pozitia 1, a 3-a aparitie. Pozitiile caracterelor: A(1) B(2) R(3) A(4) C(5) A(6) D(7) A(8) B(9) R(10) A(11). Aparitiile lui 'A' sunt la pozitiile: 1 (prima), 4 (a doua), 6 (a treia), 8 (a patra), 11 (a cincea). A 3-a aparitie se afla la pozitia 6. Deci a. b=4 este a 2-a aparitie. c=8 este a 4-a aparitie. d=3 este pozitia unui 'R', nu a lui 'A'. Cei doi parametri optionali (pozitia de start si numarul aparitiei) permit cautarea aparitiilor ulterioare, nu doar a primeia.", "enunt_html": "<p>Se considera comanda SQL-Oracle:</p><pre class=\"code\">SELECT INSTR('ABRACADABRA', 'A', 1, 3) AS rez FROM dual;</pre><p>Precizati care este valoarea afisata in coloana rez:</p>"}, {"nr": 13, "categorie": "PL/SQL", "enunt": "Se considera urmatorul bloc PL/SQL:\nSET SERVEROUTPUT ON\nBEGIN\n   RAISE_APPLICATION_ERROR(-20055, 'Operatie interzisa');\nEXCEPTION\n   WHEN OTHERS THEN\n      DBMS_OUTPUT.PUT_LINE(SQLCODE);\nEND;\n/\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "se afiseaza -20055", "b": "se afiseaza 0", "c": "se afiseaza 1, deoarece SQLCODE returneaza 1 pentru orice eroare a utilizatorului", "d": "se afiseaza -1, deoarece toate erorile definite de utilizator au SQLCODE -1"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Functia SQLCODE returneaza CODUL NUMERIC al erorii pentru exceptia curenta tratata in sectiunea EXCEPTION. Cand exceptia a fost generata prin RAISE_APPLICATION_ERROR(numar, mesaj), SQLCODE returneaza chiar acel numar. Aici exceptia a fost ridicata cu numarul -20055, prinsa de WHEN OTHERS, iar in handler SQLCODE returneaza -20055, care se afiseaza. Deci a. b este falsa: SQLCODE returneaza 0 doar cand NU exista exceptie in curs (executie normala, in afara unui handler). c si d sunt false: SQLCODE nu are o valoare fixa (1 sau -1) pentru erorile utilizatorului - reflecta exact numarul erorii curente; -1 este de fapt codul erorii predefinite DUP_VAL_ON_INDEX (ORA-00001), nu al erorilor RAISE_APPLICATION_ERROR. Complementar, SQLERRM ar returna textul 'ORA-20055: Operatie interzisa'.", "enunt_html": "<p>Se considera urmatorul bloc PL/SQL:</p><pre class=\"code\">SET SERVEROUTPUT ON\nBEGIN\n    RAISE_APPLICATION_ERROR(-20055, 'Operatie interzisa');\nEXCEPTION\nWHEN OTHERS THEN\n    DBMS_OUTPUT.PUT_LINE(SQLCODE);\nEND;\n/</pre><p>Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 14, "categorie": "OOP (C++)", "enunt": "Ce se intampla la compilarea urmatorului program C++?\n\n#include <iostream>\nusing namespace std;\nclass IShape {\npublic:\n   virtual double arie() = 0;\n   virtual double perimetru() = 0;\n};\nclass Patrat : public IShape {\n   double l;\npublic:\n   Patrat(double x) { l = x; }\n   double arie() { return l * l; }\n};\nint main() {\n   Patrat p(3);\n   return 0;\n}", "variante": {"a": "compileaza corect, deoarece Patrat implementeaza arie()", "b": "genereaza eroare de compilare deoarece Patrat ramane clasa abstracta (nu a suprascris perimetru())", "c": "compileaza, iar perimetru() va returna automat 0", "d": "genereaza eroare deoarece o clasa nu poate mosteni dintr-o interfata"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Clasa IShape este o interfata (abstracta) cu doua metode virtuale pure: arie() si perimetru(). Pentru ca o clasa derivata sa devina CONCRETA (instantiabila), ea trebuie sa suprascrie (implementeze) TOATE metodele virtuale pure mostenite. Patrat suprascrie doar arie(), dar NU si perimetru(); prin urmare perimetru() ramane virtuala pura si mostenita, iar Patrat este INCA o clasa abstracta. Declaratia Patrat p(3); incearca sa instantieze o clasa abstracta -> EROARE DE COMPILARE. Deci b. a este falsa: implementarea partiala (doar arie) nu este suficienta. c este falsa: o metoda virtuala pura neimplementata nu capata automat un corp care sa returneze 0. d este falsa: mostenirea dintr-o clasa abstracta (interfata) este exact mecanismul corect - problema este ca implementarea este incompleta. Verificat prin compilare (g++ -std=c++11): compilatorul raporteaza \"cannot declare variable 'p' to be of abstract type 'Patrat'\".", "enunt_html": "<p>Ce se intampla la compilarea urmatorului program C++?</p><pre class=\"code\">#include &lt;iostream&gt;\nusing namespace std;\nclass IShape {\npublic:\n    virtual double arie() = 0;\n    virtual double perimetru() = 0;\n};\nclass Patrat : public IShape {\n    double l;\npublic:\n    Patrat(double x) { l = x; }\n    double arie() { return l * l; }\n};\nint main() {\n    Patrat p(3);\n    return 0;\n}</pre>"}, {"nr": 15, "categorie": "C/C++", "enunt": "Ce va afisa urmatorul program C?\n#include <stdio.h>\nint suma(int a, int b) { return a + b; }\nint dif(int a, int b) { return a - b; }\nint calc(int (*f)(int, int), int a, int b) { return f(a, b); }\nint main() {\n    printf(\"%d \", calc(suma, 10, 3));\n    printf(\"%d\", calc(dif, 10, 3));\n    return 0;\n}", "variante": {"a": "13 7", "b": "7 13", "c": "13 13", "d": "30 30"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Functia calc primeste ca prim parametru un POINTER catre o functie de tip int (*f)(int, int) (functie cu doi parametri int, returnand int), plus doi intregi a si b, si returneaza f(a, b) - adica apeleaza functia primita cu argumentele a si b. La primul apel, calc(suma, 10, 3) transmite adresa functiei suma, deci se calculeaza suma(10, 3) = 10 + 3 = 13. La al doilea apel, calc(dif, 10, 3) transmite adresa functiei dif, deci dif(10, 3) = 10 - 3 = 7. Se afiseaza \"13 7\" (primul printf are un spatiu dupa %d). Deci a. b inverseaza rezultatele. c presupune gresit ca ambele apeluri folosesc aceeasi functie. d=30 30 nu corespunde niciunei operatii. Aceasta ilustreaza selectarea operatiei la RUNTIME prin pointer de functie transmis ca argument. Verificat prin compilare si rulare (gcc): programul afiseaza \"13 7\".", "enunt_html": "<p>Ce va afisa urmatorul program C?</p><pre class=\"code\">#include &lt;stdio.h&gt;\nint suma(int a, int b) { return a + b; }\nint dif(int a, int b) { return a - b; }\nint calc(int (*f)(int, int), int a, int b) { return f(a, b); }\nint main() {\n    printf(\"%d \", calc(suma, 10, 3));\n    printf(\"%d\", calc(dif, 10, 3));\n    return 0;\n}</pre>"}, {"nr": 16, "categorie": "SQL", "enunt": "Se considera comanda SQL-Oracle:\nSELECT REPLACE(UPPER('management'), 'A', 'x') AS rez FROM dual;\nPrecizati care este valoarea afisata in coloana rez:", "variante": {"a": "MxNxGEMENT", "b": "MANAGEMENT", "c": "mxnxgement", "d": "MXNXGEMENT"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Functiile se evalueaza dinauntru in afara. Intai UPPER('management') transforma toate literele in majuscule -> 'MANAGEMENT'. Apoi REPLACE(sir, 'A', 'x') inlocuieste TOATE aparitiile subsirului 'A' cu 'x'. In 'MANAGEMENT', literele: M(1) A(2) N(3) A(4) G(5) E(6) M(7) E(8) N(9) T(10) - 'A' apare pe pozitiile 2 si 4, ambele fiind inlocuite cu 'x' (litera mica, exact asa cum a fost data ca al treilea argument). Rezultat: 'MxNxGEMENT'. Deci a. b este falsa: REPLACE chiar modifica sirul (exista 'A'-uri de inlocuit). c este falsa: doar 'A' devine 'x'; restul literelor raman majuscule dupa UPPER (LOWER nu se aplica). d este falsa: sirul de inlocuire este 'x' minuscul, nu 'X'; REPLACE pastreaza exact caracterele date, fara sa le transforme in majuscule.", "enunt_html": "<p>Se considera comanda SQL-Oracle:</p><pre class=\"code\">SELECT REPLACE(UPPER('management'), 'A', 'x') AS rez FROM dual;</pre><p>Precizati care este valoarea afisata in coloana rez:</p>"}, {"nr": 17, "categorie": "PL/SQL", "enunt": "Se considera urmatorul bloc PL/SQL:\nSET SERVEROUTPUT ON\nDECLARE\n   v NUMBER := 10;\nBEGIN\n   IF v > 0 THEN\n      RAISE_APPLICATION_ERROR(-20001, 'pozitiv');\n   END IF;\nEXCEPTION\n   WHEN OTHERS THEN\n      DBMS_OUTPUT.PUT_LINE('altele');\n   WHEN NO_DATA_FOUND THEN\n      DBMS_OUTPUT.PUT_LINE('nimic');\nEND;\n/\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "blocul genereaza o eroare de compilare deoarece handlerul WHEN OTHERS trebuie sa fie ultimul din sectiunea EXCEPTION", "b": "blocul se compileaza si afiseaza 'altele'", "c": "blocul se compileaza si afiseaza 'nimic'", "d": "blocul se compileaza si nu afiseaza nimic"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "In PL/SQL, handlerul WHEN OTHERS este un handler \"prinde-tot\" care trateaza orice exceptie neacoperita de handlere anterioare. Regula sintactica obligatorie: WHEN OTHERS trebuie sa fie ULTIMUL handler din sectiunea EXCEPTION - nu poate fi urmat de alte clauze WHEN. Aici WHEN OTHERS este scris INAINTEA lui WHEN NO_DATA_FOUND, ceea ce incalca regula si produce o EROARE DE COMPILARE (PLS-00370: OTHERS handler must be last among the exception handlers of a block). Deci a. Fiindca blocul nici nu se compileaza, variantele b, c, d (care presupun executie) sunt automat false. Pentru corectare, WHEN NO_DATA_FOUND ar trebui plasat inaintea lui WHEN OTHERS.", "enunt_html": "<p>Se considera urmatorul bloc PL/SQL:</p><pre class=\"code\">SET SERVEROUTPUT ON\nDECLARE\n    v NUMBER := 10;\nBEGIN\n    IF v &gt; 0 THEN\n        RAISE_APPLICATION_ERROR(-20001, 'pozitiv');\n    END IF;\nEXCEPTION\nWHEN OTHERS THEN\n    DBMS_OUTPUT.PUT_LINE('altele');\nWHEN NO_DATA_FOUND THEN\n    DBMS_OUTPUT.PUT_LINE('nimic');\nEND;\n/</pre><p>Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 18, "categorie": "OOP (C++)", "enunt": "Ce va afisa la rulare urmatorul program C++?\n\n#include <iostream>\nusing namespace std;\nclass Animal {\npublic:\n   virtual void sunet() { cout << \"?\"; }\n};\nclass Caine : public Animal {\npublic:\n   void sunet() { cout << \"Ham\"; }\n};\nclass Pisica : public Animal {\npublic:\n   void sunet() { cout << \"Miau\"; }\n};\nint main() {\n   Animal* v[2] = { new Caine(), new Pisica() };\n   for (int i = 0; i < 2; i++)\n      v[i]->sunet();\n   return 0;\n}", "variante": {"a": "HamMiau", "b": "??", "c": "MiauHam", "d": "?Ham"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Metoda sunet() este declarata virtual in clasa de baza Animal, deci apelurile prin pointeri de baza folosesc LEGARE DINAMICA (polimorfism): la executie se apeleaza versiunea corespunzatoare TIPULUI REAL al obiectului referit, nu tipului pointerului. Vectorul v contine doi pointeri de tip Animal*, primul catre un obiect Caine, al doilea catre un obiect Pisica. In bucla: v[0]->sunet() apeleaza Caine::sunet() -> \"Ham\"; v[1]->sunet() apeleaza Pisica::sunet() -> \"Miau\". Se afiseaza \"HamMiau\". Deci a. b='??' ar aparea daca sunet() NU ar fi virtuala (legare statica dupa Animal*), dar aici este virtuala. c inverseaza ordinea elementelor din vector. d amesteca gresit un apel static cu unul dinamic. Acesta este tiparul clasic de tratare uniforma, polimorfica, a unor obiecte diferite printr-un vector de pointeri la clasa de baza. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza HamMiau.", "enunt_html": "<p>Ce va afisa la rulare urmatorul program C++?</p><pre class=\"code\">#include &lt;iostream&gt;\nusing namespace std;\nclass Animal {\npublic:\n    virtual void sunet() { cout &lt;&lt; \"?\"; }\n};\nclass Caine : public Animal {\npublic:\n    void sunet() { cout &lt;&lt; \"Ham\"; }\n};\nclass Pisica : public Animal {\npublic:\n    void sunet() { cout &lt;&lt; \"Miau\"; }\n};\nint main() {\n    Animal* v[2] = { new Caine(), new Pisica() };\n    for (int i = 0; i &lt; 2; i++)\n    v[i]-&gt;sunet();\n    return 0;\n}</pre>"}, {"nr": 19, "categorie": "C/C++", "enunt": "Ce va afisa urmatorul program C?\n#include <stdio.h>\nint add(int a, int b) { return a + b; }\nint sub(int a, int b) { return a - b; }\nint mul(int a, int b) { return a * b; }\nint main() {\n    int (*ops[3])(int, int) = { add, sub, mul };\n    int r = 0, i;\n    for (i = 0; i < 3; i++)\n        r += ops[i](6, 2);\n    printf(\"%d\", r);\n    return 0;\n}", "variante": {"a": "24", "b": "16", "c": "12", "d": "8"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "ops este un array de 3 pointeri catre functii de tip int (*)(int, int), initializat cu adresele functiilor add, sub si mul. In bucla se apeleaza pe rand fiecare functie cu argumentele (6, 2) si se acumuleaza rezultatele in r: ops[0](6,2) = add(6,2) = 6 + 2 = 8; ops[1](6,2) = sub(6,2) = 6 - 2 = 4; ops[2](6,2) = mul(6,2) = 6 * 2 = 12. Suma: r = 8 + 4 + 12 = 24. Deci a. b=16 ar omite un termen. c=12 este doar mul. d=8 este doar add. Iterarea printr-un array de pointeri de functie permite aplicarea succesiva a mai multor operatii fara instructiuni conditionale explicite. Verificat prin compilare si rulare (gcc): programul afiseaza 24.", "enunt_html": "<p>Ce va afisa urmatorul program C?</p><pre class=\"code\">#include &lt;stdio.h&gt;\nint add(int a, int b) { return a + b; }\nint sub(int a, int b) { return a - b; }\nint mul(int a, int b) { return a * b; }\nint main() {\n    int (*ops[3])(int, int) = { add, sub, mul };\n    int r = 0, i;\n    for (i = 0; i &lt; 3; i++)\n    r += ops[i](6, 2);\n    printf(\"%d\", r);\n    return 0;\n}</pre>"}, {"nr": 20, "categorie": "SQL", "enunt": "Se considera comanda SQL-Oracle:\nSELECT LENGTH('SQL' || NULL || 'ORACLE') AS rez FROM dual;\nPrecizati care este valoarea afisata in coloana rez:", "variante": {"a": "9", "b": "NULL (valoare nula)", "c": "13", "d": "6"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Aici intervine o particularitate importanta a Oracle: la CONCATENARE (operatorul ||), valoarea NULL este tratata ca un SIR VID (''), nu propaga NULL asupra rezultatului. Astfel 'SQL' || NULL || 'ORACLE' produce sirul 'SQLORACLE' (NULL-ul din mijloc \"dispare\"). Functia LENGTH numara caracterele: 'SQLORACLE' are 9 caractere (S-Q-L-O-R-A-C-L-E). Deci a. b este falsa: spre deosebire de operatiile ARITMETICE (unde orice operand NULL da rezultat NULL), concatenarea cu NULL NU da NULL in Oracle. c=13 ar aparea daca NULL ar fi numarat ca text de 4 caractere ('NULL'), ceea ce nu se intampla. d=6 ar fi doar 'ORACLE' sau alta combinatie partiala. Capcana testata: comportamentul lui NULL in concatenare este diferit de cel din aritmetica.", "enunt_html": "<p>Se considera comanda SQL-Oracle:</p><pre class=\"code\">SELECT LENGTH('SQL' || NULL || 'ORACLE') AS rez FROM dual;</pre><p>Precizati care este valoarea afisata in coloana rez:</p>"}, {"nr": 21, "categorie": "PL/SQL", "enunt": "Se considera urmatorul bloc PL/SQL cu o procedura locala care isi trateaza propria exceptie:\nSET SERVEROUTPUT ON\nDECLARE\n   PROCEDURE p IS\n   BEGIN\n      RAISE_APPLICATION_ERROR(-20030, 'x');\n   EXCEPTION\n      WHEN OTHERS THEN\n         DBMS_OUTPUT.PUT_LINE('Tratat in p');\n   END;\nBEGIN\n   p;\n   DBMS_OUTPUT.PUT_LINE('Continua in apelant');\nEND;\n/\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "se afiseaza 'Tratat in p' si apoi 'Continua in apelant'", "b": "se afiseaza doar 'Tratat in p', iar blocul apelant se opreste cu eroare", "c": "se afiseaza doar 'Continua in apelant'", "d": "blocul apelant se termina cu exceptie netratata, deoarece exceptia din p se propaga oricum in afara"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Spre deosebire de cazul in care o procedura NU isi trateaza exceptia (si aceasta se propaga la apelant), aici procedura p ARE propria sectiune EXCEPTION cu WHEN OTHERS. Cand RAISE_APPLICATION_ERROR(-20030, 'x') ridica exceptia, aceasta este prinsa CHIAR IN p de handlerul WHEN OTHERS, care afiseaza 'Tratat in p'. Dupa ce handlerul se termina cu succes, procedura p se incheie NORMAL (exceptia a fost \"consumata\" si NU se mai propaga catre apelant). Controlul revine in blocul apelant imediat dupa \"p;\", iar executia continua cu instructiunea urmatoare, afisand 'Continua in apelant'. Rezultat: ambele mesaje, in aceasta ordine. Deci a. b si d sunt false: exceptia fiind tratata in interiorul lui p, ea NU se mai propaga, deci apelantul nu primeste nicio eroare. c este falsa: si mesajul din handlerul lui p se afiseaza. Regula: o exceptie tratata local intr-un subprogram nu ajunge la apelant.", "enunt_html": "<p>Se considera urmatorul bloc PL/SQL cu o procedura locala care isi trateaza propria exceptie:</p><pre class=\"code\">SET SERVEROUTPUT ON\nDECLARE\n    PROCEDURE p IS\n    BEGIN\n        RAISE_APPLICATION_ERROR(-20030, 'x');\n    EXCEPTION\n    WHEN OTHERS THEN\n        DBMS_OUTPUT.PUT_LINE('Tratat in p');\n    END;\n    BEGIN\n        p;\n        DBMS_OUTPUT.PUT_LINE('Continua in apelant');\n    END;\n    /</pre><p>Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 22, "categorie": "OOP (C++)", "enunt": "Ce va afisa la rulare urmatorul program C++?\n\n#include <iostream>\nusing namespace std;\nclass Baza {\npublic:\n   void f(int x) { cout << \"int\"; }\n};\nclass Derivata : public Baza {\npublic:\n   void f(double x) { cout << \"double\"; }\n};\nint main() {\n   Derivata d;\n   d.f(5);\n   return 0;\n}", "variante": {"a": "double", "b": "int", "c": "intdouble", "d": "eroare de compilare deoarece f este definita cu tipuri diferite in cele doua clase"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Aceasta ilustreaza fenomenul de ASCUNDERE A NUMELUI (name hiding) in mostenire. Cand o clasa derivata declara un membru cu ACELASI NUME ca in clasa de baza (aici f), acel nume din baza este ASCUNS complet in domeniul clasei derivate, INDIFERENT de lista de parametri - nu are loc supraincarcare intre clase. Astfel, in Derivata este vizibila DOAR Derivata::f(double); Baza::f(int) este ascunsa. La apelul d.f(5), desi 5 este un int, singura functie f vizibila prin d este f(double), iar 5 se converteste implicit la double 5.0, apeland f(double) -> \"double\". Deci a. b='int' ar aparea daca Baza::f(int) ar fi ramas vizibila (ar fi potrivirea exacta), dar ea este ascunsa. c presupune gresit doua apeluri. d este falsa: nu este eroare - ascunderea este un mecanism legal (pentru a aduce si metoda bazei in domeniu s-ar folosi \"using Baza::f;\"). Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza double.", "enunt_html": "<p>Ce va afisa la rulare urmatorul program C++?</p><pre class=\"code\">#include &lt;iostream&gt;\nusing namespace std;\nclass Baza {\npublic:\n    void f(int x) { cout &lt;&lt; \"int\"; }\n};\nclass Derivata : public Baza {\npublic:\n    void f(double x) { cout &lt;&lt; \"double\"; }\n};\nint main() {\n    Derivata d;\n    d.f(5);\n    return 0;\n}</pre>"}, {"nr": 23, "categorie": "SQL", "enunt": "Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume\nVARCHAR2(30), salariul NUMBER(10,2), id_sef NUMBER(5) REFERENCES angajati(id_angajat),\nid_departament NUMBER(3)) cu cel putin 200 de randuri (inregistrari), unde id_sef indica\nseful direct al angajatului.\nSe considera comanda SQL-Oracle:\nSELECT s.nume AS sef, COUNT(a.id_angajat) AS nr_subordonati\nFROM angajati s LEFT JOIN angajati a ON a.id_sef = s.id_angajat\nGROUP BY s.id_angajat, s.nume;\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "afiseaza fiecare angajat (ca potential sef) impreuna cu numarul subordonatilor sai directi, iar cei fara subordonati apar cu 0", "b": "afiseaza doar angajatii care au cel putin un subordonat", "c": "afiseaza pentru fiecare sef valoarea 1, indiferent de numarul de subordonati", "d": "genereaza eroare deoarece nu se poate face LEFT JOIN al unei tabele cu ea insasi"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Comanda este un SELF-JOIN de tip LEFT: tabela ANGAJATI (alias s, in rol de \"sef\") este jonctionata la stanga cu ANGAJATI (alias a, in rol de \"subordonat\") pe conditia a.id_sef = s.id_angajat. Fiind LEFT JOIN, TOTI angajatii apar in rezultat in rolul de s, chiar daca nu au niciun subordonat (caz in care coloanele lui a sunt NULL). Gruparea se face pe fiecare angajat-sef (dupa id_angajat, nume), iar COUNT(a.id_angajat) numara subordonatii - dar COUNT pe o COLOANA ignora valorile NULL, deci pentru un angajat fara subordonati rezultatul este 0. Deci a. b este falsa: datorita LEFT JOIN si a lui COUNT(coloana) care da 0, apar si cei fara subordonati (un INNER JOIN i-ar fi eliminat). c este falsa: numarul reflecta cati subordonati are fiecare, nu este fix 1; COUNT(*) ar fi dat 1 pentru cei fara subordonati, dar aici se numara o coloana (id_angajat), deci 0. d este falsa: self-join-ul, inclusiv LEFT, este perfect valid.", "enunt_html": "<p>Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), id_sef NUMBER(5) REFERENCES angajati(id_angajat), id_departament NUMBER(3)) cu cel putin 200 de randuri (inregistrari), unde id_sef indica seful direct al angajatului. Se considera comanda SQL-Oracle:</p><pre class=\"code\">SELECT s.nume AS sef, COUNT(a.id_angajat) AS nr_subordonati\nFROM angajati s LEFT JOIN angajati a ON a.id_sef = s.id_angajat\nGROUP BY s.id_angajat, s.nume;</pre><p>Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 24, "categorie": "PL/SQL", "enunt": "Se considera urmatorul bloc PL/SQL:\nSET SERVEROUTPUT ON\nDECLARE\n   PROCEDURE proceseaza IS\n   BEGIN\n      RAISE_APPLICATION_ERROR(-20040, 'defect');\n   END;\nBEGIN\n   proceseaza;\nEXCEPTION\n   WHEN OTHERS THEN\n      DBMS_OUTPUT.PUT_LINE('Log: ' || SQLERRM);\n      RAISE;\nEND;\n/\nPrecizati care dintre urmatoarele afirmatii referitoare la instructiunea RAISE (fara nume de\nexceptie) din handlerul WHEN OTHERS este corecta:", "variante": {"a": "RAISE fara argument RE-RIDICA exceptia curenta, propagand-o mai departe catre mediul apelant dupa ce mesajul a fost afisat (log)", "b": "RAISE fara argument nu are efect deoarece nu se specifica numele exceptiei", "c": "RAISE fara argument opreste programul si ignora exceptia curenta, fara a o propaga", "d": "RAISE fara argument declanseaza intotdeauna exceptia predefinita NO_DATA_FOUND"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Instructiunea RAISE folosita FARA nume de exceptie poate aparea DOAR in interiorul unui handler de exceptie si are ca efect RE-RIDICAREA (re-raise) exceptiei aflate in curs de tratare, pentru a o propaga mai departe catre blocul/mediul apelant. In acest bloc, exceptia ORA-20040 ridicata in procedura proceseaza se propaga in blocul apelant, este prinsa de WHEN OTHERS, care intai o \"logheaza\" (DBMS_OUTPUT afiseaza 'Log: ORA-20040: defect'), apoi prin RAISE o re-arunca neschimbata, astfel incat mediul care a lansat blocul o primeste totusi ca eroare. Deci a. Acesta este un tipar frecvent: prinzi exceptia pentru a inregistra/loga informatii, apoi o re-propagi ca sa nu fie \"inghitita\". b este falsa: RAISE fara nume are efect clar (re-ridica exceptia curenta). c este falsa: nu ignora exceptia, ci o propaga. d este falsa: nu are legatura cu NO_DATA_FOUND - re-ridica exact exceptia curenta (aici ORA-20040).", "enunt_html": "<p>Se considera urmatorul bloc PL/SQL:</p><pre class=\"code\">SET SERVEROUTPUT ON\nDECLARE\n    PROCEDURE proceseaza IS\n    BEGIN\n        RAISE_APPLICATION_ERROR(-20040, 'defect');\n    END;\n    BEGIN\n        proceseaza;\n    EXCEPTION\n    WHEN OTHERS THEN\n        DBMS_OUTPUT.PUT_LINE('Log: ' || SQLERRM);\n        RAISE;\n    END;\n    /</pre><p>Precizati care dintre urmatoarele afirmatii referitoare la instructiunea RAISE (fara nume de exceptie) din handlerul WHEN OTHERS este corecta:</p>"}, {"nr": 25, "categorie": "OOP (C++)", "enunt": "Ce va afisa la rulare urmatorul program C++?\n\n#include <iostream>\nusing namespace std;\nclass Baza {\npublic:\n   virtual void m() = 0;\n   void wrapper() { m(); }\n};\nclass Derivata : public Baza {\npublic:\n   void m() { cout << \"OK\"; }\n};\nint main() {\n   Baza* p = new Derivata();\n   p->wrapper();\n   return 0;\n}", "variante": {"a": "OK", "b": "nu afiseaza nimic", "c": "eroare de compilare deoarece m() este virtuala pura si nu poate fi apelata din wrapper()", "d": "eroare de compilare deoarece Baza contine o metoda virtuala pura si nu poate fi folosit un pointer Baza*"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Baza este o clasa abstracta (are metoda virtuala pura m()), dar contine si o metoda OBISNUITA cu implementare, wrapper(), care apeleaza m(). O clasa abstracta poate avea metode normale ce apeleaza metodele virtuale pure - acesta este chiar tiparul \"template method\". Un POINTER de tip Baza* este perfect permis (nu se poate crea doar un OBIECT direct de tip Baza). p pointeaza catre un obiect Derivata, care implementeaza m(). La apelul p->wrapper(), se executa Baza::wrapper(), care apeleaza m(); deoarece m() este virtuala, LEGAREA DINAMICA alege versiunea din tipul real al obiectului (Derivata::m()) -> afiseaza \"OK\". Deci a. c este falsa: apelarea unei metode virtuale pure prin mecanismul virtual este legala atata timp cat obiectul real o implementeaza. d este falsa: pointerii/referintele catre o clasa abstracta sunt permise; doar instantierea directa a clasei abstracte este interzisa. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza OK.", "enunt_html": "<p>Ce va afisa la rulare urmatorul program C++?</p><pre class=\"code\">#include &lt;iostream&gt;\nusing namespace std;\nclass Baza {\npublic:\n    virtual void m() = 0;\n    void wrapper() { m(); }\n};\nclass Derivata : public Baza {\npublic:\n    void m() { cout &lt;&lt; \"OK\"; }\n};\nint main() {\n    Baza* p = new Derivata();\n    p-&gt;wrapper();\n    return 0;\n}</pre>"}, {"nr": 26, "categorie": "C/C++", "enunt": "In limbajul C, precizati care dintre urmatoarele declaratii defineste corect o variabila p\nca fiind un POINTER catre o functie care primeste doi parametri de tip int si returneaza int:", "variante": {"a": "int (*p)(int, int);", "b": "int *p(int, int);", "c": "int p(*)(int, int);", "d": "int *(p)(int, int);"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Pentru a declara un pointer catre functie, numele variabilei prefixat cu * trebuie inclus intre paranteze, tocmai pentru a modifica prioritatea operatorilor: int (*p)(int, int); se citeste \"p este un pointer (*p) catre o functie care ia (int, int) si returneaza int\". Deci a. b) int *p(int, int); - fara paranteze in jurul lui *p, operatorul de apel de functie () are prioritate mai mare decat *, deci se declara o FUNCTIE p care primeste (int, int) si returneaza int* (pointer la int), NU un pointer la functie. c) int p(*)(int, int); - sintaxa invalida, nu compileaza (nu exista un nume de variabila corect plasat). d) int *(p)(int, int); - parantezele in jurul lui p singur nu schimba nimic esential: echivaleaza cu int *p(int, int);, adica tot o functie care returneaza int*, nu un pointer la functie. Doar varianta a plaseaza corect * langa numele variabilei, intre paranteze. Verificat prin compilare (gcc): doar forma de la a) declara si permite utilizarea lui p ca pointer catre functie (p = f; apoi p(2,3) functioneaza), in timp ce b) si d) declara functii, iar c) genereaza eroare de sintaxa.", "enunt_html": "<p>In limbajul C, precizati care dintre urmatoarele declaratii defineste corect o variabila p ca fiind un POINTER catre o functie care primeste doi parametri de tip int si returneaza int:</p>"}, {"nr": 27, "categorie": "SQL", "enunt": "Se considera comanda SQL-Oracle:\nSELECT CONCAT(SUBSTR('BUCURESTI', 1, 3), LENGTH('ASE')) AS rez FROM dual;\nPrecizati care este valoarea afisata in coloana rez:", "variante": {"a": "BUC3", "b": "BUC", "c": "BUCURESTI3", "d": "genereaza eroare deoarece CONCAT nu accepta un argument numeric"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Se evalueaza intai argumentele interioare: SUBSTR('BUCURESTI', 1, 3) extrage 3 caractere incepand de la pozitia 1 -> 'BUC'; LENGTH('ASE') numara caracterele sirului 'ASE' -> 3 (valoare numerica). Apoi CONCAT primeste doua argumente si le lipeste: CONCAT('BUC', 3). Al doilea argument fiind numeric (3), Oracle il converteste IMPLICIT la sirul '3', deci rezultatul este 'BUC' || '3' = 'BUC3'. Deci a. b este falsa: ignora concatenarea celui de-al doilea argument. c este falsa: SUBSTR a decupat doar primele 3 caractere ('BUC'), nu tot sirul. d este falsa: CONCAT (ca si operatorul ||) accepta si argumente numerice, acestea fiind convertite automat la text - nu se genereaza eroare. Observatie: CONCAT accepta exact doua argumente in Oracle (pentru mai multe, se foloseste operatorul ||).", "enunt_html": "<p>Se considera comanda SQL-Oracle:</p><pre class=\"code\">SELECT CONCAT(SUBSTR('BUCURESTI', 1, 3), LENGTH('ASE')) AS rez FROM dual;</pre><p>Precizati care este valoarea afisata in coloana rez:</p>"}, {"nr": 28, "categorie": "PL/SQL", "enunt": "Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume\nVARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3))\navand 200 de randuri (inregistrari), in care NU exista niciun angajat cu id_angajat = -999.\nSe considera secventa PL/SQL:\nSET SERVEROUTPUT ON\nDECLARE\n   v angajati.salariul%TYPE;\nBEGIN\n   SELECT salariul INTO v FROM angajati WHERE id_angajat = -999;\nEXCEPTION\n   WHEN OTHERS THEN\n      DBMS_OUTPUT.PUT_LINE(SQLCODE);\nEND;\n/\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "se afiseaza 100 (codul asociat exceptiei NO_DATA_FOUND)", "b": "se afiseaza -1403", "c": "se afiseaza 0", "d": "nu se afiseaza nimic deoarece SELECT INTO fara randuri nu ridica nicio exceptie"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Un SELECT ... INTO care nu gaseste NICIUN rand ridica exceptia predefinita NO_DATA_FOUND. Cum id_angajat = -999 nu exista, se declanseaza NO_DATA_FOUND, prinsa de WHEN OTHERS, iar in handler se afiseaza SQLCODE. Capcana: desi mesajul erorii este 'ORA-01403: no data found', SQLCODE pentru exceptia NO_DATA_FOUND returneaza valoarea +100 (nu -1403). Aceasta este o exceptie de la regula generala conform careia SQLCODE returneaza numarul ORA cu semn negativ; pentru NO_DATA_FOUND, SQLCODE este 100. Deci a. b=-1403 este o confuzie frecventa: -1403 ar fi \"numarul ORA\", dar SQLCODE returneaza 100 pentru aceasta exceptie particulara (SQLERRM ar afisa insa 'ORA-01403: no data found'). c=0 ar aparea doar in absenta oricarei exceptii. d este falsa: SELECT INTO fara randuri chiar ridica NO_DATA_FOUND (spre deosebire de un cursor, care pur si simplu nu ar returna randuri fara exceptie).", "enunt_html": "<p>Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3)) avand 200 de randuri (inregistrari), in care NU exista niciun angajat cu id_angajat = -999. Se considera secventa PL/SQL:</p><pre class=\"code\">SET SERVEROUTPUT ON\nDECLARE\n    v angajati.salariul%TYPE;\nBEGIN\n    SELECT salariul INTO v FROM angajati WHERE id_angajat = -999;\nEXCEPTION\nWHEN OTHERS THEN\n    DBMS_OUTPUT.PUT_LINE(SQLCODE);\nEND;\n/</pre><p>Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 29, "categorie": "OOP (C++)", "enunt": "Ce va afisa la rulare urmatorul program C++?\n\n#include <iostream>\nusing namespace std;\nclass Baza {\npublic:\n   virtual void afiseaza() { cout << \"B\"; }\n   ~Baza() { afiseaza(); }\n};\nclass Derivata : public Baza {\npublic:\n   void afiseaza() { cout << \"D\"; }\n};\nint main() {\n   Derivata d;\n   return 0;\n}", "variante": {"a": "B", "b": "D", "c": "BD", "d": "DB"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Obiectul d de tip Derivata se distruge la iesirea din main. Ordinea de distrugere este: intai destructorul (implicit) al clasei Derivata, apoi destructorul clasei de baza ~Baza(). Cand se executa ~Baza(), partea Derivata a obiectului a fost DEJA distrusa, deci in timpul destructorului bazei obiectul este considerat din nou de tipul BAZA (simetric cu situatia din constructor). Prin urmare, apelul afiseaza() din ~Baza() foloseste tabela virtuala a clasei Baza si invoca Baza::afiseaza() -> \"B\", chiar daca metoda este virtuala si a fost suprascrisa in Derivata. Deci a. Aceasta este regula complementara celei de la constructor: un apel virtual dintr-un destructor NU coboara catre versiunea din clasa derivata. b='D' ar presupune un apel polimorfic catre Derivata, ceea ce nu se intampla din destructorul bazei. c si d presupun gresit doua apeluri ale metodei afiseaza(). Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza B.", "enunt_html": "<p>Ce va afisa la rulare urmatorul program C++?</p><pre class=\"code\">#include &lt;iostream&gt;\nusing namespace std;\nclass Baza {\npublic:\n    virtual void afiseaza() { cout &lt;&lt; \"B\"; }\n    ~Baza() { afiseaza(); }\n};\nclass Derivata : public Baza {\npublic:\n    void afiseaza() { cout &lt;&lt; \"D\"; }\n};\nint main() {\n    Derivata d;\n    return 0;\n}</pre>"}, {"nr": 30, "categorie": "OOP (C++)", "enunt": "In C++, o clasa care contine numai metode virtuale pure (fara atribute de date si fara\nmetode cu implementare) este folosita cel mai adesea pentru a modela conceptul de:", "variante": {"a": "interfata (contract pe care clasele care o implementeaza trebuie sa il respecte)", "b": "clasa prietena (friend)", "c": "sablon de clasa (template)", "d": "uniune (union)"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "O clasa abstracta ale carei metode sunt TOATE virtuale pure (si care nu contine date sau implementari) defineste doar un \"contract\": un set de operatii pe care orice clasa derivata concreta trebuie sa le implementeze, fara a impune vreo implementare anume. Aceasta corespunde notiunii de INTERFATA (asa cum exista explicit in Java sau C#; in C++ se realizeaza printr-o clasa abstracta cu metode exclusiv virtuale pure). Clasele care mostenesc interfata sunt obligate sa suprascrie toate metodele pentru a deveni instantiabile. Deci a. b este falsa: o clasa prietena (friend) este un mecanism de acordare a accesului la membrii privati, fara legatura cu metodele virtuale pure. c este falsa: un sablon (template) este un mecanism de programare generica parametrizata cu tipuri, nu o clasa cu metode virtuale pure. d este falsa: o union este o structura de date in care membrii impart aceeasi zona de memorie, un concept complet diferit.", "enunt_html": "<p>In C++, o clasa care contine numai metode virtuale pure (fara atribute de date si fara metode cu implementare) este folosita cel mai adesea pentru a modela conceptul de:</p>"}]};
+
+/* ---------- theme ---------- */
+(function(){
+  const saved = localStorage.getItem('csie3-theme');
+  if(saved) document.documentElement.setAttribute('data-theme', saved);
+  document.getElementById('themeToggle').addEventListener('click', function(){
+    const cur = document.documentElement.getAttribute('data-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light');
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('csie3-theme', next);
+  });
+})();
+
+/* ---------- helpers ---------- */
+function escapeHtml(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+function letters(str){
+  return str.split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);
+}
+
+/* ---------- state ---------- */
+const SECONDS_PER_QUESTION = 80; // raport 40 min / 30 intrebari, ca la testul real
+const state = {
+  pool: [],
+  shuffleQ: true,
+  shuffleA: true,
+  selectedCats: new Set(DATA.questions.map(q=>q.categorie)),
+  index: 0,
+  score: 0,
+  order: [],
+  results: [],
+  timeLeft: SECONDS_PER_QUESTION * 30,
+  timerId: null
+};
+
+function formatTime(sec){
+  const s = Math.max(0, sec);
+  const m = Math.floor(s/60);
+  const r = s%60;
+  return String(m).padStart(2,'0')+':'+String(r).padStart(2,'0');
+}
+function renderTimer(){
+  const el = document.getElementById('quizTimer');
+  el.textContent = 'Timp: '+formatTime(state.timeLeft);
+  el.classList.toggle('timer-warn', state.timeLeft <= 300);
+}
+function stopTimer(){
+  if(state.timerId){ clearInterval(state.timerId); state.timerId = null; }
+}
+function startTimer(){
+  stopTimer();
+  state.timeLeft = Math.round(SECONDS_PER_QUESTION * state.pool.length);
+  renderTimer();
+  state.timerId = setInterval(()=>{
+    state.timeLeft--;
+    renderTimer();
+    if(state.timeLeft <= 0){ handleTimeUp(); }
+  }, 1000);
+}
+function handleTimeUp(){
+  stopTimer();
+  const optsEl = document.getElementById('quizOptions');
+  const alreadyAnswered = optsEl.dataset.locked === '1';
+  const startFrom = alreadyAnswered ? state.index + 1 : state.index;
+  for(let i = startFrom; i < state.pool.length; i++){
+    const q = state.pool[i];
+    const correctSet = letters(q.raspuns_corect);
+    const baremSet = letters(q.raspuns_barem);
+    state.results.push({
+      nr: q.nr, categorie: q.categorie, sursa_tag: q.sursa_tag, chosen: '—', correctSet, isCorrect:false,
+      variante: q.variante, explicatie: q.explicatie, status_verificare: q.status_verificare,
+      baremSet
+    });
+  }
+  renderResults();
+  showView('results');
+}
+
+const categories = Array.from(new Set(DATA.questions.map(q=>q.categorie)));
+
+function catCount(cat){ return DATA.questions.filter(q=>q.categorie===cat).length; }
+
+function renderChips(){
+  const el = document.getElementById('categoryChips');
+  el.innerHTML = '';
+  categories.forEach(cat=>{
+    const chip = document.createElement('div');
+    chip.className = 'chip active';
+    chip.innerHTML = escapeHtml(cat)+' <span class="count">'+catCount(cat)+'</span>';
+    chip.addEventListener('click', ()=>{
+      if(state.selectedCats.has(cat)){
+        if(state.selectedCats.size>1){ state.selectedCats.delete(cat); chip.classList.remove('active'); }
+      } else {
+        state.selectedCats.add(cat); chip.classList.add('active');
+      }
+      updateStartBtn();
+    });
+    el.appendChild(chip);
+  });
+}
+
+function updateStartBtn(){
+  const n = DATA.questions.filter(q=>state.selectedCats.has(q.categorie)).length;
+  document.getElementById('startBtn').textContent = 'Începe testul ('+n+' întrebări)';
+  document.getElementById('startBtn').disabled = n===0;
+}
+
+document.getElementById('toggleShuffleQ').addEventListener('click', function(){
+  state.shuffleQ = !state.shuffleQ; this.classList.toggle('on', state.shuffleQ);
+});
+document.getElementById('toggleShuffleA').addEventListener('click', function(){
+  state.shuffleA = !state.shuffleA; this.classList.toggle('on', state.shuffleA);
+});
+
+function showView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+}
+
+function bestScoreKey(){ return 'csie3-best-'+DATA.year; }
+function loadBest(){
+  const raw = localStorage.getItem(bestScoreKey());
+  return raw ? JSON.parse(raw) : null;
+}
+function renderBestNote(){
+  const b = loadBest();
+  const el = document.getElementById('bestScoreNote');
+  el.textContent = b ? ('Cel mai bun scor anterior: '+b.score+'/'+b.total+' ('+b.pct+'%)') : '';
+}
+
+document.getElementById('startBtn').addEventListener('click', startQuiz);
+document.getElementById('quitBtn').addEventListener('click', ()=>{ stopTimer(); showView('setup'); renderBestNote(); });
+document.getElementById('restartBtn').addEventListener('click', ()=>{ showView('setup'); renderBestNote(); });
+document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+
+function startQuiz(){
+  let pool = DATA.questions.filter(q=>state.selectedCats.has(q.categorie));
+  if(state.shuffleQ) pool = shuffle(pool);
+  state.pool = pool;
+  state.index = 0;
+  state.score = 0;
+  state.results = [];
+  state.order = pool.map(q=>{
+    const opts = ['a','b','c','d'];
+    return state.shuffleA ? shuffle(opts) : opts;
+  });
+  showView('quiz');
+  renderQuestion();
+  startTimer();
+}
+
+function renderQuestion(){
+  const q = state.pool[state.index];
+  const dispOrder = state.order[state.index];
+  document.getElementById('progressBar').style.width = Math.round(100*state.index/state.pool.length)+'%';
+  document.getElementById('quizPos').textContent = 'Întrebarea '+(state.index+1)+' din '+state.pool.length;
+  document.getElementById('quizCat').textContent = q.sursa_tag ? (q.categorie+' · '+q.sursa_tag) : q.categorie;
+  document.getElementById('quizScore').textContent = 'Scor: '+state.score;
+  document.getElementById('quizEnunt').innerHTML = q.enunt_html;
+  document.getElementById('nextBtn').style.display = 'none';
+  const fb = document.getElementById('quizFeedback');
+  fb.classList.remove('show','ok','ko');
+  document.getElementById('fbBaremWarn').style.display = 'none';
+
+  const optsEl = document.getElementById('quizOptions');
+  optsEl.innerHTML = '';
+  optsEl.dataset.locked = '0';
+  const displayLetters = ['A','B','C','D'];
+  dispOrder.forEach((origLetter, i)=>{
+    const btn = document.createElement('div');
+    btn.className = 'opt';
+    btn.dataset.orig = origLetter;
+    btn.innerHTML = '<span class="letter">'+displayLetters[i]+')</span><span class="txt">'+escapeHtml(q.variante[origLetter])+'</span>';
+    btn.addEventListener('click', ()=>selectOption(origLetter));
+    optsEl.appendChild(btn);
+  });
+}
+
+function selectOption(chosenLetter){
+  const q = state.pool[state.index];
+  const optsEl = document.getElementById('quizOptions');
+  if(optsEl.dataset.locked === '1') return;
+  optsEl.dataset.locked = '1';
+
+  const correctSet = letters(q.raspuns_corect);
+  const baremSet = letters(q.raspuns_barem);
+  const isCorrect = correctSet.includes(chosenLetter);
+  if(isCorrect) state.score++;
+
+  Array.from(optsEl.children).forEach(btn=>{
+    btn.classList.add('locked');
+    const l = btn.dataset.orig;
+    if(correctSet.includes(l)) btn.classList.add('correct');
+    else if(l === chosenLetter) btn.classList.add('incorrect');
+    else btn.classList.add('dim');
+    let tag = 'sursă: '+l.toUpperCase();
+    if(q.status_verificare === 'EROARE_BAREM' && baremSet.includes(l) && !correctSet.includes(l)){
+      tag += ' · alegerea baremului oficial';
+    }
+    const span = document.createElement('span');
+    span.className = 'tag';
+    span.textContent = tag;
+    btn.appendChild(span);
+  });
+
+  const fb = document.getElementById('quizFeedback');
+  fb.classList.add('show', isCorrect ? 'ok':'ko');
+  const title = document.getElementById('fbTitle');
+  title.className = 'fb-title '+(isCorrect?'ok-txt':'ko-txt');
+  title.textContent = isCorrect ? '✓ Corect' : ('✗ Greșit — răspunsul corect: '+correctSet.join(', ').toUpperCase());
+
+  const warnEl = document.getElementById('fbBaremWarn');
+  if(q.status_verificare === 'EROARE_BAREM'){
+    warnEl.style.display = 'block';
+    warnEl.textContent = '⚠ Barem oficial eronat: documentul original indică "'+baremSet.join(', ').toUpperCase()+'", dar răspunsul corect verificat este "'+correctSet.join(', ').toUpperCase()+'". Detalii mai jos.';
+  } else {
+    warnEl.style.display = 'none';
+  }
+  document.getElementById('fbExplic').textContent = q.explicatie;
+  document.getElementById('nextBtn').style.display = 'inline-flex';
+  document.getElementById('quizScore').textContent = 'Scor: '+state.score;
+
+  state.results.push({
+    nr: q.nr, categorie: q.categorie, sursa_tag: q.sursa_tag, chosen: chosenLetter, correctSet, isCorrect,
+    variante: q.variante, explicatie: q.explicatie, status_verificare: q.status_verificare,
+    baremSet
+  });
+}
+
+function nextQuestion(){
+  state.index++;
+  if(state.index >= state.pool.length){ stopTimer(); renderResults(); showView('results'); }
+  else renderQuestion();
+}
+
+function renderResults(){
+  const total = state.results.length;
+  const score = state.results.filter(r=>r.isCorrect).length;
+  const pct = total ? Math.round(100*score/total) : 0;
+  document.getElementById('resScoreN').textContent = score+'/'+total;
+  document.getElementById('resPercent').textContent = pct+'%';
+  document.getElementById('resPunctaj').textContent = 'Punctaj estimat: '+(score*3)+' puncte (din '+(total*3)+')';
+
+  const best = loadBest();
+  if(!best || score/total > best.score/best.total){
+    localStorage.setItem(bestScoreKey(), JSON.stringify({score, total, pct}));
+  }
+
+  const catStats = {};
+  state.results.forEach(r=>{
+    catStats[r.categorie] = catStats[r.categorie] || {ok:0,total:0};
+    catStats[r.categorie].total++;
+    if(r.isCorrect) catStats[r.categorie].ok++;
+  });
+  const catBarsEl = document.getElementById('resCatBars');
+  catBarsEl.innerHTML = '';
+  Object.keys(catStats).forEach(cat=>{
+    const s = catStats[cat];
+    const p = Math.round(100*s.ok/s.total);
+    const row = document.createElement('div');
+    row.className = 'cat-bar-row';
+    row.innerHTML = '<div class="cat-bar-label"><span>'+escapeHtml(cat)+'</span><span>'+s.ok+'/'+s.total+'</span></div>'+
+      '<div class="cat-bar-outer"><div class="cat-bar-inner" style="width:'+p+'%"></div></div>';
+    catBarsEl.appendChild(row);
+  });
+
+  const tbody = document.getElementById('resTableBody');
+  tbody.innerHTML = '';
+  state.results.forEach((r, idx)=>{
+    const tr = document.createElement('tr');
+    tr.className = r.isCorrect ? 'hit':'miss';
+    const catCell = r.sursa_tag ? (r.categorie+' · '+r.sursa_tag) : r.categorie;
+    tr.innerHTML = '<td>'+(r.isCorrect?'✓':'✗')+' '+r.nr+'</td><td>'+escapeHtml(catCell)+'</td><td>'+r.chosen.toUpperCase()+'</td><td>'+r.correctSet.join(',').toUpperCase()+'</td>';
+    const detail = document.createElement('tr');
+    detail.className = 'review-detail';
+    const td = document.createElement('td');
+    td.colSpan = 4;
+    let warnHtml = '';
+    if(r.status_verificare === 'EROARE_BAREM'){
+      warnHtml = '<div class="barem-warn" style="display:block;margin-bottom:8px">⚠ Barem oficial eronat (indica '+r.baremSet.join(',').toUpperCase()+')</div>';
+    }
+    td.innerHTML = warnHtml + escapeHtml(r.explicatie).replace(/\n/g,'<br>');
+    detail.appendChild(td);
+    tr.addEventListener('click', ()=>{ detail.classList.toggle('show'); });
+    tbody.appendChild(tr);
+    tbody.appendChild(detail);
+  });
+}
+
+renderChips();
+updateStartBtn();
+renderBestNote();
+</script>
+</body>
+</html>

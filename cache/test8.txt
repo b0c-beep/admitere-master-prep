@@ -1,0 +1,879 @@
+=== ADMITERE MASTER CSIE3 - TEST SIMULARE 8 ===
+Sursă: generat original, pe baza tiparelor din subiectele 2024-2025
+Format sursă original: intrebari noi, verificate prin compilare (C/C++, OOP) si
+  rationament riguros (SQL, PL/SQL)
+Număr total întrebări: 30
+Punctaj: 3 puncte/întrebare corectă, punctaj maxim 90 puncte
+
+##### ÎNTREBAREA 1 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa la rulare urmatorul program C?
+#include <stdio.h>
+#include <stdlib.h>
+struct Nod { int val; struct Nod* next; };
+int main() {
+    struct Nod* cap = NULL;
+    int v[] = {4, 7, 2, 9};
+    for (int i = 0; i < 4; i++) {
+        struct Nod* n = (struct Nod*)malloc(sizeof(struct Nod));
+        n->val = v[i];
+        n->next = cap;
+        cap = n;
+    }
+    int s = 0;
+    struct Nod* p = cap;
+    while (p != NULL) { s += p->val; p = p->next; }
+    printf("%d %d", cap->val, s);
+    return 0;
+}
+
+VARIANTE:
+a) 4 22
+b) 9 22
+c) 9 18
+d) 4 9
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Inserarea se face la INCEPUTUL listei (inserare la cap): fiecare nod nou primeste next = cap, apoi devine noul cap. Se insereaza in ordine 4, 7, 2, 9, deci lista rezultata are in fata ULTIMUL element inserat: cap->val este 9 (nu 4). Al doilea numar afisat este suma tuturor valorilor: 4+7+2+9 = 22, calculata prin parcurgerea completa a listei. Deci "9 22", varianta b. a greseste primul element (crede ca inserarea se face la coada, deci cap ar fi 4). c greseste suma. d nu corespunde nici primului element nici sumei. Verificat prin compilare si rulare (gcc): programul afiseaza 9 22.
+
+##### ÎNTREBAREA 2 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce va afisa la rulare urmatorul program C++?
+
+#include <iostream>
+using namespace std;
+class Radio {
+public:
+    void porneste() { cout << "R"; }
+};
+class Ceas {
+public:
+    void porneste() { cout << "C"; }
+};
+class RadioCeas : public Radio, public Ceas {
+public:
+    void start() {
+        Radio::porneste();
+        Ceas::porneste();
+    }
+};
+int main() {
+    RadioCeas rc;
+    rc.start();
+    return 0;
+}
+
+VARIANTE:
+a) RR
+b) CC
+c) RC
+d) genereaza eroare de compilare deoarece metoda porneste este ambigua
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Clasa RadioCeas mosteneste prin mostenire multipla ambele clase Radio si Ceas, fiecare avand o metoda porneste(). Un apel simplu porneste() ar fi ambiguu, insa in corpul metodei start() apelurile sunt CALIFICATE EXPLICIT cu operatorul de rezolutie a domeniului: Radio::porneste() apeleaza versiunea din Radio (afiseaza "R"), iar Ceas::porneste() apeleaza versiunea din Ceas (afiseaza "C"). Rezultatul este "RC", varianta c. a si b presupun ca s-ar apela de doua ori aceeasi versiune, ceea ce e fals - calificarea selecteaza exact clasa dorita. d este falsa: ambiguitatea apare doar la un apel NECALIFICAT; folosirea prefixului NumeClasa:: rezolva complet ambiguitatea, deci codul compileaza fara erori. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza RC.
+
+##### ÎNTREBAREA 3 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela:
+ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume
+VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3))
+Se creeaza vederea:
+CREATE OR REPLACE VIEW v_dep10 AS
+   SELECT id_angajat, nume, salariul, id_departament
+   FROM angajati
+   WHERE id_departament = 10;
+Apoi se executa:
+INSERT INTO v_dep10 (id_angajat, nume, salariul, id_departament)
+VALUES (301, 'Ionescu', 5000, 20);
+COMMIT;
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) comanda INSERT genereaza eroare, deoarece nu se poate insera printr-o vedere
+b) inserarea reuseste; randul se adauga in tabela ANGAJATI, dar NU va fi vizibil prin vederea v_dep10
+c) inserarea reuseste, iar randul devine vizibil prin vederea v_dep10
+d) comanda INSERT genereaza eroare, deoarece id_departament = 20 nu respecta conditia WHERE a vederii
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Vederea v_dep10 este o vedere SIMPLA (o singura tabela, fara GROUP BY, DISTINCT, functii de grup sau JOIN), deci este ACTUALIZABILA - se poate face INSERT/UPDATE/DELETE prin ea, operatia propagandu-se catre tabela de baza ANGAJATI. Deoarece vederea NU a fost creata cu WITH CHECK OPTION, motorul Oracle NU verifica daca randul inserat respecta conditia WHERE id_departament = 10. Prin urmare inserarea reuseste, randul (cu id_departament = 20) se adauga fizic in tabela ANGAJATI, dar la o interogare ulterioara a vederii v_dep10 acel rand NU va aparea, pentru ca nu satisface filtrul id_departament = 10. Deci b. a si c sunt gresite. d ar fi adevarata DOAR daca vederea ar fi fost definita cu WITH CHECK OPTION; in absenta acestei clauze, conditia WHERE nu este impusa la inserare.
+
+##### ÎNTREBAREA 4 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera functia PL/SQL:
+CREATE OR REPLACE FUNCTION f_suma(n NUMBER) RETURN NUMBER IS
+BEGIN
+   IF n = 0 THEN
+      RETURN 0;
+   ELSE
+      RETURN n + f_suma(n - 1);
+   END IF;
+END;
+/
+Ce valoare returneaza apelul f_suma(5)?
+
+VARIANTE:
+a) 5
+b) 10
+c) 15
+d) 120
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia este RECURSIVA si calculeaza suma numerelor naturale de la 1 la n, cu cazul de baza n = 0 care returneaza 0. Desfasurarea apelurilor: f_suma(5) = 5 + f_suma(4) = 5 + 4 + f_suma(3) = 5 + 4 + 3 + f_suma(2) = 5 + 4 + 3 + 2 + f_suma(1) = 5 + 4 + 3 + 2 + 1 + f_suma(0). Cazul de baza f_suma(0) = 0. Compunand: 5+4+3+2+1+0 = 15. Deci c. a=5 si b=10 sunt sume partiale. d=120 ar fi produsul (factorialul 5!), dar functia foloseste adunarea (n + ...), nu inmultirea.
+
+##### ÎNTREBAREA 5 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+In C++, o clasa care contine cel putin o functie membru virtuala pura (declarata cu
+"= 0") este numita clasa abstracta. Precizati care dintre urmatoarele afirmatii
+referitoare la o clasa abstracta este CORECTA:
+
+VARIANTE:
+a) o clasa abstracta nu poate fi instantiata direct (nu se pot crea obiecte de tipul ei), dar poate fi folosita ca tip pentru pointeri si referinte
+b) o clasa abstracta poate fi instantiata direct, cu conditia sa se apeleze explicit constructorul
+c) o clasa derivata dintr-o clasa abstracta este obligatoriu tot abstracta, indiferent daca implementeaza sau nu metodele virtuale pure
+d) o clasa abstracta nu poate avea constructori sau date membru
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: O clasa abstracta (care are cel putin o metoda virtuala pura, neimplementata) NU poate fi instantiata direct - compilatorul interzice crearea de obiecte de acel tip, tocmai pentru ca exista metode fara implementare. Totusi, se pot declara pointeri si referinte de tipul clasei abstracte, folositi pentru polimorfism (adreseaza obiecte ale claselor derivate concrete). Deci a. b este falsa: instantierea directa este imposibila, indiferent de apelul constructorului. c este falsa: o clasa derivata care IMPLEMENTEAZA (suprascrie) toate metodele virtuale pure devine clasa CONCRETA si poate fi instantiata; ramane abstracta doar daca lasa cel putin o metoda virtuala pura neimplementata. d este falsa: o clasa abstracta poate avea constructori (apelati de clasele derivate) si date membru; ceea ce nu poate face este sa fie instantiata direct.
+
+##### ÎNTREBAREA 6 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa la rulare urmatorul program C?
+#include <stdio.h>
+#include <stdlib.h>
+struct Nod { int info; struct Nod* urm; };
+int numara(struct Nod* p) {
+    if (p == NULL) return 0;
+    return 1 + numara(p->urm);
+}
+int main() {
+    struct Nod* cap = NULL;
+    for (int i = 1; i <= 5; i++) {
+        struct Nod* n = (struct Nod*)malloc(sizeof(struct Nod));
+        n->info = i;
+        n->urm = cap;
+        cap = n;
+    }
+    cap = cap->urm;
+    printf("%d", numara(cap));
+    return 0;
+}
+
+VARIANTE:
+a) 5
+b) 4
+c) 6
+d) 0
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: In bucla se insereaza la inceputul listei 5 noduri (valorile 1..5), deci lista are 5 elemente. Instructiunea cap = cap->urm muta capul pe al doilea element, "eliminand" logic primul nod din lista parcursa; astfel lista pornind de la noul cap contine 4 noduri. Functia numara este RECURSIVA si numara nodurile: caz de baza p == NULL returneaza 0, altfel 1 + numara(p->urm). Pentru o lista de 4 noduri rezultatul este 4. Deci b. a=5 ar fi numarul de noduri INAINTE de mutarea capului. c=6 este gresit. d=0 ar fi rezultatul doar daca lista ar fi vida. Verificat prin compilare si rulare (gcc): programul afiseaza 4.
+
+##### ÎNTREBAREA 7 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela:
+ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume
+VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3))
+Se creeaza vederea:
+CREATE OR REPLACE VIEW v_dep20 AS
+   SELECT id_angajat, nume, salariul, id_departament
+   FROM angajati
+   WHERE id_departament = 20
+   WITH CHECK OPTION;
+Apoi se executa:
+INSERT INTO v_dep20 (id_angajat, nume, salariul, id_departament)
+VALUES (410, 'Marin', 6000, 30);
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) inserarea reuseste, iar randul se adauga in tabela ANGAJATI cu id_departament = 30
+b) inserarea reuseste, dar id_departament este fortat automat la valoarea 20
+c) comanda genereaza eroare, deoarece randul inserat (id_departament = 30) nu respecta conditia WHERE impusa prin WITH CHECK OPTION
+d) comanda genereaza eroare, deoarece o vedere cu WITH CHECK OPTION nu permite deloc operatii INSERT
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Clauza WITH CHECK OPTION impune ca orice rand inserat sau modificat prin vedere sa RESPECTE conditia WHERE a vederii (aici id_departament = 20), astfel incat randul afectat sa ramana vizibil prin vedere. Cum inserarea incearca sa adauge un rand cu id_departament = 30, care NU satisface conditia id_departament = 20, motorul Oracle respinge operatia cu eroarea ORA-01402 (view WITH CHECK OPTION where-clause violation). Deci c. a este falsa: fara WITH CHECK OPTION randul s-ar fi inserat (nevizibil), dar clauza CHECK il blocheaza. b este falsa: Oracle nu "corecteaza" valoarea, ci respinge inserarea. d este falsa: WITH CHECK OPTION permite operatii INSERT/UPDATE, dar numai pentru randuri care respecta conditia WHERE - blocheaza doar randurile care ar iesi din vedere.
+
+##### ÎNTREBAREA 8 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Ce va afisa executia urmatorului bloc PL/SQL?
+SET SERVEROUTPUT ON
+DECLARE
+   v_nota   NUMBER := 8;
+   v_calif  VARCHAR2(20);
+BEGIN
+   v_calif := CASE
+                 WHEN v_nota >= 9 THEN 'excelent'
+                 WHEN v_nota >= 7 THEN 'bine'
+                 WHEN v_nota >= 5 THEN 'satisfacator'
+                 ELSE 'nesatisfacator'
+              END;
+   DBMS_OUTPUT.PUT_LINE(v_calif);
+END;
+/
+
+VARIANTE:
+a) excelent
+b) bine
+c) satisfacator
+d) nesatisfacator
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Se foloseste EXPRESIA CASE (forma cautata / searched CASE), care evalueaza conditiile WHEN in ORDINE, de sus in jos, si returneaza rezultatul PRIMEI conditii adevarate, ignorand restul. Cu v_nota = 8: prima conditie v_nota >= 9 este FALSA (8 nu e >= 9); a doua conditie v_nota >= 7 este ADEVARATA (8 >= 7), deci expresia CASE returneaza 'bine' si se opreste, fara sa mai evalueze restul ramurilor. Astfel v_calif = 'bine'. Deci b. a ar fi rezultatul pentru note >= 9. c ('satisfacator') si d ('nesatisfacator') corespund unor ramuri ulterioare care nu mai sunt evaluate, deoarece o conditie anterioara a fost deja adevarata.
+
+##### ÎNTREBAREA 9 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce va afisa la rulare urmatorul program C++?
+
+#include <iostream>
+using namespace std;
+class A {
+public:
+    A() { cout << "A"; }
+    ~A() { cout << "a"; }
+};
+class B {
+public:
+    B() { cout << "B"; }
+    ~B() { cout << "b"; }
+};
+class C : public A, public B {
+public:
+    C() { cout << "C"; }
+    ~C() { cout << "c"; }
+};
+int main() {
+    C obj;
+    cout << "-";
+    return 0;
+}
+
+VARIANTE:
+a) ABC-cba
+b) ABC-cab
+c) BAC-cba
+d) ABC-abc
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: La construirea unui obiect cu mostenire multipla, constructorii claselor de baza se apeleaza in ORDINEA in care sunt enumerate in lista de mostenire (public A, public B), apoi corpul constructorului clasei derivate. Deci: A() -> "A", B() -> "B", C() -> "C", rezultand "ABC". Apoi se afiseaza "-". La sfarsitul lui main, obiectul obj se distruge: destructorii se apeleaza in ordine STRICT INVERSA constructorilor. Ordinea constructorilor a fost A, B, C, deci ordinea destructorilor este C, B, A: ~C() -> "c", ~B() -> "b", ~A() -> "a", rezultand "cba". Total: "ABC-cba", varianta a. b greseste ordinea destructorilor claselor de baza (ar trebui b inainte de a, adica invers fata de constructori). c greseste ordinea constructorilor bazelor. d apeleaza destructorii in aceeasi ordine ca si constructorii, ceea ce este gresit. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza ABC-cba.
+
+##### ÎNTREBAREA 10 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa la rulare urmatorul program C?
+#include <stdio.h>
+int suma(int a[], int n) {
+    if (n == 0) return 0;
+    return a[n - 1] + suma(a, n - 1);
+}
+int main() {
+    int a[] = {3, 1, 4, 1, 5, 9};
+    printf("%d", suma(a, 6));
+    return 0;
+}
+
+VARIANTE:
+a) 9
+b) 23
+c) 22
+d) 14
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia suma este RECURSIVA si calculeaza suma primelor n elemente ale vectorului, procesand elementele dinspre coada spre inceput: caz de baza n == 0 returneaza 0, altfel a[n-1] + suma(a, n-1). Pentru vectorul {3, 1, 4, 1, 5, 9} cu n = 6 se aduna toate elementele: 3 + 1 + 4 + 1 + 5 + 9 = 23. Deci b. a=9 este doar ultimul element (a[5]). c=22 si d=14 sunt sume gresite. Verificat prin compilare si rulare (gcc): programul afiseaza 23.
+
+##### ÎNTREBAREA 11 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabelele:
+ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), salariul
+NUMBER(10,2), id_departament NUMBER(3))
+Se creeaza vederea:
+CREATE OR REPLACE VIEW v_stat_dep AS
+   SELECT id_departament, COUNT(*) nr_ang, AVG(salariul) sal_mediu
+   FROM angajati
+   GROUP BY id_departament;
+Apoi se incearca:
+INSERT INTO v_stat_dep (id_departament, nr_ang, sal_mediu)
+VALUES (50, 3, 4000);
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) inserarea reuseste si adauga un rand nou in tabela ANGAJATI
+b) inserarea genereaza eroare, deoarece vederea contine functii de grup si GROUP BY, deci NU este actualizabila prin INSERT
+c) inserarea reuseste, dar numai coloana id_departament este completata in tabela de baza
+d) inserarea reuseste doar daca se adauga clauza WITH CHECK OPTION la definitia vederii
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Vederea v_stat_dep este o vedere COMPLEXA (de grup): contine functii agregat (COUNT, AVG) si clauza GROUP BY. Coloanele nr_ang si sal_mediu sunt valori CALCULATE (rezultate din agregare), care nu corespund unor coloane fizice individuale in tabela de baza, iar un rand al vederii sintetizeaza mai multe randuri din ANGAJATI. Din acest motiv, o astfel de vedere NU este actualizabila prin INSERT/UPDATE/DELETE, iar Oracle respinge inserarea cu o eroare (ORA-01732: data manipulation operation not legal on this view). Deci b. a si c sunt false: nu se poate insera prin vedere cu GROUP BY/functii de grup. d este falsa: WITH CHECK OPTION nu transforma o vedere neactualizabila in una actualizabila - restrictia provine din prezenta agregarii, nu din lipsa clauzei CHECK.
+
+##### ÎNTREBAREA 12 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera functia PL/SQL:
+CREATE OR REPLACE FUNCTION fact(n NUMBER) RETURN NUMBER IS
+BEGIN
+   IF n <= 1 THEN
+      RETURN 1;
+   ELSE
+      RETURN n * fact(n - 1);
+   END IF;
+END;
+/
+Ce valoare returneaza apelul fact(4)?
+
+VARIANTE:
+a) 10
+b) 16
+c) 24
+d) 4
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia este implementarea RECURSIVA a factorialului, cu cazul de baza n <= 1 care returneaza 1. Desfasurarea apelurilor: fact(4) = 4 * fact(3) = 4 * 3 * fact(2) = 4 * 3 * 2 * fact(1). Cazul de baza fact(1) = 1. Compunand de jos in sus: fact(1)=1, fact(2)=2*1=2, fact(3)=3*2=6, fact(4)=4*6=24. Deci c. a=10 ar fi suma 4+3+2+1 (dar functia foloseste inmultirea). b=16 ar fi 4 la puterea 2. d=4 este doar valoarea initiala. Rezultatul corect 4! = 24.
+
+##### ÎNTREBAREA 13 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce va afisa la rulare urmatorul program C++?
+
+#include <iostream>
+using namespace std;
+class Baza {
+public:
+    Baza() { cout << "B"; }
+    ~Baza() { cout << "b"; }
+};
+class Derivat : public Baza {
+public:
+    Derivat() { cout << "D"; }
+    ~Derivat() { cout << "d"; }
+};
+int main() {
+    Baza* p = new Derivat();
+    delete p;
+    return 0;
+}
+
+VARIANTE:
+a) BDdb
+b) BDb
+c) BDbd
+d) BD
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: La new Derivat() se construieste un obiect Derivat: intai constructorul bazei Baza() -> "B", apoi constructorul Derivat() -> "D", deci "BD". Pointerul p este de tip Baza* si adreseaza un obiect Derivat. La delete p, deoarece destructorul clasei de baza NU este declarat virtual, apelul destructorului se rezolva STATIC (dupa tipul pointerului, Baza*), deci se apeleaza DOAR destructorul ~Baza() -> "b". Destructorul ~Derivat() NU se apeleaza - acesta este un caz clasic de comportament incorect (memory leak conceptual) cauzat de LIPSA unui destructor virtual in clasa de baza. Rezultat total: "BDb", varianta b. a (BDdb) ar fi rezultatul DACA destructorul bazei ar fi fost virtual (atunci s-ar apela intai ~Derivat apoi ~Baza). c si d sunt gresite. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza BDb.
+
+##### ÎNTREBAREA 14 #####
+CATEGORIE: Baze de date (teorie)
+ENUNT:
+Se considera o schema NENORMALIZATA in care datele despre studenti si cursurile la
+care sunt inscrisi sunt stocate intr-o singura tabela INSCRIERI (id_student,
+nume_student, id_curs, denumire_curs, nume_profesor), in care denumire_curs si
+nume_profesor se repeta pentru fiecare student inscris la acelasi curs. Precizati
+care dintre urmatoarele afirmatii referitoare la anomaliile acestei scheme este CORECTA:
+
+VARIANTE:
+a) anomalia de INSERARE consta in imposibilitatea de a inregistra un curs nou (cu profesorul sau) atata timp cat niciun student nu este inca inscris la el
+b) anomalia de STERGERE nu poate aparea niciodata intr-o astfel de schema, indiferent de operatii
+c) anomalia de ACTUALIZARE se elimina automat prin adaugarea unei chei primare pe id_student
+d) o schema nenormalizata ca aceasta nu prezinta niciun fel de redundanta a datelor
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Intr-o schema nenormalizata care amesteca in aceeasi tabela informatii despre entitati diferite (studenti si cursuri), apar cele trei tipuri clasice de anomalii. Anomalia de INSERARE: nu putem introduce datele unui curs nou (denumire_curs, nume_profesor) decat daca exista cel putin un student inscris la acel curs, pentru ca fiecare rand necesita un id_student - deci a este corecta. Anomalia de STERGERE: daca stergem singurul student inscris la un curs, pierdem si informatia despre curs si profesor, deci b este falsa (anomalia de stergere chiar poate aparea). Anomalia de ACTUALIZARE: daca se schimba profesorul unui curs, valoarea trebuie modificata in TOATE randurile studentilor inscrisi la acel curs; o simpla cheie primara pe id_student nu rezolva aceasta redundanta - deci c este falsa. d este falsa: schema prezinta redundanta evidenta (denumire_curs si nume_profesor se repeta pentru fiecare student). Solutia corecta este NORMALIZAREA (descompunerea in tabele separate: STUDENTI, CURSURI, INSCRIERI).
+
+##### ÎNTREBAREA 15 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa la rulare urmatorul program C?
+#include <stdio.h>
+#include <stdlib.h>
+struct Nod { int val; struct Nod* next; };
+void afis(struct Nod* p) {
+    if (p == NULL) return;
+    afis(p->next);
+    printf("%d ", p->val);
+}
+int main() {
+    struct Nod* cap = NULL;
+    int v[] = {10, 20, 30};
+    for (int i = 0; i < 3; i++) {
+        struct Nod* n = (struct Nod*)malloc(sizeof(struct Nod));
+        n->val = v[i];
+        n->next = cap;
+        cap = n;
+    }
+    afis(cap);
+    return 0;
+}
+
+VARIANTE:
+a) 30 20 10
+b) 10 20 30
+c) 30 30 30
+d) 10 10 10
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Inserarea se face la INCEPUTUL listei (n->next = cap; cap = n). Inserand in ordine 10, 20, 30, lista rezultata are elementele in ordine INVERSA fata de inserare: capul este 30, apoi 20, apoi 10 (deci lista fizica: 30 -> 20 -> 10). Functia afis este RECURSIVA si tipareste "in oglinda": apeleaza mai intai afis(p->next) (coboara pana la sfarsitul listei) si abia DUPA revenire tipareste p->val. Astfel se afiseaza valorile in ordine inversa parcurgerii listei, adica: pornind de la ultimul nod al listei (10), apoi 20, apoi 30 - rezultand "10 20 30". Deci b. a=30 20 10 ar fi ordinea de parcurgere directa a listei (daca s-ar tipari INAINTE de apelul recursiv). c si d sunt imposibile (valorile sunt distincte). Verificat prin compilare si rulare (gcc): programul afiseaza 10 20 30.
+
+##### ÎNTREBAREA 16 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela:
+ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), salariul
+NUMBER(10,2), id_departament NUMBER(3))
+Se creeaza vederea:
+CREATE OR REPLACE VIEW v_bine_platiti AS
+   SELECT id_angajat, nume, salariul, id_departament
+   FROM angajati
+   WHERE salariul > 3000
+   WITH CHECK OPTION;
+Un angajat vizibil prin vedere are salariul 5000. Se executa:
+UPDATE v_bine_platiti SET salariul = 2000 WHERE id_angajat = 100;
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) actualizarea reuseste, iar salariul devine 2000 in tabela ANGAJATI
+b) actualizarea genereaza eroare, deoarece noul salariu (2000) nu mai respecta conditia salariul > 3000 impusa prin WITH CHECK OPTION
+c) actualizarea reuseste, dar salariul este limitat automat la valoarea minima 3000
+d) actualizarea genereaza eroare, deoarece nu se poate face UPDATE printr-o vedere
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Vederea a fost definita cu WITH CHECK OPTION, care garanteaza ca orice rand modificat prin vedere trebuie sa CONTINUE sa respecte conditia WHERE (salariul > 3000), adica sa ramana vizibil prin vedere dupa modificare. Actualizarea incearca sa seteze salariul la 2000, valoare care NU mai satisface conditia salariul > 3000; randul ar "iesi" din vedere. Prin urmare Oracle respinge operatia cu eroarea ORA-01402 (view WITH CHECK OPTION where-clause violation). Deci b. a este falsa: fara WITH CHECK OPTION actualizarea ar fi reusit (randul ar fi disparut din vedere), dar clauza CHECK o blocheaza. c este falsa: Oracle nu ajusteaza valorile, ci respinge modificarea. d este falsa: vederea este simpla (o tabela, fara agregare), deci este actualizabila prin UPDATE; blocajul provine strict din incalcarea conditiei WITH CHECK OPTION.
+
+##### ÎNTREBAREA 17 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera functia PL/SQL:
+CREATE OR REPLACE FUNCTION fib(n NUMBER) RETURN NUMBER IS
+BEGIN
+   IF n = 1 OR n = 2 THEN
+      RETURN 1;
+   ELSE
+      RETURN fib(n - 1) + fib(n - 2);
+   END IF;
+END;
+/
+Ce valoare returneaza apelul fib(6)?
+
+VARIANTE:
+a) 5
+b) 8
+c) 13
+d) 6
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia calculeaza RECURSIV termenii sirului lui Fibonacci, cu cazurile de baza fib(1) = fib(2) = 1, iar pentru n > 2, fib(n) = fib(n-1) + fib(n-2). Calculand termenii: fib(1)=1, fib(2)=1, fib(3)=fib(2)+fib(1)=1+1=2, fib(4)=fib(3)+fib(2)=2+1=3, fib(5)=fib(4)+fib(3)=3+2=5, fib(6)=fib(5)+fib(4)=5+3=8. Deci b. a=5 este fib(5) (termenul anterior). c=13 este fib(7) (termenul urmator). d=6 este chiar argumentul n, nu termenul corespunzator. Rezultatul corect fib(6) = 8.
+
+##### ÎNTREBAREA 18 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce va afisa la rulare urmatorul program C++?
+
+#include <iostream>
+using namespace std;
+class Baza {
+public:
+    Baza() { cout << "B"; }
+    virtual ~Baza() { cout << "b"; }
+};
+class Derivat : public Baza {
+public:
+    Derivat() { cout << "D"; }
+    ~Derivat() { cout << "d"; }
+};
+int main() {
+    Baza* p = new Derivat();
+    delete p;
+    return 0;
+}
+
+VARIANTE:
+a) BDb
+b) BDdb
+c) BDbd
+d) BbDd
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: La new Derivat() constructorii se apeleaza baza-apoi-derivat: Baza() -> "B", Derivat() -> "D", deci "BD". Spre deosebire de cazul cu destructor nevirtual, aici destructorul clasei de baza este declarat VIRTUAL (virtual ~Baza()). Prin urmare, la delete p (unde p este Baza* dar adreseaza un obiect Derivat), apelul destructorului se rezolva DINAMIC (polimorfic), dupa tipul REAL al obiectului: se apeleaza intai destructorul clasei derivate ~Derivat() -> "d", apoi automat destructorul clasei de baza ~Baza() -> "b", deci "db". Rezultat total: "BDdb", varianta b. a (BDb) ar fi rezultatul DACA destructorul nu ar fi fost virtual (s-ar apela doar ~Baza). Acesta este exact motivul pentru care, in mostenire, destructorul clasei de baza trebuie declarat virtual: pentru a garanta distrugerea corecta si completa a obiectului la stergere printr-un pointer catre baza. c si d au ordine gresita. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza BDdb.
+
+##### ÎNTREBAREA 19 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa la rulare urmatorul program C?
+#include <stdio.h>
+#include <stdlib.h>
+struct Nod { int val; struct Nod* next; };
+int main() {
+    struct Nod *cap = NULL, *coada = NULL;
+    for (int i = 1; i <= 4; i++) {
+        struct Nod* n = (struct Nod*)malloc(sizeof(struct Nod));
+        n->val = i * i;
+        n->next = NULL;
+        if (cap == NULL) { cap = n; coada = n; }
+        else { coada->next = n; coada = n; }
+    }
+    struct Nod* p = cap;
+    while (p != NULL) { printf("%d ", p->val); p = p->next; }
+    return 0;
+}
+
+VARIANTE:
+a) 16 9 4 1
+b) 1 4 9 16
+c) 1 2 3 4
+d) 1 1 1 1
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Aici inserarea se face la SFARSITUL listei (inserare la coada): se retin doi pointeri, cap si coada; primul nod devine si cap si coada, iar fiecare nod nou este legat dupa coada (coada->next = n) si devine noua coada. Astfel ordinea nodurilor in lista COINCIDE cu ordinea inserarii. Valorile inserate sunt i*i pentru i = 1..4, adica 1, 4, 9, 16. Parcurgand lista de la cap la coada se afiseaza "1 4 9 16". Deci b. a=16 9 4 1 ar fi rezultatul unei inserari la inceput (la cap). c=1 2 3 4 ignora ridicarea la patrat. d este imposibil (valorile sunt distincte). Verificat prin compilare si rulare (gcc): programul afiseaza 1 4 9 16.
+
+##### ÎNTREBAREA 20 #####
+CATEGORIE: SQL
+ENUNT:
+Precizati care dintre urmatoarele afirmatii referitoare la vederi (VIEW) in Oracle
+este CORECTA:
+
+VARIANTE:
+a) o vedere (VIEW) este o interogare stocata (cu nume) care NU pastreaza fizic date proprii; datele afisate sunt extrase, la fiecare acces, din tabelele de baza
+b) o vedere stocheaza fizic pe disc o copie a datelor din tabelele de baza la momentul crearii, iar acele date nu se mai actualizeaza niciodata
+c) o vedere nu poate fi niciodata folosita intr-o comanda SELECT, ci doar pentru INSERT
+d) crearea unei vederi cu CREATE VIEW duplica automat toate randurile tabelei de baza intr-o structura separata
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: O vedere (VIEW) este, in esenta, o INTEROGARE STOCATA (o interogare SELECT careia i s-a dat un nume). Vederea NU contine date proprii stocate fizic - in dictionarul de date se pastreaza doar definitia (textul interogarii). La fiecare interogare a vederii, motorul Oracle executa interogarea subiacenta si extrage datele CURENTE din tabelele de baza, deci vederea reflecta intotdeauna starea la zi a datelor. Deci a. b descrie de fapt o VEDERE MATERIALIZATA (materialized view), care intr-adevar stocheaza fizic rezultatul, dar o vedere obisnuita NU face acest lucru. c este falsa: o vedere se foloseste in primul rand in comenzi SELECT (si, daca este simpla/actualizabila, si in INSERT/UPDATE/DELETE). d este falsa: CREATE VIEW nu duplica randurile, ci memoreaza doar definitia interogarii.
+
+##### ÎNTREBAREA 21 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Ce va afisa executia urmatorului bloc PL/SQL?
+SET SERVEROUTPUT ON
+DECLARE
+   v_cod  NUMBER := 2;
+   v_zi   VARCHAR2(15);
+BEGIN
+   v_zi := CASE v_cod
+              WHEN 1 THEN 'luni'
+              WHEN 2 THEN 'marti'
+              WHEN 3 THEN 'miercuri'
+              ELSE 'necunoscut'
+           END;
+   DBMS_OUTPUT.PUT_LINE(v_zi);
+END;
+/
+
+VARIANTE:
+a) luni
+b) marti
+c) miercuri
+d) necunoscut
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Se foloseste EXPRESIA CASE in forma SIMPLA (cu selector): valoarea selectorului v_cod este comparata pe rand cu valorile din ramurile WHEN, iar la prima potrivire se returneaza rezultatul corespunzator. Cum v_cod = 2, se potriveste ramura WHEN 2 THEN 'marti', deci expresia returneaza 'marti' si se atribuie lui v_zi. Deci b. a ('luni') corespunde lui v_cod = 1, c ('miercuri') lui v_cod = 3, iar d ('necunoscut') ramurii ELSE, care s-ar executa doar daca v_cod nu ar fi 1, 2 sau 3. Deoarece exista potrivire exacta (2), ramura ELSE nu se atinge.
+
+##### ÎNTREBAREA 22 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+In contextul mostenirii in C++, se considera o clasa de baza ale carei obiecte pot fi
+adresate prin pointeri de tipul clasei de baza, dar create dinamic ca obiecte ale unei
+clase derivate (ex.: Baza* p = new Derivat(); ... delete p;). Precizati care dintre
+urmatoarele afirmatii este CORECTA:
+
+VARIANTE:
+a) daca destructorul clasei de baza NU este declarat virtual, la delete p se apeleaza doar destructorul clasei de baza, iar destructorul clasei derivate NU se executa, ceea ce poate produce scurgeri de memorie (memory leak)
+b) destructorii se apeleaza corect indiferent daca sunt virtuali sau nu, deoarece compilatorul deduce intotdeauna tipul real al obiectului
+c) un destructor nu poate fi niciodata declarat virtual in C++
+d) declararea destructorului clasei de baza ca virtual impiedica apelul destructorului clasei derivate
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Cand un obiect al unei clase derivate este creat dinamic si adresat printr-un pointer catre clasa de baza, comportamentul la delete depinde de virtualitatea destructorului. Daca destructorul clasei de baza NU este virtual, apelul se rezolva STATIC (dupa tipul pointerului, Baza*), deci se executa doar destructorul clasei de baza; destructorul clasei derivate este ignorat, iar resursele alocate de partea derivata a obiectului nu sunt eliberate (memory leak) - deci a este corecta. b este falsa: fara destructor virtual, compilatorul NU foloseste tipul real al obiectului, ci tipul static al pointerului. c este falsa: in C++ destructorul POATE (si de multe ori TREBUIE) declarat virtual intr-o clasa de baza folosita polimorfic. d este exact pe dos: destructorul virtual GARANTEAZA apelul destructorului derivat urmat de cel al bazei, nu il impiedica.
+
+##### ÎNTREBAREA 23 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa la rulare urmatorul program C?
+#include <stdio.h>
+#include <stdlib.h>
+struct Nod { int val; struct Nod* next; };
+int maxim(struct Nod* p) {
+    if (p->next == NULL) return p->val;
+    int m = maxim(p->next);
+    return p->val > m ? p->val : m;
+}
+int main() {
+    struct Nod* cap = NULL;
+    int v[] = {8, 15, 3, 15, 6};
+    for (int i = 0; i < 5; i++) {
+        struct Nod* n = (struct Nod*)malloc(sizeof(struct Nod));
+        n->val = v[i];
+        n->next = cap;
+        cap = n;
+    }
+    printf("%d", maxim(cap));
+    return 0;
+}
+
+VARIANTE:
+a) 8
+b) 6
+c) 15
+d) 47
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia maxim parcurge RECURSIV lista si determina valoarea maxima: cazul de baza este ultimul nod (p->next == NULL), care returneaza propria valoare; altfel se calculeaza recursiv maximul restului listei (m = maxim(p->next)) si se returneaza cea mai mare dintre p->val si m. Indiferent de ordinea nodurilor in lista (inserate la cap, deci ordinea fizica este 6, 15, 3, 15, 8), functia examineaza toate cele 5 valori {8, 15, 3, 15, 6} si returneaza maximul lor, care este 15. Deci c. a=8 si b=6 sunt valori individuale, nu maximul. d=47 ar fi o suma (nu are legatura cu maximul). Verificat prin compilare si rulare (gcc): programul afiseaza 15.
+
+##### ÎNTREBAREA 24 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela:
+ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), salariul
+NUMBER(10,2), id_departament NUMBER(3))
+Se creeaza vederea simpla (fara GROUP BY, DISTINCT sau JOIN):
+CREATE OR REPLACE VIEW v_dep30 AS
+   SELECT id_angajat, nume, salariul, id_departament
+   FROM angajati
+   WHERE id_departament = 30;
+Se executa:
+DELETE FROM v_dep30 WHERE salariul < 2500;
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) comanda sterge din tabela ANGAJATI randurile din departamentul 30 care au salariul < 2500
+b) comanda genereaza eroare, deoarece operatia DELETE nu poate fi executata printr-o vedere
+c) comanda sterge randurile doar din vedere, tabela de baza ANGAJATI ramanand neschimbata
+d) comanda sterge toti angajatii cu salariul < 2500 din TOATE departamentele
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Vederea v_dep30 este SIMPLA si ACTUALIZABILA (o singura tabela, fara GROUP BY, DISTINCT, functii de grup sau JOIN), deci operatiile DML - inclusiv DELETE - se propaga direct catre tabela de baza ANGAJATI. Comanda DELETE FROM v_dep30 WHERE salariul < 2500 se aplica randurilor "vazute" de vedere (care satisfac deja filtrul id_departament = 30) si care in plus au salariul < 2500. Aceste randuri sunt sterse fizic din tabela ANGAJATI. Deci a. b este falsa: DELETE este permis printr-o vedere simpla actualizabila. c este falsa: o vedere nu stocheaza date proprii - stergerea afecteaza intotdeauna tabela de baza, nu "doar vederea". d este falsa: filtrul vederii (id_departament = 30) restrange stergerea la departamentul 30; angajatii cu salariul < 2500 din alte departamente NU sunt vizibili prin vedere si nu sunt afectati.
+
+##### ÎNTREBAREA 25 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Ce va afisa executia urmatorului bloc PL/SQL?
+SET SERVEROUTPUT ON
+DECLARE
+   v_x   NUMBER := 4;
+   v_r   VARCHAR2(10);
+BEGIN
+   v_r := CASE
+             WHEN v_x = 1 THEN 'unu'
+             WHEN v_x = 2 THEN 'doi'
+             WHEN v_x = 3 THEN 'trei'
+          END;
+   IF v_r IS NULL THEN
+      DBMS_OUTPUT.PUT_LINE('NULL');
+   ELSE
+      DBMS_OUTPUT.PUT_LINE(v_r);
+   END IF;
+END;
+/
+
+VARIANTE:
+a) NULL
+b) unu
+c) genereaza eroare deoarece expresia CASE trebuie sa contina obligatoriu o clauza ELSE
+d) trei
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Expresia CASE (forma cautata) evalueaza conditiile WHEN pe rand. Cu v_x = 4, niciuna dintre conditii (v_x = 1, v_x = 2, v_x = 3) nu este adevarata. Cand nicio ramura WHEN nu se potriveste SI NU exista clauza ELSE, expresia CASE returneaza valoarea NULL (nu genereaza eroare). Astfel v_r primeste NULL, iar testul IF v_r IS NULL este adevarat, deci se afiseaza 'NULL'. Deci a. b si d corespund unor ramuri care nu se potrivesc (v_x nu este 1, nici 3). c este falsa: clauza ELSE este OPTIONALA in expresia CASE - in lipsa ei, valoarea implicita returnata cand nimic nu se potriveste este NULL, nu o eroare. Aceasta este o capcana clasica legata de tratarea valorii NULL in PL/SQL.
+
+##### ÎNTREBAREA 26 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce va afisa la rulare urmatorul program C++?
+
+#include <iostream>
+using namespace std;
+class Motor {
+public:
+    Motor() { cout << "1"; }
+    ~Motor() { cout << "6"; }
+};
+class Sasiu {
+public:
+    Sasiu() { cout << "2"; }
+    ~Sasiu() { cout << "5"; }
+};
+class Automobil : public Motor, public Sasiu {
+public:
+    Automobil() { cout << "3"; }
+    ~Automobil() { cout << "4"; }
+};
+int main() {
+    Automobil a;
+    return 0;
+}
+
+VARIANTE:
+a) 123456
+b) 321654
+c) 123654
+d) 126543
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: La construirea obiectului Automobil (mostenire multipla din Motor si Sasiu), constructorii claselor de baza se apeleaza in ordinea din lista de mostenire (public Motor, public Sasiu), apoi corpul constructorului derivat: Motor() -> "1", Sasiu() -> "2", Automobil() -> "3", deci "123". La distrugerea obiectului (la iesirea din main), destructorii se apeleaza in ordine STRICT INVERSA constructorilor: ~Automobil() -> "4", apoi ~Sasiu() -> "5", apoi ~Motor() -> "6", deci "456". Numerele au fost alese INTENTIONAT astfel incat secventa corecta constructori+destructori sa fie exact "123456". Deci a. b (321654) inverseaza gresit ordinea constructorilor. c (123654) inverseaza gresit ordinea celor doua clase de baza la distrugere (ar trebui Sasiu inainte de Motor, adica 5 inainte de 6). d nu respecta ordinea. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza 123456.
+
+##### ÎNTREBAREA 27 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela:
+ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), salariul
+NUMBER(10,2), id_departament NUMBER(3))
+Se creeaza vederea:
+CREATE OR REPLACE VIEW v_salarii AS
+   SELECT id_angajat, nume, salariul, salariul * 12 AS salariu_anual
+   FROM angajati;
+Apoi se executa:
+INSERT INTO v_salarii (id_angajat, nume, salariu_anual)
+VALUES (500, 'Radu', 60000);
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) inserarea genereaza eroare, deoarece salariu_anual este o coloana VIRTUALA (calculata prin expresie), in care nu se poate insera o valoare
+b) inserarea reuseste si seteaza automat salariul = 5000 (60000 / 12) in tabela de baza
+c) inserarea reuseste si adauga valoarea 60000 direct in coloana salariul a tabelei
+d) inserarea reuseste, iar coloana salariu_anual este stocata fizic in tabela ANGAJATI
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: In definitia vederii, coloana salariu_anual este rezultatul unei EXPRESII (salariul * 12), deci este o coloana VIRTUALA (calculata), care nu corespunde unei coloane fizice din tabela ANGAJATI. Nu se poate insera (sau actualiza) o valoare intr-o coloana derivata dintr-o expresie, deoarece motorul nu poate "descompune" invers valoarea in coloanele de baza. Oracle respinge inserarea cu eroarea ORA-01733 (virtual column not allowed here). Deci a. b este falsa: Oracle NU face calcul invers (60000/12) pentru a deduce salariul - operatia este pur si simplu interzisa. c este falsa: valoarea 60000 este destinata coloanei salariu_anual (virtuala), nu coloanei salariul; comanda esueaza inainte de a insera ceva. d este falsa: salariu_anual nu este stocata fizic - este calculata la fiecare interogare a vederii.
+
+##### ÎNTREBAREA 28 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera functia PL/SQL:
+CREATE OR REPLACE FUNCTION g(n NUMBER) RETURN NUMBER IS
+BEGIN
+   IF n <= 0 THEN
+      RETURN 0;
+   ELSE
+      RETURN n + g(n - 2);
+   END IF;
+END;
+/
+Ce valoare returneaza apelul g(7)?
+
+VARIANTE:
+a) 12
+b) 16
+c) 28
+d) 15
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia recursiva aduna argumentul cu rezultatul apelului pentru n-2, oprindu-se cand n <= 0 (returnand 0). Pentru g(7), lantul de apeluri parcurge valorile 7, 5, 3, 1, apoi -1 (care este <= 0): g(7) = 7 + g(5) = 7 + 5 + g(3) = 7 + 5 + 3 + g(1) = 7 + 5 + 3 + 1 + g(-1). Cazul de baza g(-1) = 0. Compunand: 7 + 5 + 3 + 1 + 0 = 16 (suma numerelor impare de la 1 la 7). Deci b. a=12 si d=15 sunt sume gresite. c=28 ar fi suma tuturor numerelor de la 1 la 7 (daca pasul ar fi -1, nu -2). Rezultatul corect g(7) = 16.
+
+##### ÎNTREBAREA 29 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+In C++, se considera o ierarhie de tip "diamant": o clasa de baza comuna Baza, doua
+clase intermediare D1 si D2 care mostenesc din Baza, si o clasa D3 care mosteneste
+din D1 si din D2 (mostenire multipla). Precizati care dintre urmatoarele afirmatii
+este CORECTA:
+
+VARIANTE:
+a) daca D1 si D2 mostenesc din Baza folosind mostenire VIRTUALA (class D1 : virtual public Baza), atunci obiectul de tip D3 contine un SINGUR subobiect Baza, evitandu-se duplicarea si ambiguitatea la accesarea membrilor din Baza
+b) mostenirea virtuala nu are niciun efect asupra numarului de subobiecte Baza dintr-un obiect D3
+c) fara mostenire virtuala, un obiect de tip D3 contine automat un singur subobiect Baza
+d) mostenirea virtuala este interzisa in C++, fiind inlocuita obligatoriu cu compunere
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: In ierarhia "diamant", daca D1 si D2 mostenesc NORMAL (nevirtual) din Baza, atunci un obiect D3 contine DOUA subobiecte Baza distincte (unul provenit prin D1, altul prin D2), ceea ce duce la duplicarea datelor si la AMBIGUITATE cand se acceseaza un membru mostenit din Baza (compilatorul nu stie care copie). Solutia este MOSTENIREA VIRTUALA (class D1 : virtual public Baza, class D2 : virtual public Baza): in acest caz, obiectul D3 va contine un SINGUR subobiect Baza, partajat, eliminand atat duplicarea cat si ambiguitatea. Deci a. b este falsa: mostenirea virtuala are exact efectul de a reduce la unu numarul de subobiecte Baza. c este falsa: fara mostenire virtuala apar DOUA subobiecte Baza, nu unul. d este falsa: mostenirea virtuala este un mecanism legal si standard in C++, folosit tocmai pentru rezolvarea problemei diamantului.
+
+##### ÎNTREBAREA 30 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Se compileaza urmatorul program C++. Ce se intampla?
+
+#include <iostream>
+using namespace std;
+class Persoana {
+public:
+    void afiseaza() { cout << "P"; }
+};
+class Angajat {
+public:
+    void afiseaza() { cout << "A"; }
+};
+class Manager : public Persoana, public Angajat {
+public:
+    void info() {
+        afiseaza();
+    }
+};
+int main() {
+    Manager m;
+    m.info();
+    return 0;
+}
+
+VARIANTE:
+a) afiseaza "P"
+b) afiseaza "A"
+c) genereaza eroare de compilare, deoarece apelul afiseaza() din info() este ambiguu (metoda exista si in Persoana si in Angajat)
+d) afiseaza "PA"
+
+RASPUNS_BAREM: c
+RASPUNS_CORECT: c
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Clasa Manager mosteneste prin mostenire multipla atat din Persoana cat si din Angajat, iar AMBELE clase de baza definesc o metoda afiseaza(). In corpul metodei info() apelul afiseaza() este NECALIFICAT: compilatorul nu poate decide care dintre cele doua metode mostenite sa apeleze, deci semnaleaza o eroare de AMBIGUITATE ("reference to 'afiseaza' is ambiguous") la compilare. Deci c. a, b si d presupun ca programul ruleaza si produce o iesire, dar programul NICI NU COMPILEAZA. Pentru a rezolva ambiguitatea, apelul ar trebui calificat explicit cu operatorul de rezolutie a domeniului: Persoana::afiseaza() sau Angajat::afiseaza(). Verificat prin compilare (g++ -std=c++11): compilarea esueaza cu eroarea "reference to 'afiseaza' is ambiguous".

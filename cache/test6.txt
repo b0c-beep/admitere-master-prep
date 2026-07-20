@@ -1,0 +1,794 @@
+=== ADMITERE MASTER CSIE3 - TEST SIMULARE 6 ===
+Sursă: generat original, pe baza tiparelor din subiectele 2024-2025
+Format sursă original: intrebari noi, verificate prin compilare (C/C++, OOP) si
+  rationament riguros (SQL, PL/SQL)
+Număr total întrebări: 30
+Punctaj: 3 puncte/întrebare corectă, punctaj maxim 90 puncte
+
+##### ÎNTREBAREA 1 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa urmatorul program C?
+#include <stdio.h>
+int aduna(int a, int b) { return a + b; }
+int inmulteste(int a, int b) { return a * b; }
+int main() {
+    int (*op)(int, int);
+    op = inmulteste;
+    printf("%d", op(4, 5));
+    return 0;
+}
+
+VARIANTE:
+a) 9
+b) 20
+c) 45
+d) eroare de compilare deoarece nu se poate atribui o functie unui pointer
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: op este declarat ca pointer catre o functie care primeste doi parametri int si returneaza int: int (*op)(int, int). Parantezele din jurul lui *op sunt esentiale - ele fac ca op sa fie un POINTER catre functie (fara ele, int *op(int,int) ar declara o functie care returneaza int*). Atribuirea op = inmulteste memoreaza in op adresa functiei inmulteste (numele unei functii se converteste automat la adresa ei, nefiind nevoie de operatorul &). Apelul indirect op(4, 5) este echivalent cu inmulteste(4, 5) = 4 * 5 = 20. Deci b. a=9 ar fi rezultatul lui aduna(4,5), dar op pointeaza catre inmulteste. c=45 nu corespunde. d este falsa: atribuirea unui nume de functie unui pointer de functie compatibil este perfect legala. Verificat prin compilare si rulare (gcc): programul afiseaza 20.
+
+##### ÎNTREBAREA 2 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce se intampla la compilarea urmatorului program C++?
+
+#include <iostream>
+using namespace std;
+class Forma {
+public:
+   virtual double arie() = 0;
+   virtual double perimetru() = 0;
+};
+int main() {
+   Forma f;
+   return 0;
+}
+
+VARIANTE:
+a) compileaza si ruleaza corect, cu arie() si perimetru() returnand 0
+b) genereaza eroare de compilare deoarece Forma este o clasa abstracta si nu poate fi instantiata
+c) compileaza, dar arunca o exceptie la executie deoarece metodele nu au corp
+d) genereaza eroare deoarece o clasa nu poate avea doua metode virtuale pure
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: O metoda virtuala pura (declarata cu = 0) nu are implementare si obliga clasele derivate sa o redefineasca. O clasa care contine cel putin o metoda virtuala pura este o CLASA ABSTRACTA. Regula fundamentala: o clasa abstracta NU poate fi instantiata direct (nu se pot crea obiecte de tipul ei), deoarece ar exista metode fara corp care ar putea fi apelate. Declaratia Forma f; incearca sa creeze un obiect al clasei abstracte, ceea ce produce o EROARE DE COMPILARE. Deci b. Se pot folosi insa pointeri sau referinte de tip Forma* / Forma& catre obiecte ale unor clase derivate concrete. a si c sunt false: programul nu ajunge la executie. d este falsa: o clasa poate avea oricate metode virtuale pure (o "interfata completa" le are pe toate pure). Verificat prin compilare (g++ -std=c++11): compilatorul raporteaza "cannot declare variable 'f' to be of abstract type 'Forma'".
+
+##### ÎNTREBAREA 3 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume
+VARCHAR2(30), salariul NUMBER(10,2), id_sef NUMBER(5) REFERENCES angajati(id_angajat),
+id_departament NUMBER(3)) cu cel putin 200 de randuri (inregistrari), unde id_sef este
+id_angajat-ul sefului direct (NULL pentru angajatii fara sef).
+Se considera comanda SQL-Oracle:
+SELECT a.nume AS angajat, s.nume AS sef
+FROM angajati a JOIN angajati s ON a.id_sef = s.id_angajat
+WHERE a.salariul > s.salariul;
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) afiseaza perechile (angajat, sef direct) in care angajatul are un salariu mai mare decat seful sau direct
+b) afiseaza toti angajatii impreuna cu sefii lor, indiferent de salariu
+c) afiseaza sefii care castiga mai mult decat toti subordonatii lor
+d) genereaza eroare deoarece o tabela nu poate fi jonctionata cu ea insasi
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Comanda realizeaza un SELF-JOIN (auto-jonctiune) al tabelei ANGAJATI cu ea insasi, folosind doua aliasuri: a pentru "angajat" si s pentru "sef". Conditia de jonctiune a.id_sef = s.id_angajat leaga fiecare angajat de randul sefului sau direct. Filtrul WHERE a.salariul > s.salariul pastreaza doar perechile in care salariul angajatului depaseste salariul sefului. Rezultatul este lista angajatilor care castiga mai mult decat seful lor direct, alaturi de numele sefului. Deci a. b este falsa: exista filtrul pe salariu, deci nu apar toti; in plus, fiind INNER JOIN, angajatii cu id_sef NULL (fara sef) sunt exclusi. c este falsa: comanda compara fiecare angajat DOAR cu seful sau direct, nu cu toti subordonatii. d este falsa: auto-jonctiunea este perfect valida si standard pentru structuri ierarhice sef-subordonat, aliasurile a si s distingand cele doua utilizari ale tabelei.
+
+##### ÎNTREBAREA 4 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera urmatorul bloc PL/SQL care valideaza o valoare a salariului:
+SET SERVEROUTPUT ON
+DECLARE
+   v_sal NUMBER := -500;
+BEGIN
+   IF v_sal < 0 THEN
+      RAISE_APPLICATION_ERROR(-20010, 'Salariul nu poate fi negativ');
+   END IF;
+   DBMS_OUTPUT.PUT_LINE('Salariu valid');
+END;
+/
+Precizati care dintre urmatoarele afirmatii referitoare la procedura RAISE_APPLICATION_ERROR
+este corecta:
+
+VARIANTE:
+a) numarul de eroare trebuie sa fie un intreg din intervalul rezervat -20000 .. -20999, iar aici -20010 este valid si blocul opreste executia aruncand eroarea definita de utilizator
+b) numarul de eroare poate fi orice intreg, iar RAISE_APPLICATION_ERROR doar afiseaza mesajul fara a intrerupe executia
+c) apelul este incorect deoarece mesajul trebuie transmis inaintea codului de eroare: RAISE_APPLICATION_ERROR('Salariul...', -20010)
+d) blocul afiseaza 'Salariu valid' deoarece RAISE_APPLICATION_ERROR nu opreste executia ramurii IF
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: RAISE_APPLICATION_ERROR(numar_eroare, mesaj) genereaza o eroare (exceptie) definita de utilizator. Primul argument, numarul de eroare, trebuie sa fie un intreg din intervalul REZERVAT pentru erorile utilizatorului: -20000 pana la -20999. Aici -20010 se afla in acest interval, deci apelul este valid. La executie, deoarece v_sal = -500 < 0, se apeleaza RAISE_APPLICATION_ERROR, care INTRERUPE imediat executia blocului si propaga eroarea (ORA-20010 cu mesajul dat) catre mediul apelant; instructiunea DBMS_OUTPUT.PUT_LINE('Salariu valid') NU se mai executa. Deci a. b este falsa: numarul in afara intervalului -20000..-20999 ar genera chiar el o eroare, iar procedura NU doar afiseaza, ci arunca efectiv exceptia oprind executia. c este falsa: ordinea argumentelor este (numar, mesaj), nu invers. d este falsa: RAISE_APPLICATION_ERROR opreste executia, deci 'Salariu valid' nu apare.
+
+##### ÎNTREBAREA 5 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce va afisa la rulare urmatorul program C++?
+
+#include <iostream>
+using namespace std;
+class Baza {
+public:
+   void afiseaza() { cout << "B"; }
+   virtual void scrie() { cout << "b"; }
+};
+class Derivata : public Baza {
+public:
+   void afiseaza() { cout << "D"; }
+   void scrie() { cout << "d"; }
+};
+int main() {
+   Baza *p = new Derivata();
+   p->afiseaza();
+   p->scrie();
+   return 0;
+}
+
+VARIANTE:
+a) Bd
+b) Dd
+c) BB
+d) DD
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Pointerul p are tipul static Baza*, dar refera un obiect real de tip Derivata. Cele doua apeluri se rezolva DIFERIT: (1) afiseaza() NU este virtuala - apelul p->afiseaza() se rezolva prin LEGARE STATICA, la compilare, dupa TIPUL POINTERULUI (Baza*), deci se apeleaza Baza::afiseaza() -> "B"; aceasta este ASCUNDEREA (hiding): Derivata::afiseaza() doar ascunde metoda de baza, fara a o suprascrie. (2) scrie() ESTE virtuala - apelul p->scrie() se rezolva prin LEGARE DINAMICA, la executie, dupa TIPUL OBIECTULUI REAL (Derivata), deci se apeleaza Derivata::scrie() -> "d"; aceasta este SUPRASCRIEREA (override). Rezultat: "Bd", varianta a. Diferenta esentiala testata: la o metoda NEvirtuala conteaza tipul pointerului (ascundere), la o metoda virtuala conteaza tipul obiectului (suprascriere/polimorfism). b, c, d ignora aceasta distinctie. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza Bd.
+
+##### ÎNTREBAREA 6 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa urmatorul program C?
+#include <stdio.h>
+int inc(int x) { return x + 1; }
+int dbl(int x) { return x * 2; }
+int sq(int x) { return x * x; }
+int main() {
+    int (*v[3])(int) = { inc, dbl, sq };
+    printf("%d", v[2](v[0](3)));
+    return 0;
+}
+
+VARIANTE:
+a) 16
+b) 8
+c) 49
+d) 36
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: v este un ARRAY de 3 pointeri catre functii care primesc un int si returneaza un int: int (*v[3])(int). Elementele sunt initializate cu adresele functiilor inc, dbl si sq, deci v[0]=inc, v[1]=dbl, v[2]=sq. Expresia v[2](v[0](3)) se evalueaza dinauntru in afara: intai v[0](3) = inc(3) = 3 + 1 = 4; apoi v[2](4) = sq(4) = 4 * 4 = 16. Deci a. b=8 ar fi dbl(4). c=49 ar fi sq(inc(6)) sau sq(7), nu corespunde. d=36 ar fi sq(6). Rezultatul corect combina inc urmat de sq: 16. Verificat prin compilare si rulare (gcc): programul afiseaza 16.
+
+##### ÎNTREBAREA 7 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera urmatorul bloc PL/SQL cu o procedura locala:
+SET SERVEROUTPUT ON
+DECLARE
+   PROCEDURE p IS
+   BEGIN
+      RAISE_APPLICATION_ERROR(-20020, 'Eroare aparuta in p');
+   END;
+BEGIN
+   p;
+   DBMS_OUTPUT.PUT_LINE('Dupa apelul lui p');
+EXCEPTION
+   WHEN OTHERS THEN
+      DBMS_OUTPUT.PUT_LINE('Prins in apelant: ' || SQLERRM);
+END;
+/
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) exceptia ridicata in p, nefiind tratata in p, se propaga in blocul apelant si este prinsa de WHEN OTHERS; se afiseaza doar 'Prins in apelant: ORA-20020: Eroare aparuta in p'
+b) se afiseaza atat 'Dupa apelul lui p' cat si mesajul din WHEN OTHERS
+c) blocul se termina cu eroare netratata deoarece exceptia din p nu poate fi prinsa in blocul apelant
+d) se afiseaza doar 'Dupa apelul lui p' deoarece RAISE_APPLICATION_ERROR nu opreste procedura p
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Procedura p ridica o exceptie prin RAISE_APPLICATION_ERROR(-20020, ...), dar NU are o sectiune EXCEPTION proprie, deci exceptia nu este tratata local. Regula de PROPAGARE a exceptiilor: o exceptie netratata intr-un subprogram se propaga catre blocul care l-a apelat. Astfel, exceptia iese din p si ajunge in blocul apelant, exact in punctul apelului "p;". Cum instructiunea a esuat, urmatoarea instructiune DBMS_OUTPUT.PUT_LINE('Dupa apelul lui p') NU se mai executa; controlul sare direct la sectiunea EXCEPTION a blocului apelant, unde WHEN OTHERS prinde orice exceptie si afiseaza 'Prins in apelant: ' || SQLERRM, adica 'Prins in apelant: ORA-20020: Eroare aparuta in p'. Deci a. b este falsa: 'Dupa apelul lui p' nu se afiseaza (executia normala s-a intrerupt la exceptie). c este falsa: exceptia SE poate prinde in apelant, tocmai prin WHEN OTHERS. d este falsa: RAISE_APPLICATION_ERROR opreste efectiv executia lui p.
+
+##### ÎNTREBAREA 8 #####
+CATEGORIE: SQL
+ENUNT:
+Se considera comanda SQL-Oracle:
+SELECT SUBSTR('ADMITERE', -4, 3) AS rez FROM dual;
+Precizati care este valoarea afisata in coloana rez:
+
+VARIANTE:
+a) TER
+b) MIT
+c) ERE
+d) ITE
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia SUBSTR(sir, pozitie, lungime) extrage o subsecventa. Cand pozitia de start este NEGATIVA, Oracle numara pozitia de la SFARSITUL sirului spre inceput. Sirul 'ADMITERE' are 8 caractere: A(1) D(2) M(3) I(4) T(5) E(6) R(7) E(8). Pozitia -4 inseamna al 4-lea caracter numarand de la coada: E(-1), R(-2), E(-3), T(-4), deci startul este pe caracterul T (pozitia 5 de la stanga). De acolo se iau 3 caractere consecutive spre dreapta: T, E, R -> 'TER'. Deci a. b='MIT' si d='ITE' ar corespunde unor pozitii de start din zona de mijloc/stanga, nu pozitiei -4. c='ERE' ar fi ultimele 3 caractere (SUBSTR('ADMITERE', -3) sau SUBSTR('ADMITERE', 6)). Capcana: startul negativ se numara de la dreapta, dar EXTRAGEREA se face tot spre dreapta pe lungimea data.
+
+##### ÎNTREBAREA 9 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce va afisa la rulare urmatorul program C++?
+
+#include <iostream>
+using namespace std;
+class Baza {
+public:
+   Baza() { init(); }
+   virtual void init() { cout << "B"; }
+};
+class Derivata : public Baza {
+public:
+   void init() { cout << "D"; }
+};
+int main() {
+   Derivata d;
+   return 0;
+}
+
+VARIANTE:
+a) B
+b) D
+c) BD
+d) DB
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: La crearea obiectului d de tip Derivata, se apeleaza mai intai constructorul clasei de baza, Baza(). Regula speciala a C++: in timpul executiei constructorului clasei de baza, obiectul este considerat inca de tipul bazei (partea derivata nu este inca construita), deci mecanismul de LEGARE DINAMICA (virtual) foloseste tabela virtuala a clasei BAZA. Prin urmare, apelul init() din constructorul Baza() invoca Baza::init() (NU versiunea suprascrisa din Derivata), afisand "B". Deci a. Aceasta este o capcana clasica: apelarea unei metode virtuale din constructor NU produce comportament polimorfic catre clasa derivata, ci apeleaza versiunea din clasa curent construita. b='D' ar aparea DOAR daca apelul s-ar face dupa construirea completa a obiectului, din afara constructorului. c si d presupun gresit doua apeluri. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza B.
+
+##### ÎNTREBAREA 10 #####
+CATEGORIE: Baze de date (teorie)
+ENUNT:
+Fie relatia R(cod_produs, denumire, pret) in care fiecare produs are un cod unic, iar din
+codul produsului se determina univoc atat denumirea cat si pretul (exista dependentele
+functionale cod_produs -> denumire si cod_produs -> pret).
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) cod_produs este cheie candidata a relatiei, deoarece determina functional toate celelalte atribute ale relatiei
+b) denumire este cheie candidata deoarece apare in partea dreapta a unei dependente functionale
+c) relatia nu are nicio cheie candidata deoarece exista mai multe dependente functionale
+d) dependenta cod_produs -> denumire implica automat si dependenta inversa denumire -> cod_produs
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: O dependenta functionala X -> Y intr-o relatie inseamna ca oricaror doua tupluri cu aceeasi valoare pentru X le corespunde obligatoriu aceeasi valoare pentru Y (X determina univoc Y). Un atribut (sau grup de atribute) este CHEIE CANDIDATA daca determina functional TOATE celelalte atribute ale relatiei si este minimal. Aici cod_produs -> denumire si cod_produs -> pret arata ca din cod_produs se deduc univoc si denumire, si pret, adica cod_produs -> {denumire, pret}; fiind un singur atribut, este si minimal. Deci cod_produs este cheie candidata - varianta a. b este falsa: aparitia unui atribut in partea DREAPTA a unei dependente (ca atribut DETERMINAT) nu il face cheie; dimpotriva, cheia se afla in partea stanga (determinant). c este falsa: existenta mai multor dependente nu impiedica existenta unei chei - tocmai aceste dependente stabilesc cheia. d este falsa: dependentele functionale NU sunt in general simetrice - din cod_produs -> denumire nu rezulta denumire -> cod_produs (doua produse diferite ar putea, in principiu, avea aceeasi denumire).
+
+##### ÎNTREBAREA 11 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa urmatorul program C?
+#include <stdio.h>
+int aplica(int x, int (*f)(int)) { return f(f(x)); }
+int neg(int x) { return -x; }
+int main() {
+    printf("%d", aplica(7, neg));
+    return 0;
+}
+
+VARIANTE:
+a) -7
+b) 7
+c) -14
+d) 14
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia aplica primeste un intreg x si un POINTER catre o functie f (de tip int (*f)(int) - functie care ia un int si returneaza un int), apoi returneaza f(f(x)), adica aplica functia f de doua ori consecutiv. La apelul aplica(7, neg), pointerul f primeste adresa functiei neg (schimbarea semnului). Se calculeaza f(f(7)) = neg(neg(7)) = neg(-7) = -(-7) = 7. Aplicarea de doua ori a negarii readuce valoarea initiala. Deci b. a=-7 ar fi rezultatul unei singure aplicari neg(7). c si d nu corespund niciunei compuneri corecte (nu exista inmultire cu 2). Aceasta ilustreaza transmiterea unei functii ca parametru (callback) prin pointer de functie. Verificat prin compilare si rulare (gcc): programul afiseaza 7.
+
+##### ÎNTREBAREA 12 #####
+CATEGORIE: SQL
+ENUNT:
+Se considera comanda SQL-Oracle:
+SELECT INSTR('ABRACADABRA', 'A', 1, 3) AS rez FROM dual;
+Precizati care este valoarea afisata in coloana rez:
+
+VARIANTE:
+a) 6
+b) 4
+c) 8
+d) 3
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia INSTR(sir, subsir, pozitie_start, nr_aparitie) returneaza POZITIA (indexul, incepand de la 1) la care se gaseste a n-a aparitie a subsirului cautat, pornind cautarea de la pozitia data. Aici se cauta caracterul 'A' in 'ABRACADABRA', incepand de la pozitia 1, a 3-a aparitie. Pozitiile caracterelor: A(1) B(2) R(3) A(4) C(5) A(6) D(7) A(8) B(9) R(10) A(11). Aparitiile lui 'A' sunt la pozitiile: 1 (prima), 4 (a doua), 6 (a treia), 8 (a patra), 11 (a cincea). A 3-a aparitie se afla la pozitia 6. Deci a. b=4 este a 2-a aparitie. c=8 este a 4-a aparitie. d=3 este pozitia unui 'R', nu a lui 'A'. Cei doi parametri optionali (pozitia de start si numarul aparitiei) permit cautarea aparitiilor ulterioare, nu doar a primeia.
+
+##### ÎNTREBAREA 13 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera urmatorul bloc PL/SQL:
+SET SERVEROUTPUT ON
+BEGIN
+   RAISE_APPLICATION_ERROR(-20055, 'Operatie interzisa');
+EXCEPTION
+   WHEN OTHERS THEN
+      DBMS_OUTPUT.PUT_LINE(SQLCODE);
+END;
+/
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) se afiseaza -20055
+b) se afiseaza 0
+c) se afiseaza 1, deoarece SQLCODE returneaza 1 pentru orice eroare a utilizatorului
+d) se afiseaza -1, deoarece toate erorile definite de utilizator au SQLCODE -1
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia SQLCODE returneaza CODUL NUMERIC al erorii pentru exceptia curenta tratata in sectiunea EXCEPTION. Cand exceptia a fost generata prin RAISE_APPLICATION_ERROR(numar, mesaj), SQLCODE returneaza chiar acel numar. Aici exceptia a fost ridicata cu numarul -20055, prinsa de WHEN OTHERS, iar in handler SQLCODE returneaza -20055, care se afiseaza. Deci a. b este falsa: SQLCODE returneaza 0 doar cand NU exista exceptie in curs (executie normala, in afara unui handler). c si d sunt false: SQLCODE nu are o valoare fixa (1 sau -1) pentru erorile utilizatorului - reflecta exact numarul erorii curente; -1 este de fapt codul erorii predefinite DUP_VAL_ON_INDEX (ORA-00001), nu al erorilor RAISE_APPLICATION_ERROR. Complementar, SQLERRM ar returna textul 'ORA-20055: Operatie interzisa'.
+
+##### ÎNTREBAREA 14 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce se intampla la compilarea urmatorului program C++?
+
+#include <iostream>
+using namespace std;
+class IShape {
+public:
+   virtual double arie() = 0;
+   virtual double perimetru() = 0;
+};
+class Patrat : public IShape {
+   double l;
+public:
+   Patrat(double x) { l = x; }
+   double arie() { return l * l; }
+};
+int main() {
+   Patrat p(3);
+   return 0;
+}
+
+VARIANTE:
+a) compileaza corect, deoarece Patrat implementeaza arie()
+b) genereaza eroare de compilare deoarece Patrat ramane clasa abstracta (nu a suprascris perimetru())
+c) compileaza, iar perimetru() va returna automat 0
+d) genereaza eroare deoarece o clasa nu poate mosteni dintr-o interfata
+
+RASPUNS_BAREM: b
+RASPUNS_CORECT: b
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Clasa IShape este o interfata (abstracta) cu doua metode virtuale pure: arie() si perimetru(). Pentru ca o clasa derivata sa devina CONCRETA (instantiabila), ea trebuie sa suprascrie (implementeze) TOATE metodele virtuale pure mostenite. Patrat suprascrie doar arie(), dar NU si perimetru(); prin urmare perimetru() ramane virtuala pura si mostenita, iar Patrat este INCA o clasa abstracta. Declaratia Patrat p(3); incearca sa instantieze o clasa abstracta -> EROARE DE COMPILARE. Deci b. a este falsa: implementarea partiala (doar arie) nu este suficienta. c este falsa: o metoda virtuala pura neimplementata nu capata automat un corp care sa returneze 0. d este falsa: mostenirea dintr-o clasa abstracta (interfata) este exact mecanismul corect - problema este ca implementarea este incompleta. Verificat prin compilare (g++ -std=c++11): compilatorul raporteaza "cannot declare variable 'p' to be of abstract type 'Patrat'".
+
+##### ÎNTREBAREA 15 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa urmatorul program C?
+#include <stdio.h>
+int suma(int a, int b) { return a + b; }
+int dif(int a, int b) { return a - b; }
+int calc(int (*f)(int, int), int a, int b) { return f(a, b); }
+int main() {
+    printf("%d ", calc(suma, 10, 3));
+    printf("%d", calc(dif, 10, 3));
+    return 0;
+}
+
+VARIANTE:
+a) 13 7
+b) 7 13
+c) 13 13
+d) 30 30
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functia calc primeste ca prim parametru un POINTER catre o functie de tip int (*f)(int, int) (functie cu doi parametri int, returnand int), plus doi intregi a si b, si returneaza f(a, b) - adica apeleaza functia primita cu argumentele a si b. La primul apel, calc(suma, 10, 3) transmite adresa functiei suma, deci se calculeaza suma(10, 3) = 10 + 3 = 13. La al doilea apel, calc(dif, 10, 3) transmite adresa functiei dif, deci dif(10, 3) = 10 - 3 = 7. Se afiseaza "13 7" (primul printf are un spatiu dupa %d). Deci a. b inverseaza rezultatele. c presupune gresit ca ambele apeluri folosesc aceeasi functie. d=30 30 nu corespunde niciunei operatii. Aceasta ilustreaza selectarea operatiei la RUNTIME prin pointer de functie transmis ca argument. Verificat prin compilare si rulare (gcc): programul afiseaza "13 7".
+
+##### ÎNTREBAREA 16 #####
+CATEGORIE: SQL
+ENUNT:
+Se considera comanda SQL-Oracle:
+SELECT REPLACE(UPPER('management'), 'A', 'x') AS rez FROM dual;
+Precizati care este valoarea afisata in coloana rez:
+
+VARIANTE:
+a) MxNxGEMENT
+b) MANAGEMENT
+c) mxnxgement
+d) MXNXGEMENT
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Functiile se evalueaza dinauntru in afara. Intai UPPER('management') transforma toate literele in majuscule -> 'MANAGEMENT'. Apoi REPLACE(sir, 'A', 'x') inlocuieste TOATE aparitiile subsirului 'A' cu 'x'. In 'MANAGEMENT', literele: M(1) A(2) N(3) A(4) G(5) E(6) M(7) E(8) N(9) T(10) - 'A' apare pe pozitiile 2 si 4, ambele fiind inlocuite cu 'x' (litera mica, exact asa cum a fost data ca al treilea argument). Rezultat: 'MxNxGEMENT'. Deci a. b este falsa: REPLACE chiar modifica sirul (exista 'A'-uri de inlocuit). c este falsa: doar 'A' devine 'x'; restul literelor raman majuscule dupa UPPER (LOWER nu se aplica). d este falsa: sirul de inlocuire este 'x' minuscul, nu 'X'; REPLACE pastreaza exact caracterele date, fara sa le transforme in majuscule.
+
+##### ÎNTREBAREA 17 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera urmatorul bloc PL/SQL:
+SET SERVEROUTPUT ON
+DECLARE
+   v NUMBER := 10;
+BEGIN
+   IF v > 0 THEN
+      RAISE_APPLICATION_ERROR(-20001, 'pozitiv');
+   END IF;
+EXCEPTION
+   WHEN OTHERS THEN
+      DBMS_OUTPUT.PUT_LINE('altele');
+   WHEN NO_DATA_FOUND THEN
+      DBMS_OUTPUT.PUT_LINE('nimic');
+END;
+/
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) blocul genereaza o eroare de compilare deoarece handlerul WHEN OTHERS trebuie sa fie ultimul din sectiunea EXCEPTION
+b) blocul se compileaza si afiseaza 'altele'
+c) blocul se compileaza si afiseaza 'nimic'
+d) blocul se compileaza si nu afiseaza nimic
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: In PL/SQL, handlerul WHEN OTHERS este un handler "prinde-tot" care trateaza orice exceptie neacoperita de handlere anterioare. Regula sintactica obligatorie: WHEN OTHERS trebuie sa fie ULTIMUL handler din sectiunea EXCEPTION - nu poate fi urmat de alte clauze WHEN. Aici WHEN OTHERS este scris INAINTEA lui WHEN NO_DATA_FOUND, ceea ce incalca regula si produce o EROARE DE COMPILARE (PLS-00370: OTHERS handler must be last among the exception handlers of a block). Deci a. Fiindca blocul nici nu se compileaza, variantele b, c, d (care presupun executie) sunt automat false. Pentru corectare, WHEN NO_DATA_FOUND ar trebui plasat inaintea lui WHEN OTHERS.
+
+##### ÎNTREBAREA 18 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce va afisa la rulare urmatorul program C++?
+
+#include <iostream>
+using namespace std;
+class Animal {
+public:
+   virtual void sunet() { cout << "?"; }
+};
+class Caine : public Animal {
+public:
+   void sunet() { cout << "Ham"; }
+};
+class Pisica : public Animal {
+public:
+   void sunet() { cout << "Miau"; }
+};
+int main() {
+   Animal* v[2] = { new Caine(), new Pisica() };
+   for (int i = 0; i < 2; i++)
+      v[i]->sunet();
+   return 0;
+}
+
+VARIANTE:
+a) HamMiau
+b) ??
+c) MiauHam
+d) ?Ham
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Metoda sunet() este declarata virtual in clasa de baza Animal, deci apelurile prin pointeri de baza folosesc LEGARE DINAMICA (polimorfism): la executie se apeleaza versiunea corespunzatoare TIPULUI REAL al obiectului referit, nu tipului pointerului. Vectorul v contine doi pointeri de tip Animal*, primul catre un obiect Caine, al doilea catre un obiect Pisica. In bucla: v[0]->sunet() apeleaza Caine::sunet() -> "Ham"; v[1]->sunet() apeleaza Pisica::sunet() -> "Miau". Se afiseaza "HamMiau". Deci a. b='??' ar aparea daca sunet() NU ar fi virtuala (legare statica dupa Animal*), dar aici este virtuala. c inverseaza ordinea elementelor din vector. d amesteca gresit un apel static cu unul dinamic. Acesta este tiparul clasic de tratare uniforma, polimorfica, a unor obiecte diferite printr-un vector de pointeri la clasa de baza. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza HamMiau.
+
+##### ÎNTREBAREA 19 #####
+CATEGORIE: C/C++
+ENUNT:
+Ce va afisa urmatorul program C?
+#include <stdio.h>
+int add(int a, int b) { return a + b; }
+int sub(int a, int b) { return a - b; }
+int mul(int a, int b) { return a * b; }
+int main() {
+    int (*ops[3])(int, int) = { add, sub, mul };
+    int r = 0, i;
+    for (i = 0; i < 3; i++)
+        r += ops[i](6, 2);
+    printf("%d", r);
+    return 0;
+}
+
+VARIANTE:
+a) 24
+b) 16
+c) 12
+d) 8
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: ops este un array de 3 pointeri catre functii de tip int (*)(int, int), initializat cu adresele functiilor add, sub si mul. In bucla se apeleaza pe rand fiecare functie cu argumentele (6, 2) si se acumuleaza rezultatele in r: ops[0](6,2) = add(6,2) = 6 + 2 = 8; ops[1](6,2) = sub(6,2) = 6 - 2 = 4; ops[2](6,2) = mul(6,2) = 6 * 2 = 12. Suma: r = 8 + 4 + 12 = 24. Deci a. b=16 ar omite un termen. c=12 este doar mul. d=8 este doar add. Iterarea printr-un array de pointeri de functie permite aplicarea succesiva a mai multor operatii fara instructiuni conditionale explicite. Verificat prin compilare si rulare (gcc): programul afiseaza 24.
+
+##### ÎNTREBAREA 20 #####
+CATEGORIE: SQL
+ENUNT:
+Se considera comanda SQL-Oracle:
+SELECT LENGTH('SQL' || NULL || 'ORACLE') AS rez FROM dual;
+Precizati care este valoarea afisata in coloana rez:
+
+VARIANTE:
+a) 9
+b) NULL (valoare nula)
+c) 13
+d) 6
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Aici intervine o particularitate importanta a Oracle: la CONCATENARE (operatorul ||), valoarea NULL este tratata ca un SIR VID (''), nu propaga NULL asupra rezultatului. Astfel 'SQL' || NULL || 'ORACLE' produce sirul 'SQLORACLE' (NULL-ul din mijloc "dispare"). Functia LENGTH numara caracterele: 'SQLORACLE' are 9 caractere (S-Q-L-O-R-A-C-L-E). Deci a. b este falsa: spre deosebire de operatiile ARITMETICE (unde orice operand NULL da rezultat NULL), concatenarea cu NULL NU da NULL in Oracle. c=13 ar aparea daca NULL ar fi numarat ca text de 4 caractere ('NULL'), ceea ce nu se intampla. d=6 ar fi doar 'ORACLE' sau alta combinatie partiala. Capcana testata: comportamentul lui NULL in concatenare este diferit de cel din aritmetica.
+
+##### ÎNTREBAREA 21 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera urmatorul bloc PL/SQL cu o procedura locala care isi trateaza propria exceptie:
+SET SERVEROUTPUT ON
+DECLARE
+   PROCEDURE p IS
+   BEGIN
+      RAISE_APPLICATION_ERROR(-20030, 'x');
+   EXCEPTION
+      WHEN OTHERS THEN
+         DBMS_OUTPUT.PUT_LINE('Tratat in p');
+   END;
+BEGIN
+   p;
+   DBMS_OUTPUT.PUT_LINE('Continua in apelant');
+END;
+/
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) se afiseaza 'Tratat in p' si apoi 'Continua in apelant'
+b) se afiseaza doar 'Tratat in p', iar blocul apelant se opreste cu eroare
+c) se afiseaza doar 'Continua in apelant'
+d) blocul apelant se termina cu exceptie netratata, deoarece exceptia din p se propaga oricum in afara
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Spre deosebire de cazul in care o procedura NU isi trateaza exceptia (si aceasta se propaga la apelant), aici procedura p ARE propria sectiune EXCEPTION cu WHEN OTHERS. Cand RAISE_APPLICATION_ERROR(-20030, 'x') ridica exceptia, aceasta este prinsa CHIAR IN p de handlerul WHEN OTHERS, care afiseaza 'Tratat in p'. Dupa ce handlerul se termina cu succes, procedura p se incheie NORMAL (exceptia a fost "consumata" si NU se mai propaga catre apelant). Controlul revine in blocul apelant imediat dupa "p;", iar executia continua cu instructiunea urmatoare, afisand 'Continua in apelant'. Rezultat: ambele mesaje, in aceasta ordine. Deci a. b si d sunt false: exceptia fiind tratata in interiorul lui p, ea NU se mai propaga, deci apelantul nu primeste nicio eroare. c este falsa: si mesajul din handlerul lui p se afiseaza. Regula: o exceptie tratata local intr-un subprogram nu ajunge la apelant.
+
+##### ÎNTREBAREA 22 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce va afisa la rulare urmatorul program C++?
+
+#include <iostream>
+using namespace std;
+class Baza {
+public:
+   void f(int x) { cout << "int"; }
+};
+class Derivata : public Baza {
+public:
+   void f(double x) { cout << "double"; }
+};
+int main() {
+   Derivata d;
+   d.f(5);
+   return 0;
+}
+
+VARIANTE:
+a) double
+b) int
+c) intdouble
+d) eroare de compilare deoarece f este definita cu tipuri diferite in cele doua clase
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Aceasta ilustreaza fenomenul de ASCUNDERE A NUMELUI (name hiding) in mostenire. Cand o clasa derivata declara un membru cu ACELASI NUME ca in clasa de baza (aici f), acel nume din baza este ASCUNS complet in domeniul clasei derivate, INDIFERENT de lista de parametri - nu are loc supraincarcare intre clase. Astfel, in Derivata este vizibila DOAR Derivata::f(double); Baza::f(int) este ascunsa. La apelul d.f(5), desi 5 este un int, singura functie f vizibila prin d este f(double), iar 5 se converteste implicit la double 5.0, apeland f(double) -> "double". Deci a. b='int' ar aparea daca Baza::f(int) ar fi ramas vizibila (ar fi potrivirea exacta), dar ea este ascunsa. c presupune gresit doua apeluri. d este falsa: nu este eroare - ascunderea este un mecanism legal (pentru a aduce si metoda bazei in domeniu s-ar folosi "using Baza::f;"). Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza double.
+
+##### ÎNTREBAREA 23 #####
+CATEGORIE: SQL
+ENUNT:
+Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume
+VARCHAR2(30), salariul NUMBER(10,2), id_sef NUMBER(5) REFERENCES angajati(id_angajat),
+id_departament NUMBER(3)) cu cel putin 200 de randuri (inregistrari), unde id_sef indica
+seful direct al angajatului.
+Se considera comanda SQL-Oracle:
+SELECT s.nume AS sef, COUNT(a.id_angajat) AS nr_subordonati
+FROM angajati s LEFT JOIN angajati a ON a.id_sef = s.id_angajat
+GROUP BY s.id_angajat, s.nume;
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) afiseaza fiecare angajat (ca potential sef) impreuna cu numarul subordonatilor sai directi, iar cei fara subordonati apar cu 0
+b) afiseaza doar angajatii care au cel putin un subordonat
+c) afiseaza pentru fiecare sef valoarea 1, indiferent de numarul de subordonati
+d) genereaza eroare deoarece nu se poate face LEFT JOIN al unei tabele cu ea insasi
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Comanda este un SELF-JOIN de tip LEFT: tabela ANGAJATI (alias s, in rol de "sef") este jonctionata la stanga cu ANGAJATI (alias a, in rol de "subordonat") pe conditia a.id_sef = s.id_angajat. Fiind LEFT JOIN, TOTI angajatii apar in rezultat in rolul de s, chiar daca nu au niciun subordonat (caz in care coloanele lui a sunt NULL). Gruparea se face pe fiecare angajat-sef (dupa id_angajat, nume), iar COUNT(a.id_angajat) numara subordonatii - dar COUNT pe o COLOANA ignora valorile NULL, deci pentru un angajat fara subordonati rezultatul este 0. Deci a. b este falsa: datorita LEFT JOIN si a lui COUNT(coloana) care da 0, apar si cei fara subordonati (un INNER JOIN i-ar fi eliminat). c este falsa: numarul reflecta cati subordonati are fiecare, nu este fix 1; COUNT(*) ar fi dat 1 pentru cei fara subordonati, dar aici se numara o coloana (id_angajat), deci 0. d este falsa: self-join-ul, inclusiv LEFT, este perfect valid.
+
+##### ÎNTREBAREA 24 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Se considera urmatorul bloc PL/SQL:
+SET SERVEROUTPUT ON
+DECLARE
+   PROCEDURE proceseaza IS
+   BEGIN
+      RAISE_APPLICATION_ERROR(-20040, 'defect');
+   END;
+BEGIN
+   proceseaza;
+EXCEPTION
+   WHEN OTHERS THEN
+      DBMS_OUTPUT.PUT_LINE('Log: ' || SQLERRM);
+      RAISE;
+END;
+/
+Precizati care dintre urmatoarele afirmatii referitoare la instructiunea RAISE (fara nume de
+exceptie) din handlerul WHEN OTHERS este corecta:
+
+VARIANTE:
+a) RAISE fara argument RE-RIDICA exceptia curenta, propagand-o mai departe catre mediul apelant dupa ce mesajul a fost afisat (log)
+b) RAISE fara argument nu are efect deoarece nu se specifica numele exceptiei
+c) RAISE fara argument opreste programul si ignora exceptia curenta, fara a o propaga
+d) RAISE fara argument declanseaza intotdeauna exceptia predefinita NO_DATA_FOUND
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Instructiunea RAISE folosita FARA nume de exceptie poate aparea DOAR in interiorul unui handler de exceptie si are ca efect RE-RIDICAREA (re-raise) exceptiei aflate in curs de tratare, pentru a o propaga mai departe catre blocul/mediul apelant. In acest bloc, exceptia ORA-20040 ridicata in procedura proceseaza se propaga in blocul apelant, este prinsa de WHEN OTHERS, care intai o "logheaza" (DBMS_OUTPUT afiseaza 'Log: ORA-20040: defect'), apoi prin RAISE o re-arunca neschimbata, astfel incat mediul care a lansat blocul o primeste totusi ca eroare. Deci a. Acesta este un tipar frecvent: prinzi exceptia pentru a inregistra/loga informatii, apoi o re-propagi ca sa nu fie "inghitita". b este falsa: RAISE fara nume are efect clar (re-ridica exceptia curenta). c este falsa: nu ignora exceptia, ci o propaga. d este falsa: nu are legatura cu NO_DATA_FOUND - re-ridica exact exceptia curenta (aici ORA-20040).
+
+##### ÎNTREBAREA 25 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce va afisa la rulare urmatorul program C++?
+
+#include <iostream>
+using namespace std;
+class Baza {
+public:
+   virtual void m() = 0;
+   void wrapper() { m(); }
+};
+class Derivata : public Baza {
+public:
+   void m() { cout << "OK"; }
+};
+int main() {
+   Baza* p = new Derivata();
+   p->wrapper();
+   return 0;
+}
+
+VARIANTE:
+a) OK
+b) nu afiseaza nimic
+c) eroare de compilare deoarece m() este virtuala pura si nu poate fi apelata din wrapper()
+d) eroare de compilare deoarece Baza contine o metoda virtuala pura si nu poate fi folosit un pointer Baza*
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Baza este o clasa abstracta (are metoda virtuala pura m()), dar contine si o metoda OBISNUITA cu implementare, wrapper(), care apeleaza m(). O clasa abstracta poate avea metode normale ce apeleaza metodele virtuale pure - acesta este chiar tiparul "template method". Un POINTER de tip Baza* este perfect permis (nu se poate crea doar un OBIECT direct de tip Baza). p pointeaza catre un obiect Derivata, care implementeaza m(). La apelul p->wrapper(), se executa Baza::wrapper(), care apeleaza m(); deoarece m() este virtuala, LEGAREA DINAMICA alege versiunea din tipul real al obiectului (Derivata::m()) -> afiseaza "OK". Deci a. c este falsa: apelarea unei metode virtuale pure prin mecanismul virtual este legala atata timp cat obiectul real o implementeaza. d este falsa: pointerii/referintele catre o clasa abstracta sunt permise; doar instantierea directa a clasei abstracte este interzisa. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza OK.
+
+##### ÎNTREBAREA 26 #####
+CATEGORIE: C/C++
+ENUNT:
+In limbajul C, precizati care dintre urmatoarele declaratii defineste corect o variabila p
+ca fiind un POINTER catre o functie care primeste doi parametri de tip int si returneaza int:
+
+VARIANTE:
+a) int (*p)(int, int);
+b) int *p(int, int);
+c) int p(*)(int, int);
+d) int *(p)(int, int);
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Pentru a declara un pointer catre functie, numele variabilei prefixat cu * trebuie inclus intre paranteze, tocmai pentru a modifica prioritatea operatorilor: int (*p)(int, int); se citeste "p este un pointer (*p) catre o functie care ia (int, int) si returneaza int". Deci a. b) int *p(int, int); - fara paranteze in jurul lui *p, operatorul de apel de functie () are prioritate mai mare decat *, deci se declara o FUNCTIE p care primeste (int, int) si returneaza int* (pointer la int), NU un pointer la functie. c) int p(*)(int, int); - sintaxa invalida, nu compileaza (nu exista un nume de variabila corect plasat). d) int *(p)(int, int); - parantezele in jurul lui p singur nu schimba nimic esential: echivaleaza cu int *p(int, int);, adica tot o functie care returneaza int*, nu un pointer la functie. Doar varianta a plaseaza corect * langa numele variabilei, intre paranteze. Verificat prin compilare (gcc): doar forma de la a) declara si permite utilizarea lui p ca pointer catre functie (p = f; apoi p(2,3) functioneaza), in timp ce b) si d) declara functii, iar c) genereaza eroare de sintaxa.
+
+##### ÎNTREBAREA 27 #####
+CATEGORIE: SQL
+ENUNT:
+Se considera comanda SQL-Oracle:
+SELECT CONCAT(SUBSTR('BUCURESTI', 1, 3), LENGTH('ASE')) AS rez FROM dual;
+Precizati care este valoarea afisata in coloana rez:
+
+VARIANTE:
+a) BUC3
+b) BUC
+c) BUCURESTI3
+d) genereaza eroare deoarece CONCAT nu accepta un argument numeric
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Se evalueaza intai argumentele interioare: SUBSTR('BUCURESTI', 1, 3) extrage 3 caractere incepand de la pozitia 1 -> 'BUC'; LENGTH('ASE') numara caracterele sirului 'ASE' -> 3 (valoare numerica). Apoi CONCAT primeste doua argumente si le lipeste: CONCAT('BUC', 3). Al doilea argument fiind numeric (3), Oracle il converteste IMPLICIT la sirul '3', deci rezultatul este 'BUC' || '3' = 'BUC3'. Deci a. b este falsa: ignora concatenarea celui de-al doilea argument. c este falsa: SUBSTR a decupat doar primele 3 caractere ('BUC'), nu tot sirul. d este falsa: CONCAT (ca si operatorul ||) accepta si argumente numerice, acestea fiind convertite automat la text - nu se genereaza eroare. Observatie: CONCAT accepta exact doua argumente in Oracle (pentru mai multe, se foloseste operatorul ||).
+
+##### ÎNTREBAREA 28 #####
+CATEGORIE: PL/SQL
+ENUNT:
+Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume
+VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3))
+avand 200 de randuri (inregistrari), in care NU exista niciun angajat cu id_angajat = -999.
+Se considera secventa PL/SQL:
+SET SERVEROUTPUT ON
+DECLARE
+   v angajati.salariul%TYPE;
+BEGIN
+   SELECT salariul INTO v FROM angajati WHERE id_angajat = -999;
+EXCEPTION
+   WHEN OTHERS THEN
+      DBMS_OUTPUT.PUT_LINE(SQLCODE);
+END;
+/
+Precizati care dintre urmatoarele afirmatii este corecta:
+
+VARIANTE:
+a) se afiseaza 100 (codul asociat exceptiei NO_DATA_FOUND)
+b) se afiseaza -1403
+c) se afiseaza 0
+d) nu se afiseaza nimic deoarece SELECT INTO fara randuri nu ridica nicio exceptie
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Un SELECT ... INTO care nu gaseste NICIUN rand ridica exceptia predefinita NO_DATA_FOUND. Cum id_angajat = -999 nu exista, se declanseaza NO_DATA_FOUND, prinsa de WHEN OTHERS, iar in handler se afiseaza SQLCODE. Capcana: desi mesajul erorii este 'ORA-01403: no data found', SQLCODE pentru exceptia NO_DATA_FOUND returneaza valoarea +100 (nu -1403). Aceasta este o exceptie de la regula generala conform careia SQLCODE returneaza numarul ORA cu semn negativ; pentru NO_DATA_FOUND, SQLCODE este 100. Deci a. b=-1403 este o confuzie frecventa: -1403 ar fi "numarul ORA", dar SQLCODE returneaza 100 pentru aceasta exceptie particulara (SQLERRM ar afisa insa 'ORA-01403: no data found'). c=0 ar aparea doar in absenta oricarei exceptii. d este falsa: SELECT INTO fara randuri chiar ridica NO_DATA_FOUND (spre deosebire de un cursor, care pur si simplu nu ar returna randuri fara exceptie).
+
+##### ÎNTREBAREA 29 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+Ce va afisa la rulare urmatorul program C++?
+
+#include <iostream>
+using namespace std;
+class Baza {
+public:
+   virtual void afiseaza() { cout << "B"; }
+   ~Baza() { afiseaza(); }
+};
+class Derivata : public Baza {
+public:
+   void afiseaza() { cout << "D"; }
+};
+int main() {
+   Derivata d;
+   return 0;
+}
+
+VARIANTE:
+a) B
+b) D
+c) BD
+d) DB
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: Obiectul d de tip Derivata se distruge la iesirea din main. Ordinea de distrugere este: intai destructorul (implicit) al clasei Derivata, apoi destructorul clasei de baza ~Baza(). Cand se executa ~Baza(), partea Derivata a obiectului a fost DEJA distrusa, deci in timpul destructorului bazei obiectul este considerat din nou de tipul BAZA (simetric cu situatia din constructor). Prin urmare, apelul afiseaza() din ~Baza() foloseste tabela virtuala a clasei Baza si invoca Baza::afiseaza() -> "B", chiar daca metoda este virtuala si a fost suprascrisa in Derivata. Deci a. Aceasta este regula complementara celei de la constructor: un apel virtual dintr-un destructor NU coboara catre versiunea din clasa derivata. b='D' ar presupune un apel polimorfic catre Derivata, ceea ce nu se intampla din destructorul bazei. c si d presupun gresit doua apeluri ale metodei afiseaza(). Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza B.
+
+##### ÎNTREBAREA 30 #####
+CATEGORIE: OOP (C++)
+ENUNT:
+In C++, o clasa care contine numai metode virtuale pure (fara atribute de date si fara
+metode cu implementare) este folosita cel mai adesea pentru a modela conceptul de:
+
+VARIANTE:
+a) interfata (contract pe care clasele care o implementeaza trebuie sa il respecte)
+b) clasa prietena (friend)
+c) sablon de clasa (template)
+d) uniune (union)
+
+RASPUNS_BAREM: a
+RASPUNS_CORECT: a
+STATUS_VERIFICARE: CONFIRMAT
+EXPLICATIE: O clasa abstracta ale carei metode sunt TOATE virtuale pure (si care nu contine date sau implementari) defineste doar un "contract": un set de operatii pe care orice clasa derivata concreta trebuie sa le implementeze, fara a impune vreo implementare anume. Aceasta corespunde notiunii de INTERFATA (asa cum exista explicit in Java sau C#; in C++ se realizeaza printr-o clasa abstracta cu metode exclusiv virtuale pure). Clasele care mostenesc interfata sunt obligate sa suprascrie toate metodele pentru a deveni instantiabile. Deci a. b este falsa: o clasa prietena (friend) este un mecanism de acordare a accesului la membrii privati, fara legatura cu metodele virtuale pure. c este falsa: un sablon (template) este un mecanism de programare generica parametrizata cu tipuri, nu o clasa cu metode virtuale pure. d este falsa: o union este o structura de date in care membrii impart aceeasi zona de memorie, un concept complet diferit.

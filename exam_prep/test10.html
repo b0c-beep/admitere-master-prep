@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CSIE3 Test de simulare 10 — Test grilă admitere master</title>
+<meta name="description" content="Test grilă interactiv admitere master CSIE Test de simulare 10 — C/C++, SQL, PL/SQL, baze de date">
+<style>
+:root{
+  --bg:#f5f6fa; --surface:#ffffff; --surface-2:#eef0f6; --border:#dde1ea;
+  --text:#1a2030; --text-dim:#5c6579; --accent:#4a55d6; --accent-ink:#ffffff;
+  --good:#177a4c; --good-bg:#e2f6ec; --good-bd:#a9e3c3;
+  --bad:#a8271f; --bad-bg:#fbeae8; --bad-bd:#f0b8b2;
+  --warn:#8a6100; --warn-bg:#fff3d6; --warn-bd:#f0d998;
+  --code-bg:#eef0f7; --code-text:#2a3040;
+  --radius:14px; --shadow:0 2px 14px rgba(20,25,45,.07);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#10131c; --surface:#171b28; --surface-2:#1e2332; --border:#2a3042;
+    --text:#e8eaf2; --text-dim:#9aa2b8; --accent:#8b93ff; --accent-ink:#0d0f18;
+    --good:#3ddb92; --good-bg:#123326; --good-bd:#1f5c3f;
+    --bad:#ff8a80; --bad-bg:#3a1614; --bad-bd:#6e2a25;
+    --warn:#ffce6b; --warn-bg:#382b0a; --warn-bd:#6b4f14;
+    --code-bg:#12151f; --code-text:#d7dbe8;
+    --shadow:0 2px 18px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="light"]{
+  --bg:#f5f6fa; --surface:#ffffff; --surface-2:#eef0f6; --border:#dde1ea;
+  --text:#1a2030; --text-dim:#5c6579; --accent:#4a55d6; --accent-ink:#ffffff;
+  --good:#177a4c; --good-bg:#e2f6ec; --good-bd:#a9e3c3;
+  --bad:#a8271f; --bad-bg:#fbeae8; --bad-bd:#f0b8b2;
+  --warn:#8a6100; --warn-bg:#fff3d6; --warn-bd:#f0d998;
+  --code-bg:#eef0f7; --code-text:#2a3040;
+}
+:root[data-theme="dark"]{
+  --bg:#10131c; --surface:#171b28; --surface-2:#1e2332; --border:#2a3042;
+  --text:#e8eaf2; --text-dim:#9aa2b8; --accent:#8b93ff; --accent-ink:#0d0f18;
+  --good:#3ddb92; --good-bg:#123326; --good-bd:#1f5c3f;
+  --bad:#ff8a80; --bad-bg:#3a1614; --bad-bd:#6e2a25;
+  --warn:#ffce6b; --warn-bg:#382b0a; --warn-bd:#6b4f14;
+  --code-bg:#12151f; --code-text:#d7dbe8;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.55; min-height:100vh;
+}
+.wrap{max-width:840px;margin:0 auto;padding:20px 16px 64px}
+header.top{
+  display:flex;align-items:center;gap:12px;justify-content:space-between;
+  padding:14px 0;margin-bottom:18px;border-bottom:1px solid var(--border);
+}
+.brand{display:flex;flex-direction:column;gap:2px;min-width:0}
+.brand a{color:var(--text-dim);text-decoration:none;font-size:13px}
+.brand a:hover{color:var(--accent)}
+.brand h1{font-size:19px;margin:0;font-weight:700;letter-spacing:.2px}
+.brand .sub{font-size:12.5px;color:var(--text-dim)}
+.iconbtn{
+  border:1px solid var(--border);background:var(--surface);color:var(--text);
+  width:38px;height:38px;border-radius:10px;cursor:pointer;font-size:16px;
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+}
+.iconbtn:hover{border-color:var(--accent)}
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:22px;margin-bottom:16px;
+}
+h2.section-title{font-size:16px;margin:0 0 12px;color:var(--text)}
+.muted{color:var(--text-dim)}
+.small{font-size:12.5px}
+
+/* setup screen */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 18px}
+.chip{
+  border:1px solid var(--border);background:var(--surface-2);color:var(--text);
+  padding:8px 14px;border-radius:999px;cursor:pointer;font-size:13.5px;user-select:none;
+  display:flex;align-items:center;gap:7px;transition:border-color .15s,background .15s;
+}
+.chip .count{color:var(--text-dim);font-size:12px}
+.chip.active{border-color:var(--accent);background:color-mix(in srgb, var(--accent) 14%, var(--surface-2));}
+.chip.active .count{color:var(--accent)}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border)}
+.toggle-row:last-of-type{border-bottom:none}
+.toggle-row .label{font-size:14px}
+.toggle-row .desc{font-size:12.5px;color:var(--text-dim);margin-top:2px}
+.switch{
+  position:relative;width:44px;height:26px;border-radius:999px;background:var(--surface-2);
+  border:1px solid var(--border);cursor:pointer;flex:0 0 auto;
+}
+.switch::after{
+  content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;
+  background:var(--text-dim);transition:transform .18s ease, background .18s ease;
+}
+.switch.on{background:color-mix(in srgb, var(--accent) 30%, var(--surface-2));border-color:var(--accent)}
+.switch.on::after{transform:translateX(18px);background:var(--accent)}
+.btn{
+  appearance:none;border:none;border-radius:11px;padding:13px 22px;font-size:15px;font-weight:600;
+  cursor:pointer;display:inline-flex;align-items:center;gap:8px;justify-content:center;
+}
+.btn-primary{background:var(--accent);color:var(--accent-ink);width:100%;margin-top:6px}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.btn-secondary{background:var(--surface-2);color:var(--text);border:1px solid var(--border)}
+.best-score{font-size:13px;color:var(--text-dim);margin-top:10px}
+
+/* quiz screen */
+.progress-outer{height:7px;border-radius:999px;background:var(--surface-2);overflow:hidden;margin-bottom:16px}
+.progress-inner{height:100%;background:var(--accent);transition:width .25s ease}
+.quiz-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:13px;color:var(--text-dim)}
+.badge{
+  display:inline-block;padding:3px 10px;border-radius:999px;background:var(--surface-2);
+  border:1px solid var(--border);font-size:12px;color:var(--text-dim);
+}
+#quizTimer{font-variant-numeric:tabular-nums;font-weight:700;color:var(--text)}
+#quizTimer.timer-warn{color:var(--bad)}
+.enunt p{margin:0 0 10px;font-size:15.5px}
+.enunt pre.code{
+  background:var(--code-bg);color:var(--code-text);border:1px solid var(--border);
+  border-radius:10px;padding:12px 14px;overflow-x:auto;font-size:13.5px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;margin:0 0 12px;
+  white-space:pre;line-height:1.5;
+}
+.options{display:flex;flex-direction:column;gap:9px;margin-top:14px}
+.opt{
+  text-align:left;border:1px solid var(--border);background:var(--surface-2);color:var(--text);
+  border-radius:11px;padding:12px 14px;cursor:pointer;font-size:14.5px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  display:flex;gap:10px;align-items:flex-start;transition:border-color .12s, background .12s;
+}
+.opt:hover:not(.locked){border-color:var(--accent)}
+.opt .letter{font-weight:700;flex:0 0 auto;color:var(--text-dim)}
+.opt .txt{white-space:pre-wrap;word-break:break-word}
+.opt .tag{margin-left:auto;font-size:11px;color:var(--text-dim);font-family:inherit;flex:0 0 auto;padding-left:8px}
+.opt.correct{background:var(--good-bg);border-color:var(--good-bd);color:var(--good)}
+.opt.correct .letter,.opt.correct .tag{color:var(--good)}
+.opt.incorrect{background:var(--bad-bg);border-color:var(--bad-bd);color:var(--bad)}
+.opt.incorrect .letter,.opt.incorrect .tag{color:var(--bad)}
+.opt.locked{cursor:default}
+.opt.dim{opacity:.55}
+
+.feedback{margin-top:16px;border-radius:12px;padding:14px 16px;font-size:14.5px;display:none}
+.feedback.show{display:block}
+.feedback.ok{background:var(--good-bg);border:1px solid var(--good-bd);color:var(--text)}
+.feedback.ko{background:var(--bad-bg);border:1px solid var(--bad-bd);color:var(--text)}
+.feedback .fb-title{font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.feedback .fb-title.ok-txt{color:var(--good)}
+.feedback .fb-title.ko-txt{color:var(--bad)}
+.barem-warn{
+  background:var(--warn-bg);border:1px solid var(--warn-bd);color:var(--warn);
+  border-radius:10px;padding:10px 12px;margin:10px 0;font-size:13.5px;font-weight:600;
+}
+.explic{margin-top:10px;white-space:pre-wrap;font-size:14px;color:var(--text)}
+.quiz-actions{display:flex;justify-content:flex-end;margin-top:18px;gap:10px}
+
+/* results screen */
+.score-hero{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.score-circle{
+  width:104px;height:104px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  flex-direction:column;border:6px solid var(--accent);flex:0 0 auto;
+}
+.score-circle .n{font-size:26px;font-weight:800}
+.score-circle .d{font-size:11px;color:var(--text-dim)}
+.cat-bar-row{margin:8px 0}
+.cat-bar-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}
+.cat-bar-outer{height:8px;border-radius:999px;background:var(--surface-2);overflow:hidden}
+.cat-bar-inner{height:100%;background:var(--accent)}
+table.review{width:100%;border-collapse:collapse;margin-top:8px;font-size:13.5px}
+table.review th, table.review td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--border)}
+table.review tr.miss td:first-child{color:var(--bad);font-weight:700}
+table.review tr.hit td:first-child{color:var(--good);font-weight:700}
+table.review tr{cursor:pointer}
+table.review tr:hover td{background:var(--surface-2)}
+.review-detail{display:none;padding:10px 6px 16px;font-size:13.5px;white-space:pre-wrap;border-bottom:1px solid var(--border)}
+.review-detail.show{display:table-row}
+.footer-note{font-size:12px;color:var(--text-dim);text-align:center;margin-top:26px}
+.view{display:none}
+.view.active{display:block}
+.hint{font-size:12.5px;color:var(--text-dim);margin-top:4px}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <a href="../index.html">&larr; Toate anii</a>
+      <h1>CSIE3 &middot; Admitere master &middot; Test de simulare 10</h1>
+      <div class="sub">generat original, pe baza tiparelor din subiectele 2024-2025 &nbsp;&bull;&nbsp; 3 puncte/întrebare corectă, punctaj maxim 90 puncte</div>
+    </div>
+    <button class="iconbtn" id="themeToggle" title="Comută tema">&#9788;</button>
+  </header>
+
+  <div id="view-setup" class="view active">
+    <div class="card">
+      <h2 class="section-title">Categorii incluse</h2>
+      <div class="chips" id="categoryChips"></div>
+
+      <h2 class="section-title">Opțiuni</h2>
+      <div class="toggle-row">
+        <div>
+          <div class="label">Amestecă ordinea întrebărilor</div>
+          <div class="desc">Întrebările apar într-o ordine aleatorie la fiecare start</div>
+        </div>
+        <div class="switch on" id="toggleShuffleQ"></div>
+      </div>
+      <div class="toggle-row">
+        <div>
+          <div class="label">Amestecă ordinea variantelor</div>
+          <div class="desc">Variantele a/b/c/d sunt reordonate aleator</div>
+        </div>
+        <div class="switch on" id="toggleShuffleA"></div>
+      </div>
+
+      <button class="btn btn-primary" id="startBtn">Începe testul (30 întrebări)</button>
+      <div class="best-score" id="bestScoreNote"></div>
+    </div>
+  </div>
+
+  <div id="view-quiz" class="view">
+    <div class="progress-outer"><div class="progress-inner" id="progressBar" style="width:0%"></div></div>
+    <div class="quiz-meta">
+      <span id="quizPos">Întrebarea 1 din 30</span>
+      <span class="badge" id="quizCat">—</span>
+      <span id="quizTimer">Timp: 40:00</span>
+      <span id="quizScore">Scor: 0</span>
+    </div>
+    <div class="card">
+      <div class="enunt" id="quizEnunt"></div>
+      <div class="options" id="quizOptions"></div>
+      <div class="feedback" id="quizFeedback">
+        <div class="fb-title" id="fbTitle"></div>
+        <div class="barem-warn" id="fbBaremWarn" style="display:none"></div>
+        <div class="explic" id="fbExplic"></div>
+      </div>
+      <div class="quiz-actions">
+        <button class="btn btn-secondary" id="quitBtn">Renunță</button>
+        <button class="btn btn-primary" id="nextBtn" style="display:none;width:auto">Următoarea &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="view-results" class="view">
+    <div class="card">
+      <h2 class="section-title">Rezultat final</h2>
+      <div class="score-hero">
+        <div class="score-circle"><div class="n" id="resScoreN">0/0</div><div class="d">corecte</div></div>
+        <div>
+          <div style="font-size:20px;font-weight:700" id="resPercent">0%</div>
+          <div class="muted small" id="resPunctaj">Punctaj estimat: 0 puncte</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Pe categorii</h2>
+      <div id="resCatBars"></div>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Recapitulare (click pe un rând pentru detalii)</h2>
+      <table class="review" id="resTable">
+        <thead><tr><th>#</th><th>Categorie</th><th>Răspunsul tău</th><th>Corect</th></tr></thead>
+        <tbody id="resTableBody"></tbody>
+      </table>
+    </div>
+    <button class="btn btn-primary" id="restartBtn">Înapoi la opțiuni</button>
+  </div>
+
+  <div class="footer-note">Grile extrase din subiectele oficiale de anii anteriori și verificate independent. Explicațiile marcate „barem oficial eronat” indică o discrepanță identificată față de baremul original — verifică și tu raționamentul.</div>
+</div>
+
+<script>
+const DATA = {"year": "test10", "sursa": "generat original, pe baza tiparelor din subiectele 2024-2025", "punctaj": "3 puncte/întrebare corectă, punctaj maxim 90 puncte", "questions": [{"nr": 1, "categorie": "C/C++", "enunt": "Ce va afisa urmatorul program C?\n#include <stdio.h>\nint numarPare(int v[], int n) {\n    if (n == 0) return 0;\n    if (v[n - 1] % 2 == 0) return 1 + numarPare(v, n - 1);\n    return numarPare(v, n - 1);\n}\nint main() {\n    int v[] = {4, 7, 2, 9, 6, 3};\n    printf(\"%d\", numarPare(v, 6));\n    return 0;\n}", "variante": {"a": "3", "b": "4", "c": "2", "d": "6"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Functia numarPare parcurge recursiv vectorul de la ultimul element (v[n-1]) spre primul, numarand cate elemente sunt pare. La fiecare pas, daca elementul curent v[n-1] este par, se adauga 1 la rezultatul recursiv obtinut pentru restul vectorului (primele n-1 elemente); daca e impar, se ia direct rezultatul recursiv fara a adauga nimic. Cazul de baza n==0 returneaza 0 (vector gol, 0 numere pare). Desfasurare pentru {4,7,2,9,6,3}: elementele sunt 4(par), 7(impar), 2(par), 9(impar), 6(par), 3(impar) -> exact 3 numere pare (4, 2, 6). Deci numarPare(v,6) returneaza 3, varianta a. b=4 ar rezulta daca s-ar numara si un element impar suplimentar. c=2 ar rezulta daca s-ar omite unul dintre cele 3 elemente pare (de exemplu daca bucla s-ar opri prematur). d=6 este numarul total de elemente din vector, nu numarul celor pare. Verificat prin compilare si rulare (gcc): programul afiseaza 3.", "enunt_html": "<p>Ce va afisa urmatorul program C?</p><pre class=\"code\">#include &lt;stdio.h&gt;\nint numarPare(int v[], int n) {\n    if (n == 0) return 0;\n    if (v[n - 1] % 2 == 0) return 1 + numarPare(v, n - 1);\n    return numarPare(v, n - 1);\n}\nint main() {\n    int v[] = {4, 7, 2, 9, 6, 3};\n    printf(\"%d\", numarPare(v, 6));\n    return 0;\n}</pre>"}, {"nr": 2, "categorie": "OOP (C++)", "enunt": "Ce va afisa la rulare urmatorul program C++?\n\n#include <iostream>\nusing namespace std;\nclass Forma {\npublic:\n   virtual void arata() { cout << \"F\"; }\n};\nclass Cerc : public Forma {\npublic:\n   void arata() { cout << \"C\"; }\n};\nclass Patrat : public Forma {\npublic:\n   void arata() { cout << \"P\"; }\n};\nint main() {\n   Forma* v[3];\n   v[0] = new Cerc();\n   v[1] = new Patrat();\n   v[2] = new Forma();\n   for (int i = 0; i < 3; i++)\n      v[i]->arata();\n   return 0;\n}", "variante": {"a": "FFF", "b": "CPF", "c": "CP", "d": "FFFCPF"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Vectorul v contine pointeri catre clasa de baza Forma, dar fiecare element indica de fapt catre un obiect al unei clase (potential) diferite: v[0] este un Cerc, v[1] un Patrat, v[2] o Forma. Deoarece metoda arata() este declarata virtual in clasa de baza, apelul v[i]->arata() se rezolva prin legare tarzie (dynamic binding), in functie de tipul REAL al obiectului indicat, nu de tipul pointerului. Astfel: v[0]->arata() apeleaza Cerc::arata() -> \"C\", v[1]->arata() apeleaza Patrat::arata() -> \"P\", v[2]->arata() apeleaza Forma::arata() -> \"F\". Rezultat: \"CPF\", varianta b. a=FFF ar fi corect DOAR daca arata() nu ar fi virtual (legare statica dupa tipul pointerului Forma*). c omite ultimul element. d amesteca gresit. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza CPF.", "enunt_html": "<p>Ce va afisa la rulare urmatorul program C++?</p><pre class=\"code\">#include &lt;iostream&gt;\nusing namespace std;\nclass Forma {\npublic:\n    virtual void arata() { cout &lt;&lt; \"F\"; }\n};\nclass Cerc : public Forma {\npublic:\n    void arata() { cout &lt;&lt; \"C\"; }\n};\nclass Patrat : public Forma {\npublic:\n    void arata() { cout &lt;&lt; \"P\"; }\n};\nint main() {\n    Forma* v[3];\n    v[0] = new Cerc();\n    v[1] = new Patrat();\n    v[2] = new Forma();\n    for (int i = 0; i &lt; 3; i++)\n    v[i]-&gt;arata();\n    return 0;\n}</pre>"}, {"nr": 3, "categorie": "SQL", "enunt": "Fie tabela:\nANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume\nVARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3))\ncu cel putin 200 de randuri (inregistrari).\nSe considera comanda SQL-Oracle:\nSELECT x.id_departament, x.sal_mediu\nFROM (SELECT id_departament, AVG(salariul) AS sal_mediu\n      FROM angajati\n      GROUP BY id_departament) x\nWHERE x.sal_mediu > 5000;\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "foloseste o subcerere in clauza FROM (vedere inline) care calculeaza salariul mediu pe fiecare departament, iar interogarea exterioara pastreaza departamentele cu media salariala peste 5000", "b": "genereaza eroare deoarece o subcerere din clauza FROM nu poate contine functii de grup precum AVG", "c": "genereaza eroare deoarece nu se poate face referire la aliasul sal_mediu in clauza WHERE a interogarii exterioare", "d": "afiseaza toti angajatii al caror salariu individual depaseste 5000"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Subcererea din clauza FROM este o vedere inline (inline view): ea produce un tabel temporar x cu doua coloane, id_departament si sal_mediu (media salariilor grupata pe departament). Interogarea exterioara selecteaza din acest tabel intermediar si aplica filtrul WHERE x.sal_mediu > 5000, pastrand doar departamentele a caror medie salariala depaseste 5000. Deci a. b este falsa: o vedere inline poate contine orice constructie valida de SELECT, inclusiv GROUP BY si functii de grup. c este falsa: exact acesta este avantajul vederii inline - aliasul sal_mediu devine o coloana reala a tabelului intermediar x si poate fi folosit in WHERE-ul exterior (spre deosebire de a incerca AVG(salariul)>5000 direct in WHERE, care ar fi eroare). d este falsa: filtrul se aplica pe MEDIA departamentului, nu pe salariul individual, iar rezultatul contine departamente, nu angajati.", "enunt_html": "<p>Fie tabela: ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3)) cu cel putin 200 de randuri (inregistrari). Se considera comanda SQL-Oracle:</p><pre class=\"code\">SELECT x.id_departament, x.sal_mediu\nFROM (SELECT id_departament, AVG(salariul) AS sal_mediu\nFROM angajati\nGROUP BY id_departament) x\nWHERE x.sal_mediu &gt; 5000;</pre><p>Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 4, "categorie": "PL/SQL", "enunt": "Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume\nVARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3)).\nSe considera procedura:\nCREATE OR REPLACE PROCEDURE stat_dept(\n   p_id    IN  NUMBER,\n   p_nr    OUT NUMBER,\n   p_total OUT NUMBER) IS\nBEGIN\n   SELECT COUNT(*), SUM(salariul)\n   INTO p_nr, p_total\n   FROM angajati\n   WHERE id_departament = p_id;\nEND;\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "procedura returneaza, prin cei doi parametri OUT, numarul de angajati si suma salariilor din departamentul primit prin p_id", "b": "procedura genereaza eroare de compilare deoarece un subprogram nu poate avea doi parametri OUT", "c": "procedura genereaza eroare deoarece SELECT ... INTO nu poate popula simultan doi parametri OUT", "d": "procedura trebuie declarata ca FUNCTION, pentru ca returneaza valori catre apelant"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Procedura primeste departamentul prin parametrul IN p_id si transmite inapoi catre apelant doua rezultate prin cei doi parametri OUT: p_nr (numarul de angajati, COUNT(*)) si p_total (suma salariilor, SUM(salariul)) din acel departament. Instructiunea SELECT ... INTO p_nr, p_total ... completeaza ambele variabile OUT dintr-o singura interogare de grup (care returneaza exact o linie). Deci a. b este falsa: o procedura poate avea oricati parametri OUT - acesta este chiar mecanismul standard prin care o procedura \"returneaza\" mai multe valori. c este falsa: SELECT ... INTO poate popula o lista de variabile/parametri, iar aici cele doua functii de grup corespund celor doi parametri OUT. d este falsa: o FUNCTION returneaza o SINGURA valoare prin RETURN; pentru a intoarce mai multe valori se foloseste tocmai o procedura cu parametri OUT.", "enunt_html": "<p>Fie tabela ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3)). Se considera procedura:</p><pre class=\"code\">CREATE OR REPLACE PROCEDURE stat_dept(\np_id    IN  NUMBER,\np_nr    OUT NUMBER,\np_total OUT NUMBER) IS\n    BEGIN\n        SELECT COUNT(*), SUM(salariul)\n        INTO p_nr, p_total\n        FROM angajati\n        WHERE id_departament = p_id;\n    END;</pre><p>Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 5, "categorie": "OOP (C++)", "enunt": "Ce va afisa la rulare urmatorul program C++?\n\n#include <iostream>\nusing namespace std;\nclass Animal {\npublic:\n   virtual int picioare() { return 4; }\n};\nclass Pasare : public Animal {\npublic:\n   int picioare() { return 2; }\n};\nclass Paianjen : public Animal {\npublic:\n   int picioare() { return 8; }\n};\nint main() {\n   Animal* a[3];\n   a[0] = new Pasare();\n   a[1] = new Paianjen();\n   a[2] = new Animal();\n   int s = 0;\n   for (int i = 0; i < 3; i++)\n      s += a[i]->picioare();\n   cout << s;\n   return 0;\n}", "variante": {"a": "12", "b": "14", "c": "16", "d": "6"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Se parcurge polimorfic un tablou de pointeri Animal*, iar metoda picioare() fiind virtual, fiecare apel a[i]->picioare() se rezolva dupa tipul real al obiectului: a[0] este Pasare -> 2, a[1] este Paianjen -> 8, a[2] este Animal -> 4. Suma acumulata este 2 + 8 + 4 = 14, varianta b. a=12 ar rezulta daca a[2] ar fi tot un obiect derivat; c=16 este eronat. d=6 (adica 2+4) ignora un element sau presupune ca metoda nu e virtual (caz in care s-ar apela mereu Animal::picioare()=4 si suma ar fi 12, tot nu 6). Deoarece picioare() este declarata virtual, legarea este dinamica si suma corecta este 14. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza 14.", "enunt_html": "<p>Ce va afisa la rulare urmatorul program C++?</p><pre class=\"code\">#include &lt;iostream&gt;\nusing namespace std;\nclass Animal {\npublic:\n    virtual int picioare() { return 4; }\n};\nclass Pasare : public Animal {\npublic:\n    int picioare() { return 2; }\n};\nclass Paianjen : public Animal {\npublic:\n    int picioare() { return 8; }\n};\nint main() {\n    Animal* a[3];\n    a[0] = new Pasare();\n    a[1] = new Paianjen();\n    a[2] = new Animal();\n    int s = 0;\n    for (int i = 0; i &lt; 3; i++)\n    s += a[i]-&gt;picioare();\n    cout &lt;&lt; s;\n    return 0;\n}</pre>"}, {"nr": 6, "categorie": "C/C++", "enunt": "Ce va afisa urmatorul program C?\n#include <stdio.h>\nint nrPare(int v[], int n) {\n    if (n == 0) return 0;\n    return (v[n-1] % 2 == 0 ? 1 : 0) + nrPare(v, n-1);\n}\nint main() {\n    int v[] = {4, 7, 10, 3, 6, 9};\n    printf(\"%d\", nrPare(v, 6));\n    return 0;\n}", "variante": {"a": "2", "b": "3", "c": "4", "d": "6"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Functia numara recursiv cate elemente pare exista in vector. La fiecare pas testeaza ultimul element neprocesat: daca v[n-1] este par (v[n-1]%2==0) adauga 1, altfel 0, apoi continua cu primele n-1 elemente. Cazul de baza n==0 returneaza 0. Analizand elementele {4,7,10,3,6,9}: 4 este par (+1), 7 impar (+0), 10 par (+1), 3 impar (+0), 6 par (+1), 9 impar (+0). Total elemente pare: 4, 10 si 6, adica 3, varianta b. a=2 numara gresit; c=4 este numarul de elemente impare + eroare; d=6 este numarul total de elemente. Verificat prin compilare si rulare (gcc): programul afiseaza 3.", "enunt_html": "<p>Ce va afisa urmatorul program C?</p><pre class=\"code\">#include &lt;stdio.h&gt;\nint nrPare(int v[], int n) {\n    if (n == 0) return 0;\n    return (v[n-1] % 2 == 0 ? 1 : 0) + nrPare(v, n-1);\n}\nint main() {\n    int v[] = {4, 7, 10, 3, 6, 9};\n    printf(\"%d\", nrPare(v, 6));\n    return 0;\n}</pre>"}, {"nr": 7, "categorie": "SQL", "enunt": "Fie tabela:\nANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume\nVARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3))\ncu cel putin 200 de randuri (inregistrari), din care unii angajati au id_departament = 20.\nSe considera comanda SQL-Oracle:\nSELECT a.nume, a.salariul,\n       (SELECT MAX(b.salariul) FROM angajati b) AS sal_max\nFROM angajati a\nWHERE a.id_departament = 20;\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "pentru fiecare angajat din departamentul 20 se afiseaza numele, salariul sau si salariul maxim din intreaga tabela ANGAJATI (aceeasi valoare pe toate randurile)", "b": "genereaza eroare deoarece o subcerere nu poate aparea in clauza SELECT", "c": "afiseaza numai angajatul cu salariul maxim din departamentul 20", "d": "genereaza eroare deoarece subcererea din SELECT nu contine clauza WHERE care sa o coreleze cu interogarea exterioara"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Subcererea (SELECT MAX(b.salariul) FROM angajati b) este o subcerere scalara plasata in clauza SELECT: ea returneaza o SINGURA valoare (salariul maxim din intreaga tabela ANGAJATI) care este atasata ca a treia coloana (sal_max) la fiecare rand produs de interogarea exterioara. Interogarea exterioara selecteaza angajatii din departamentul 20 (WHERE a.id_departament = 20), iar valoarea maxima globala se repeta identic pe fiecare rand. Deci a. b este falsa: o subcerere scalara este perfect permisa in clauza SELECT, atat timp cat returneaza o singura valoare. c este falsa: filtrul WHERE selecteaza TOTI angajatii din departamentul 20, nu doar pe cel cu salariul maxim - subcererea doar adauga o coloana informativa. d este falsa: o subcerere scalara NU trebuie sa fie corelata; aici este necorelata (necorelata inseamna ca da aceeasi valoare pe toate randurile), ceea ce este perfect valid.", "enunt_html": "<p>Fie tabela: ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3)) cu cel putin 200 de randuri (inregistrari), din care unii angajati au id_departament = 20. Se considera comanda SQL-Oracle:</p><pre class=\"code\">SELECT a.nume, a.salariul,\n(SELECT MAX(b.salariul) FROM angajati b) AS sal_max\nFROM angajati a\nWHERE a.id_departament = 20;</pre><p>Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 8, "categorie": "PL/SQL", "enunt": "Se considera procedura (deja creata):\nCREATE OR REPLACE PROCEDURE stat_dept(\n   p_id    IN  NUMBER,\n   p_nr    OUT NUMBER,\n   p_total OUT NUMBER) IS\nBEGIN\n   SELECT COUNT(*), SUM(salariul)\n   INTO p_nr, p_total\n   FROM angajati WHERE id_departament = p_id;\nEND;\nUn bloc anonim contine apelul:\nDECLARE\n   v_n NUMBER;\n   v_t NUMBER;\nBEGIN\n   stat_dept(p_total => v_t, p_id => 10, p_nr => v_n);\nEND;\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "apelul este valid; prin notatia cu parametri numiti ordinea argumentelor nu conteaza, deci p_id primeste 10, iar v_n si v_t primesc rezultatele, chiar daca parametrii sunt scrisi intr-o ordine diferita de cea din antet", "b": "apelul genereaza eroare deoarece la apelarea unei proceduri parametrii trebuie transmisi obligatoriu in ordinea din antet", "c": "apelul genereaza eroare deoarece p_id (parametru IN) nu poate fi transmis prin notatia cu nume (=>)", "d": "apelul este valid, dar p_id va primi valoarea lui v_t, deoarece conteaza pozitia, nu numele"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Apelul foloseste notatia cu parametri numiti (named notation): fiecare argument este asociat explicit numelui formal prin operatorul de asociere =>. In aceasta notatie ordinea in care sunt scrisi parametrii in apel NU conteaza, deoarece potrivirea se face dupa nume, nu dupa pozitie. Astfel p_id => 10 transmite 10 la parametrul de intrare p_id, p_nr => v_n leaga variabila v_n de parametrul OUT p_nr, iar p_total => v_t leaga v_t de p_total. Apelul este perfect valid si corect. Deci a. b este falsa: ordinea obligatorie exista doar la notatia pozitionala; notatia cu nume elimina aceasta constrangere. c este falsa: orice parametru (IN, OUT sau IN OUT) poate fi transmis prin notatia cu nume. d este falsa: exact caracteristica notatiei cu nume este ca numele decide asocierea, nu pozitia - deci p_id primeste 10, nu v_t.", "enunt_html": "<p>Se considera procedura (deja creata):</p><pre class=\"code\">CREATE OR REPLACE PROCEDURE stat_dept(\np_id    IN  NUMBER,\np_nr    OUT NUMBER,\np_total OUT NUMBER) IS\n    BEGIN\n        SELECT COUNT(*), SUM(salariul)\n        INTO p_nr, p_total\n        FROM angajati WHERE id_departament = p_id;\n    END;</pre><p>Un bloc anonim contine apelul:</p><pre class=\"code\">DECLARE\n    v_n NUMBER;\n    v_t NUMBER;\nBEGIN\n    stat_dept(p_total =&gt; v_t, p_id =&gt; 10, p_nr =&gt; v_n);\nEND;</pre><p>Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 9, "categorie": "OOP (C++)", "enunt": "Ce va afisa la rulare urmatorul program C++?\n\n#include <iostream>\nusing namespace std;\nclass Baza {\npublic:\n   Baza() { cout << \"B\"; }\n   virtual ~Baza() { cout << \"b\"; }\n};\nclass Derivata : public Baza {\npublic:\n   Derivata() { cout << \"D\"; }\n   ~Derivata() { cout << \"d\"; }\n};\nint main() {\n   Baza* p = new Derivata();\n   delete p;\n   return 0;\n}", "variante": {"a": "BDdb", "b": "BDbd", "c": "BDb", "d": "DBbd"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "La new Derivata() se construieste obiectul in ordinea: constructorul bazei Baza() -> \"B\", apoi constructorul derivatei Derivata() -> \"D\", deci \"BD\". La delete p, unde p este un pointer Baza* care indica un obiect Derivata: deoarece destructorul bazei este declarat virtual (~Baza() virtual), apelul delete se rezolva prin legare dinamica si porneste de la destructorul clasei REALE (Derivata). Destructorii se executa in ordine inversa constructorilor: intai ~Derivata() -> \"d\", apoi ~Baza() -> \"b\", deci \"db\". Rezultat total: \"BDdb\", varianta a. Observatie esentiala: daca ~Baza() NU ar fi fost virtual, delete p (prin pointer de baza) ar fi apelat doar ~Baza(), producand comportament nedefinit / obiect derivat distrus incomplet (\"BDb\"), motiv pentru care destructorul bazei se declara virtual la clasele polimorfice. c=BDb corespunde tocmai cazului gresit (fara destructor virtual). b si d inverseaza ordinea destructorilor. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza BDdb.", "enunt_html": "<p>Ce va afisa la rulare urmatorul program C++?</p><pre class=\"code\">#include &lt;iostream&gt;\nusing namespace std;\nclass Baza {\npublic:\n    Baza() { cout &lt;&lt; \"B\"; }\n    virtual ~Baza() { cout &lt;&lt; \"b\"; }\n};\nclass Derivata : public Baza {\npublic:\n    Derivata() { cout &lt;&lt; \"D\"; }\n    ~Derivata() { cout &lt;&lt; \"d\"; }\n};\nint main() {\n    Baza* p = new Derivata();\n    delete p;\n    return 0;\n}</pre>"}, {"nr": 10, "categorie": "C/C++", "enunt": "Ce va afisa urmatorul program C?\n#include <stdio.h>\nint cauta(int v[], int n, int x) {\n    if (n == 0) return -1;\n    if (v[n-1] == x) return n-1;\n    return cauta(v, n-1, x);\n}\nint main() {\n    int v[] = {5, 8, 12, 8, 3};\n    printf(\"%d\", cauta(v, 5, 8));\n    return 0;\n}", "variante": {"a": "1", "b": "3", "c": "8", "d": "-1"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Functia cauta valoarea x in vector, in mod recursiv, verificand elementele de la coada spre cap (de la indicele n-1 in jos). La fiecare pas: daca n==0 s-a epuizat vectorul si returneaza -1 (negasit); daca v[n-1]==x returneaza indicele curent n-1; altfel continua cu subvectorul de lungime n-1. Trace pentru x=8: n=5 -> v[4]=3, nu; n=4 -> v[3]=8, DA -> returneaza 3. Deci se opreste la primul 8 intalnit dinspre coada, care se afla pe pozitia 3. Rezultat: 3, varianta b. Atentie: desi valoarea 8 apare si pe pozitia 1, cautarea pornind de la coada gaseste INTAI aparitia de pe pozitia 3 si returneaza imediat, deci a=1 (prima aparitie de la cap) este gresit. c=8 este VALOAREA cautata, nu indicele. d=-1 ar fi rezultatul daca valoarea nu ar exista. Verificat prin compilare si rulare (gcc): programul afiseaza 3.", "enunt_html": "<p>Ce va afisa urmatorul program C?</p><pre class=\"code\">#include &lt;stdio.h&gt;\nint cauta(int v[], int n, int x) {\n    if (n == 0) return -1;\n    if (v[n-1] == x) return n-1;\n    return cauta(v, n-1, x);\n}\nint main() {\n    int v[] = {5, 8, 12, 8, 3};\n    printf(\"%d\", cauta(v, 5, 8));\n    return 0;\n}</pre>"}, {"nr": 11, "categorie": "SQL", "enunt": "Fie tabela:\nANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume\nVARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3))\ncu cel putin 200 de randuri (inregistrari).\nSe considera comanda SQL-Oracle:\nSELECT nume, salariul\nFROM (SELECT nume, salariul\n      FROM angajati\n      ORDER BY salariul DESC)\nWHERE ROWNUM <= 3;\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "afiseaza cei 3 angajati cu cele mai mari salarii, deoarece sortarea descrescatoare se face in vederea inline, iar ROWNUM se aplica pe rezultatul deja sortat", "b": "afiseaza 3 angajati aleatori, deoarece ROWNUM ignora clauza ORDER BY din vederea inline", "c": "genereaza eroare deoarece ROWNUM nu poate fi folosit impreuna cu o subcerere in FROM", "d": "afiseaza cei 3 angajati cu cele mai mici salarii"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Aceasta este forma clasica Oracle de a obtine \"top-N\" corect. Cheia este ORDINEA de evaluare: in Oracle, pseudocoloana ROWNUM se atribuie randurilor INAINTE de aplicarea unui ORDER BY din acelasi bloc de interogare. De aceea, daca s-ar scrie direct SELECT ... FROM angajati WHERE ROWNUM<=3 ORDER BY salariul DESC, ROWNUM ar numerota 3 randuri OARECARE si abia apoi le-ar sorta - rezultat gresit. Solutia corecta este vederea inline: subcererea din FROM produce mai intai rezultatul complet SORTAT descrescator dupa salariu, iar interogarea exterioara aplica ROWNUM<=3 pe acest set deja ordonat, retinand primele 3 randuri, adica cele mai mari 3 salarii. Deci a. b este falsa tocmai pentru ca sortarea este \"materializata\" in vederea inline inaintea aplicarii ROWNUM. c este falsa: ROWNUM se poate folosi liber cu vederi inline (este chiar tehnica recomandata). d este falsa: sortarea este DESC (descrescatoare), deci se obtin salariile cele mai MARI.", "enunt_html": "<p>Fie tabela: ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3)) cu cel putin 200 de randuri (inregistrari). Se considera comanda SQL-Oracle:</p><pre class=\"code\">SELECT nume, salariul\nFROM (SELECT nume, salariul\nFROM angajati\nORDER BY salariul DESC)\nWHERE ROWNUM &lt;= 3;</pre><p>Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 12, "categorie": "Baze de date (teorie)", "enunt": "In teoria modelului relational, se considera notiunile de supercheie (superkey) si cheie\ncandidata (cheie minima). Precizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "orice cheie candidata este o supercheie, dar nu orice supercheie este cheie candidata", "b": "orice supercheie este si cheie candidata, deoarece ambele identifica unic un tuplu", "c": "o cheie candidata poate contine atribute redundante (care pot fi eliminate fara a pierde unicitatea)", "d": "o relatie poate avea cel mult o supercheie"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "O supercheie este orice multime de atribute care identifica unic un tuplu (rand) intr-o relatie; ea poate contine si atribute \"in plus\", nenecesare pentru unicitate. O cheie candidata (numita si cheie minima) este o supercheie MINIMALA: identifica unic tuplul si, in plus, niciun subansamblu propriu al ei nu mai are aceasta proprietate (nu contine atribute redundante). Prin urmare, orice cheie candidata este in mod evident si supercheie (indeplineste conditia de unicitate), dar reciproca nu este adevarata: o supercheie care contine atribute in plus (ex. {id_angajat, nume}) nu este cheie candidata, deoarece nu este minimala. Deci a. b este falsa: o supercheie neminimala NU este cheie candidata. c este falsa: exact absenta atributelor redundante (minimalitatea) defineste cheia candidata; daca ar putea fi eliminate atribute, nu ar fi minimala. d este falsa: o relatie poate avea multiple superchei (si chiar mai multe chei candidate); dintre cheile candidate se alege una drept cheie primara.", "enunt_html": "<p>In teoria modelului relational, se considera notiunile de supercheie (superkey) si cheie candidata (cheie minima). Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 13, "categorie": "OOP (C++)", "enunt": "Ce va afisa la rulare urmatorul program C++?\n\n#include <iostream>\nusing namespace std;\nclass A {\npublic:\n   void afiseaza() { cout << \"A\"; }\n};\nclass B : public A {\npublic:\n   void afiseaza() { cout << \"B\"; }\n};\nint main() {\n   A* p = new B();\n   p->afiseaza();\n   return 0;\n}", "variante": {"a": "A", "b": "B", "c": "AB", "d": "Eroare de compilare deoarece B nu poate redefini metoda afiseaza"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Metoda afiseaza() NU este declarata virtual in clasa de baza A. In lipsa cuvantului cheie virtual, apelul p->afiseaza() se rezolva prin legare STATICA (early binding), adica in functie de TIPUL POINTERULUI (A*), nu de tipul real al obiectului indicat (B). Prin urmare se apeleaza A::afiseaza() si se afiseaza \"A\", varianta a. Acesta este exact \"capcana\" polimorfismului: pentru ca apelul sa se rezolve dupa tipul real al obiectului (adica B::afiseaza() -> \"B\") ar fi fost necesar ca metoda sa fie declarata virtual in A. b=B ar fi corect DOAR daca afiseaza() ar fi virtual. c=AB nu corespunde (se apeleaza o singura metoda). d este falsa: o clasa derivata poate redefini (ascunde/suprascrie) o metoda a bazei fara nicio eroare. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza A.", "enunt_html": "<p>Ce va afisa la rulare urmatorul program C++?</p><pre class=\"code\">#include &lt;iostream&gt;\nusing namespace std;\nclass A {\npublic:\n    void afiseaza() { cout &lt;&lt; \"A\"; }\n};\nclass B : public A {\npublic:\n    void afiseaza() { cout &lt;&lt; \"B\"; }\n};\nint main() {\n    A* p = new B();\n    p-&gt;afiseaza();\n    return 0;\n}</pre>"}, {"nr": 14, "categorie": "PL/SQL", "enunt": "Se considera procedura:\nCREATE OR REPLACE PROCEDURE incrementeaza(x OUT NUMBER) IS\nBEGIN\n   x := NVL(x, 0) + 1;\nEND;\nSi blocul anonim:\nDECLARE\n   v NUMBER := 5;\nBEGIN\n   incrementeaza(v);\n   DBMS_OUTPUT.PUT_LINE(v);\nEND;\nCe valoare va afisa blocul pentru v?", "variante": {"a": "6", "b": "1", "c": "5", "d": "NULL"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Regula esentiala: un parametru de tip OUT primeste valoarea NULL la INTRAREA in procedura, indiferent de valoarea variabilei actuale transmise. Cu alte cuvinte, un parametru OUT este de tip \"doar de iesire\": valoarea de 5 a variabilei v NU se transmite in interiorul procedurii prin parametrul x. Astfel, la intrarea in incrementeaza, x este NULL. Instructiunea x := NVL(x, 0) + 1 devine x := NVL(NULL, 0) + 1 = 0 + 1 = 1. La iesirea din procedura, valoarea 1 a parametrului OUT x este copiata inapoi in variabila actuala v. Deci v devine 1, varianta b. a=6 ar rezulta daca parametrul ar fi IN OUT (caz in care valoarea initiala 5 s-ar transmite si s-ar obtine 5+1=6). c=5 ar insemna ca procedura nu modifica v. d=NULL ar ignora NVL. Corect: cu parametru OUT si NVL, rezultatul este 1.", "enunt_html": "<p>Se considera procedura:</p><pre class=\"code\">CREATE OR REPLACE PROCEDURE incrementeaza(x OUT NUMBER) IS\n    BEGIN\n        x := NVL(x, 0) + 1;\n    END;</pre><p>Si blocul anonim:</p><pre class=\"code\">DECLARE\n    v NUMBER := 5;\nBEGIN\n    incrementeaza(v);\n    DBMS_OUTPUT.PUT_LINE(v);\nEND;</pre><p>Ce valoare va afisa blocul pentru v?</p>"}, {"nr": 15, "categorie": "C/C++", "enunt": "Ce va afisa urmatorul program C?\n#include <stdio.h>\nint maxim(int v[], int n) {\n    if (n == 1) return v[0];\n    int m = maxim(v, n-1);\n    return v[n-1] > m ? v[n-1] : m;\n}\nint main() {\n    int v[] = {2, 9, 4, 15, 7, 15, 1};\n    printf(\"%d\", maxim(v, 7));\n    return 0;\n}", "variante": {"a": "15", "b": "9", "c": "1", "d": "30"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Functia determina recursiv maximul dintr-un vector. Cazul de baza este n==1, cand singurul element v[0] este maximul. Pentru n>1, se calculeaza mai intai maximul primelor n-1 elemente (m = maxim(v, n-1)), apoi se compara cu ultimul element v[n-1] si se returneaza cel mai mare dintre ele (v[n-1] > m ? v[n-1] : m). Pentru vectorul {2,9,4,15,7,15,1}, maximul este 15 (valoare care apare de doua ori, dar acest lucru nu conteaza pentru maxim). Deci a. b=9 este un maxim partial gresit; c=1 este ultimul element; d=30 este eronat (functia nu aduna elemente). Verificat prin compilare si rulare (gcc): programul afiseaza 15.", "enunt_html": "<p>Ce va afisa urmatorul program C?</p><pre class=\"code\">#include &lt;stdio.h&gt;\nint maxim(int v[], int n) {\n    if (n == 1) return v[0];\n    int m = maxim(v, n-1);\n    return v[n-1] &gt; m ? v[n-1] : m;\n}\nint main() {\n    int v[] = {2, 9, 4, 15, 7, 15, 1};\n    printf(\"%d\", maxim(v, 7));\n    return 0;\n}</pre>"}, {"nr": 16, "categorie": "SQL", "enunt": "Fie tabelele:\nANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume\nVARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3))\ncu cel putin 200 de randuri.\nDEPARTAMENTE (id_departament NUMBER(5) PRIMARY KEY, denumire_departament\nVARCHAR2(30)) cu cel putin 20 de randuri, unele departamente neavand niciun angajat.\nSe considera comanda SQL-Oracle:\nSELECT d.denumire_departament,\n       (SELECT COUNT(*) FROM angajati a\n        WHERE a.id_departament = d.id_departament) AS nr_ang\nFROM departamente d;\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "afiseaza toate departamentele (inclusiv cele fara angajati, care vor avea nr_ang = 0), impreuna cu numarul de angajati din fiecare, calculat printr-o subcerere scalara corelata", "b": "afiseaza doar departamentele care au cel putin un angajat, la fel ca un INNER JOIN", "c": "genereaza eroare deoarece subcererea din SELECT se refera la d.id_departament din interogarea exterioara", "d": "afiseaza pentru fiecare departament numarul TOTAL de angajati din firma, aceeasi valoare pe toate randurile"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Subcererea din clauza SELECT este o subcerere scalara CORELATA: pentru fiecare rand (departament d) al interogarii exterioare, ea numara angajatii care au a.id_departament = d.id_departament, adica angajatii din acel departament. Deoarece interogarea exterioara parcurge toate randurile din DEPARTAMENTE (nu exista filtru care sa le elimine), se afiseaza TOATE departamentele. Pentru un departament fara angajati, COUNT(*) al subcererii returneaza 0 (COUNT nu returneaza NULL, ci 0 cand nu exista randuri). Deci a. b este falsa: spre deosebire de un INNER JOIN (care ar elimina departamentele fara angajati), aceasta forma pastreaza si departamentele cu 0 angajati - comportament similar unui LEFT JOIN. c este falsa: referirea la o coloana a interogarii exterioare (d.id_departament) in subcerere este exact definitia unei subcereri corelate, perfect valida. d este falsa: valoarea difera de la departament la departament (este numarul de angajati al FIECARUI departament), datorita corelarii prin d.id_departament.", "enunt_html": "<p>Fie tabelele: ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3)) cu cel putin 200 de randuri. DEPARTAMENTE (id_departament NUMBER(5) PRIMARY KEY, denumire_departament VARCHAR2(30)) cu cel putin 20 de randuri, unele departamente neavand niciun angajat. Se considera comanda SQL-Oracle:</p><pre class=\"code\">SELECT d.denumire_departament,\n(SELECT COUNT(*) FROM angajati a\nWHERE a.id_departament = d.id_departament) AS nr_ang\nFROM departamente d;</pre><p>Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 17, "categorie": "OOP (C++)", "enunt": "Ce va afisa la rulare urmatorul program C++?\n\n#include <iostream>\nusing namespace std;\nclass Plata {\npublic:\n   virtual int suma() = 0;\n};\nclass Cash : public Plata {\n   int s;\npublic:\n   Cash(int s) { this->s = s; }\n   int suma() { return s; }\n};\nclass Card : public Plata {\n   int s;\npublic:\n   Card(int s) { this->s = s; }\n   int suma() { return s * 2; }\n};\nint main() {\n   Plata* p[2];\n   p[0] = new Cash(100);\n   p[1] = new Card(50);\n   int t = 0;\n   for (int i = 0; i < 2; i++)\n      t += p[i]->suma();\n   cout << t;\n   return 0;\n}", "variante": {"a": "150", "b": "200", "c": "300", "d": "Eroare de compilare deoarece clasa Plata contine o metoda virtual pura"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Clasa Plata are metoda virtual pura suma() (= 0), deci este o clasa abstracta: nu poate fi instantiata direct, dar poate fi folosita ca tip de baza pentru pointeri. Tabloul p contine pointeri Plata* care indica obiecte concrete: p[0] un Cash(100) si p[1] un Card(50). Apelul polimorfic p[i]->suma() se rezolva dupa tipul real: Cash::suma() returneaza s = 100, iar Card::suma() returneaza s*2 = 50*2 = 100. Suma acumulata este 100 + 100 = 200, varianta b. a=150 ar rezulta daca Card ar returna doar s (50). c=300 este eronat. d este falsa: prezenta unei metode virtual pure NU produce eroare de compilare - ea doar face clasa abstracta; eroare ar aparea doar daca s-ar incerca instantierea directa a clasei abstracte (ex. Plata x;), ceea ce nu se intampla aici (se folosesc doar pointeri catre clase derivate concrete care implementeaza suma()). Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza 200.", "enunt_html": "<p>Ce va afisa la rulare urmatorul program C++?</p><pre class=\"code\">#include &lt;iostream&gt;\nusing namespace std;\nclass Plata {\npublic:\n    virtual int suma() = 0;\n};\nclass Cash : public Plata {\n    int s;\npublic:\n    Cash(int s) { this-&gt;s = s; }\n    int suma() { return s; }\n};\nclass Card : public Plata {\n    int s;\npublic:\n    Card(int s) { this-&gt;s = s; }\n    int suma() { return s * 2; }\n};\nint main() {\n    Plata* p[2];\n    p[0] = new Cash(100);\n    p[1] = new Card(50);\n    int t = 0;\n    for (int i = 0; i &lt; 2; i++)\n    t += p[i]-&gt;suma();\n    cout &lt;&lt; t;\n    return 0;\n}</pre>"}, {"nr": 18, "categorie": "PL/SQL", "enunt": "Se considera procedura cu doi parametri OUT:\nCREATE OR REPLACE PROCEDURE stat_dept(\n   p_id    IN  NUMBER,\n   p_nr    OUT NUMBER,\n   p_total OUT NUMBER) IS\nBEGIN\n   SELECT COUNT(*), SUM(salariul)\n   INTO p_nr, p_total\n   FROM angajati WHERE id_departament = p_id;\nEND;\nIntr-un bloc anonim s-au declarat variabilele v_n NUMBER; v_t NUMBER;.\nPrecizati care dintre urmatoarele apeluri ale procedurii NU este corect (genereaza eroare):", "variante": {"a": "stat_dept(10, v_n, v_t);", "b": "stat_dept(p_id => 10, p_nr => v_n, p_total => v_t);", "c": "stat_dept(10, p_nr => v_n, p_total => v_t);", "d": "stat_dept(p_id => 10, v_n, v_t);"}, "raspuns_barem": "d", "raspuns_corect": "d", "status_verificare": "CONFIRMAT", "explicatie": "Regula de combinare a notatiilor la apelul unui subprogram: se pot amesteca notatia pozitionala si notatia cu parametri numiti, DAR toti parametrii transmisi pozitional trebuie sa apara INAINTEA celor transmisi prin nume. Odata ce s-a folosit notatia cu nume (=>), toti parametrii urmatori trebuie transmisi tot prin nume. Analiza: a) toti pozitionali - corect (10->p_id, v_n->p_nr, v_t->p_total). b) toti prin nume - corect. c) primul pozitional (10->p_id), apoi cu nume - corect, deoarece pozitionalul precede numele. d) INCORECT: primul parametru este transmis prin nume (p_id => 10), iar urmatorii doi (v_n, v_t) sunt pozitionali - dupa ce s-a inceput notatia cu nume nu se mai poate reveni la cea pozitionala (eroare PLS-00312 / \"a positional parameter association may not follow a named association\"). Deci raspunsul (apelul incorect) este d.", "enunt_html": "<p>Se considera procedura cu doi parametri OUT:</p><pre class=\"code\">CREATE OR REPLACE PROCEDURE stat_dept(\np_id    IN  NUMBER,\np_nr    OUT NUMBER,\np_total OUT NUMBER) IS\n    BEGIN\n        SELECT COUNT(*), SUM(salariul)\n        INTO p_nr, p_total\n        FROM angajati WHERE id_departament = p_id;\n    END;\n    Intr-un bloc anonim s-au declarat variabilele v_n NUMBER; v_t NUMBER;.</pre><p>Precizati care dintre urmatoarele apeluri ale procedurii NU este corect (genereaza eroare):</p>"}, {"nr": 19, "categorie": "C/C++", "enunt": "Ce va afisa urmatorul program C++?\n\n#include <iostream>\nusing namespace std;\nint calc(int a, int b = 5, int c = 10) {\n   return a + b * c;\n}\nint main() {\n   cout << calc(2) << \" \" << calc(2, 3) << \" \" << calc(2, 3, 4);\n   return 0;\n}", "variante": {"a": "52 32 14", "b": "70 50 24", "c": "52 35 14", "d": "17 17 17"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Functia calc are doi parametri cu valori implicite (default arguments): b = 5 si c = 10. La un apel, parametrii lipsa (de la dreapta la stanga) primesc valorile implicite. Se calculeaza a + b * c (inmultirea are prioritate fata de adunare). Analiza: calc(2) -> a=2, b=5 (implicit), c=10 (implicit) -> 2 + 5*10 = 2 + 50 = 52. calc(2, 3) -> a=2, b=3, c=10 (implicit) -> 2 + 3*10 = 2 + 30 = 32. calc(2, 3, 4) -> a=2, b=3, c=4 -> 2 + 3*4 = 2 + 12 = 14. Rezultat: \"52 32 14\", varianta a. b calculeaza gresit (ca (a+b)*c). c greseste al doilea termen. d presupune gresit ca toti parametrii au aceeasi valoare. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza 52 32 14.", "enunt_html": "<p>Ce va afisa urmatorul program C++?</p><pre class=\"code\">#include &lt;iostream&gt;\nusing namespace std;\nint calc(int a, int b = 5, int c = 10) {\n    return a + b * c;\n}\nint main() {\n    cout &lt;&lt; calc(2) &lt;&lt; \" \" &lt;&lt; calc(2, 3) &lt;&lt; \" \" &lt;&lt; calc(2, 3, 4);\n    return 0;\n}</pre>"}, {"nr": 20, "categorie": "SQL", "enunt": "Fie tabelele:\nANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume\nVARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3))\ncu cel putin 200 de randuri.\nDEPARTAMENTE (id_departament NUMBER(5) PRIMARY KEY, denumire_departament\nVARCHAR2(30)) cu cel putin 20 de randuri.\nSe considera comanda SQL-Oracle:\nSELECT d.denumire_departament, m.sal_mediu\nFROM departamente d\nJOIN (SELECT id_departament, AVG(salariul) AS sal_mediu\n      FROM angajati\n      GROUP BY id_departament) m\n  ON m.id_departament = d.id_departament;\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "afiseaza denumirea departamentului si salariul mediu al angajatilor sai, doar pentru departamentele care au cel putin un angajat", "b": "afiseaza toate departamentele, inclusiv cele fara angajati, care vor avea sal_mediu = 0", "c": "genereaza eroare deoarece nu se poate face JOIN intre un tabel si o vedere inline", "d": "genereaza eroare deoarece coloana sal_mediu din vederea inline nu poate fi folosita in clauza SELECT exterioara"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Vederea inline m calculeaza, pentru fiecare departament care are angajati, salariul mediu (AVG grupat pe id_departament). Aceasta este apoi unita prin JOIN (INNER JOIN) cu tabela DEPARTAMENTE dupa id_departament. Deoarece este un JOIN interior, se pastreaza doar departamentele care au corespondent in vederea inline m, adica cele care au cel putin un angajat (departamentele fara angajati nu apar in m, pentru ca GROUP BY nu genereaza grupuri pentru ele). Deci a. b este falsa: fiind INNER JOIN, departamentele fara angajati sunt eliminate (ar aparea doar cu un LEFT JOIN, si chiar si atunci sal_mediu ar fi NULL, nu 0). c este falsa: un tabel se poate uni fara probleme cu o vedere inline (subcerere in FROM). d este falsa: coloana sal_mediu, definita prin alias in vederea inline, devine o coloana reala a lui m si poate fi folosita in SELECT-ul exterior.", "enunt_html": "<p>Fie tabelele: ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3)) cu cel putin 200 de randuri. DEPARTAMENTE (id_departament NUMBER(5) PRIMARY KEY, denumire_departament VARCHAR2(30)) cu cel putin 20 de randuri. Se considera comanda SQL-Oracle:</p><pre class=\"code\">SELECT d.denumire_departament, m.sal_mediu\nFROM departamente d\nJOIN (SELECT id_departament, AVG(salariul) AS sal_mediu\nFROM angajati\nGROUP BY id_departament) m\nON m.id_departament = d.id_departament;</pre><p>Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 21, "categorie": "OOP (C++)", "enunt": "Ce va afisa la rulare urmatorul program C++?\n\n#include <iostream>\nusing namespace std;\nclass Resursa {\npublic:\n   ~Resursa() { cout << \"R\"; }\n};\nclass Baza {\npublic:\n   virtual ~Baza() { cout << \"B\"; }\n};\nclass Derivata : public Baza {\n   Resursa r;\npublic:\n   ~Derivata() { cout << \"D\"; }\n};\nint main() {\n   Baza* p = new Derivata();\n   delete p;\n   return 0;\n}", "variante": {"a": "DRB", "b": "BRD", "c": "DB", "d": "B"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Obiectul creat este de tip Derivata, care contine un membru r de tip Resursa si mosteneste public din Baza. Deoarece destructorul bazei este virtual (~Baza() virtual), delete p (prin pointer de baza catre un obiect derivat) porneste corect distrugerea de la clasa reala Derivata. Ordinea de distrugere a unui obiect derivat este: (1) corpul destructorului clasei derivate, (2) destructorii obiectelor membru (in ordine inversa declararii), (3) destructorul clasei de baza. Deci: intai ~Derivata() -> \"D\", apoi destructorul membrului r, ~Resursa() -> \"R\", apoi ~Baza() -> \"B\". Rezultat: \"DRB\", varianta a. b inverseaza ordinea. c=DB omite membrul (ceea ce s-ar intampla doar daca membrul nu ar avea destructor). d=B ar fi cazul GRESIT in care destructorul bazei NU ar fi virtual, iar delete p ar apela doar ~Baza(), lasand membrul r si partea Derivata nedistruse (comportament nedefinit); tocmai de aceea destructorul bazei este declarat virtual. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza DRB.", "enunt_html": "<p>Ce va afisa la rulare urmatorul program C++?</p><pre class=\"code\">#include &lt;iostream&gt;\nusing namespace std;\nclass Resursa {\npublic:\n    ~Resursa() { cout &lt;&lt; \"R\"; }\n};\nclass Baza {\npublic:\n    virtual ~Baza() { cout &lt;&lt; \"B\"; }\n};\nclass Derivata : public Baza {\n    Resursa r;\npublic:\n    ~Derivata() { cout &lt;&lt; \"D\"; }\n};\nint main() {\n    Baza* p = new Derivata();\n    delete p;\n    return 0;\n}</pre>"}, {"nr": 22, "categorie": "PL/SQL", "enunt": "Se considera procedura:\nCREATE OR REPLACE PROCEDURE calc_bonus(\n   p_id      IN  NUMBER,\n   p_bonus   OUT NUMBER,\n   p_procent IN  NUMBER DEFAULT 10) IS\n   v_sal NUMBER;\nBEGIN\n   SELECT salariul INTO v_sal FROM angajati WHERE id_angajat = p_id;\n   p_bonus := v_sal * p_procent / 100;\nEND;\nUn bloc anonim declara v_b NUMBER; si apeleaza:\n   calc_bonus(p_id => 100, p_bonus => v_b);\nPresupunand ca angajatul cu id 100 are salariul 4000, ce valoare va avea v_b dupa apel?", "variante": {"a": "400", "b": "4000", "c": "NULL", "d": "apelul genereaza eroare deoarece parametrul p_procent nu a fost transmis"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Procedura are trei parametri, dintre care p_procent are o valoare implicita (DEFAULT 10). La apel se foloseste notatia cu parametri numiti: p_id => 100 si p_bonus => v_b. Parametrul p_procent nu este transmis, deci ia valoarea sa implicita 10 - notatia cu nume permite tocmai omiterea unui parametru cu valoare implicita, chiar daca acesta nu este ultimul din lista, fara ambiguitate. In corp: v_sal preia salariul angajatului 100, adica 4000, iar p_bonus := 4000 * 10 / 100 = 400. La iesire, valoarea 400 este copiata in v_b. Deci a. b=4000 ar fi salariul netransformat. c=NULL este gresit. d este falsa: p_procent avand DEFAULT, omiterea lui NU produce eroare - ia automat valoarea implicita 10. Rezultat corect: v_b = 400.", "enunt_html": "<p>Se considera procedura:</p><pre class=\"code\">CREATE OR REPLACE PROCEDURE calc_bonus(\np_id      IN  NUMBER,\np_bonus   OUT NUMBER,\np_procent IN  NUMBER DEFAULT 10) IS\n    v_sal NUMBER;\n    BEGIN\n        SELECT salariul INTO v_sal FROM angajati WHERE id_angajat = p_id;\n        p_bonus := v_sal * p_procent / 100;\n    END;\n    Un bloc anonim declara v_b NUMBER; si apeleaza:\n    calc_bonus(p_id =&gt; 100, p_bonus =&gt; v_b);</pre><p>Presupunand ca angajatul cu id 100 are salariul 4000, ce valoare va avea v_b dupa apel?</p>"}, {"nr": 23, "categorie": "SQL", "enunt": "Fie tabela:\nANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume\nVARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3))\ncu cel putin 200 de randuri.\nSe considera comanda SQL-Oracle:\nSELECT a.nume,\n       a.salariul - (SELECT AVG(b.salariul) FROM angajati b) AS diferenta\nFROM angajati a;\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "pentru fiecare angajat, afiseaza numele si diferenta dintre salariul sau si salariul mediu al intregii firme (subcerere scalara necorelata)", "b": "afiseaza numai angajatii al caror salariu este peste medie", "c": "genereaza eroare deoarece nu se poate face o operatie aritmetica intre o coloana si o subcerere", "d": "afiseaza pentru fiecare angajat diferenta fata de salariul mediu al PROPRIULUI departament"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Subcererea (SELECT AVG(b.salariul) FROM angajati b) este o subcerere scalara NECORELATA: ea returneaza o singura valoare - salariul mediu calculat pe intreaga tabela ANGAJATI - care este aceeasi pentru toate randurile. In clauza SELECT, aceasta valoare este scazuta din salariul fiecarui angajat (a.salariul - medie), rezultand coloana \"diferenta\". Astfel, pentru fiecare angajat se afiseaza numele si cat de mult se abate salariul sau de la media firmei (valoare pozitiva daca este peste medie, negativa daca este sub). Deci a. b este falsa: nu exista clauza WHERE care sa filtreze - se afiseaza TOTI angajatii, doar ca unii au diferenta negativa. c este falsa: o subcerere scalara returneaza o valoare unica ce poate participa la orice expresie aritmetica. d este falsa: subcererea nu este corelata cu departamentul angajatului (nu are conditie care sa lege b.id_departament de a.id_departament), deci calculeaza media GLOBALA, nu pe departament.", "enunt_html": "<p>Fie tabela: ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3)) cu cel putin 200 de randuri. Se considera comanda SQL-Oracle:</p><pre class=\"code\">SELECT a.nume,\na.salariul - (SELECT AVG(b.salariul) FROM angajati b) AS diferenta\nFROM angajati a;</pre><p>Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 24, "categorie": "OOP (C++)", "enunt": "Ce va afisa la rulare urmatorul program C++?\n\n#include <iostream>\nusing namespace std;\nclass Angajat {\npublic:\n   virtual int salariu() { return 1000; }\n};\nclass Manager : public Angajat {\npublic:\n   int salariu() { return 5000; }\n};\nclass Director : public Manager {\npublic:\n   int salariu() { return 8000; }\n};\nint main() {\n   Angajat* v[3];\n   v[0] = new Angajat();\n   v[1] = new Manager();\n   v[2] = new Director();\n   for (int i = 0; i < 3; i++)\n      cout << v[i]->salariu() << \" \";\n   return 0;\n}", "variante": {"a": "1000 5000 8000", "b": "1000 1000 1000", "c": "8000 8000 8000", "d": "1000 5000 5000"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Metoda salariu() este virtual in clasa de baza Angajat si este suprascrisa pe fiecare nivel al ierarhiei: Manager o redefineste (5000), iar Director (derivat din Manager) o redefineste din nou (8000). Proprietatea virtual se transmite automat pe toata ierarhia. Parcurgand polimorfic tabloul de pointeri Angajat*, fiecare apel v[i]->salariu() se leaga dinamic la tipul real: v[0] Angajat -> 1000, v[1] Manager -> 5000, v[2] Director -> 8000. Rezultat: \"1000 5000 8000 \", varianta a. b=1000 1000 1000 ar aparea daca metoda NU ar fi virtual (legare statica dupa Angajat*). c presupune gresit ca toate obiectele sunt Director. d greseste ultimul apel (Director suprascrie corect si pe Manager, deci 8000, nu 5000). Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza 1000 5000 8000 .", "enunt_html": "<p>Ce va afisa la rulare urmatorul program C++?</p><pre class=\"code\">#include &lt;iostream&gt;\nusing namespace std;\nclass Angajat {\npublic:\n    virtual int salariu() { return 1000; }\n};\nclass Manager : public Angajat {\npublic:\n    int salariu() { return 5000; }\n};\nclass Director : public Manager {\npublic:\n    int salariu() { return 8000; }\n};\nint main() {\n    Angajat* v[3];\n    v[0] = new Angajat();\n    v[1] = new Manager();\n    v[2] = new Director();\n    for (int i = 0; i &lt; 3; i++)\n    cout &lt;&lt; v[i]-&gt;salariu() &lt;&lt; \" \";\n    return 0;\n}</pre>"}, {"nr": 25, "categorie": "C/C++", "enunt": "Ce va afisa urmatorul program C++?\n\n#include <iostream>\nusing namespace std;\nint f(int n, int p = 2) {\n   if (n == 0) return 1;\n   return p * f(n - 1, p);\n}\nint main() {\n   cout << f(3) << \" \" << f(3, 3);\n   return 0;\n}", "variante": {"a": "8 27", "b": "6 9", "c": "8 9", "d": "6 27"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Functia f este recursiva si calculeaza p la puterea n (p^n), avand parametrul p cu valoare implicita 2 (default argument). La fiecare pas inmulteste p cu rezultatul apelului f(n-1, p), iar cazul de baza n==0 returneaza 1. Analiza: f(3) foloseste p implicit = 2 -> 2^3 = 2*2*2 = 8. f(3, 3) transmite explicit p = 3 -> 3^3 = 3*3*3 = 27. La fiecare apel recursiv p se propaga neschimbat (se transmite acelasi p), deci baza puterii ramane constanta pe tot lantul. Rezultat: \"8 27\", varianta a. b=6 9 ar rezulta dintr-o inmultire gresita (p*n). c amesteca. d greseste primul termen. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza 8 27.", "enunt_html": "<p>Ce va afisa urmatorul program C++?</p><pre class=\"code\">#include &lt;iostream&gt;\nusing namespace std;\nint f(int n, int p = 2) {\n    if (n == 0) return 1;\n    return p * f(n - 1, p);\n}\nint main() {\n    cout &lt;&lt; f(3) &lt;&lt; \" \" &lt;&lt; f(3, 3);\n    return 0;\n}</pre>"}, {"nr": 26, "categorie": "PL/SQL", "enunt": "Se considera procedura cu un parametru OUT:\nCREATE OR REPLACE PROCEDURE get_nume(\n   p_id   IN  NUMBER,\n   p_nume OUT VARCHAR2) IS\nBEGIN\n   SELECT nume INTO p_nume\n   FROM angajati\n   WHERE id_angajat = p_id;\nEND;\nSe apeleaza procedura (prin notatie cu nume) pentru un id care NU exista in tabela ANGAJATI:\n   get_nume(p_id => 99999, p_nume => v_rez);\nPrecizati ce se intampla la executie:", "variante": {"a": "se declanseaza exceptia NO_DATA_FOUND, deoarece SELECT ... INTO nu gaseste niciun rand, iar p_nume nu primeste nicio valoare", "b": "p_nume primeste valoarea NULL, iar executia se incheie fara eroare", "c": "se declanseaza exceptia TOO_MANY_ROWS", "d": "apelul genereaza eroare de compilare deoarece un parametru OUT nu poate fi populat prin SELECT ... INTO"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Instructiunea SELECT ... INTO din PL/SQL trebuie sa returneze EXACT un rand. Daca interogarea nu gaseste niciun rand (cazul unui id inexistent), se declanseaza automat exceptia predefinita NO_DATA_FOUND (ORA-01403); daca ar gasi mai multe randuri, s-ar declansa TOO_MANY_ROWS. Cum id_angajat este cheie primara si valoarea 99999 nu exista, interogarea nu returneaza niciun rand, deci se ridica NO_DATA_FOUND, iar parametrul OUT p_nume ramane neatribuit (exceptia intrerupe executia inainte de finalizarea atribuirii). Deci a. b este falsa: SELECT ... INTO fara randuri NU pune NULL in variabila, ci arunca exceptie (aceasta este o capcana clasica). c este falsa: TOO_MANY_ROWS apare cand se returneaza MAI MULTE randuri, nu zero. d este falsa: un parametru OUT poate fi tinta unui SELECT ... INTO fara nicio problema de compilare.", "enunt_html": "<p>Se considera procedura cu un parametru OUT:</p><pre class=\"code\">CREATE OR REPLACE PROCEDURE get_nume(\np_id   IN  NUMBER,\np_nume OUT VARCHAR2) IS\n    BEGIN\n        SELECT nume INTO p_nume\n        FROM angajati\n        WHERE id_angajat = p_id;\n    END;</pre><p>Se apeleaza procedura (prin notatie cu nume) pentru un id care NU exista in tabela ANGAJATI:</p><pre class=\"code\">get_nume(p_id =&gt; 99999, p_nume =&gt; v_rez);</pre><p>Precizati ce se intampla la executie:</p>"}, {"nr": 27, "categorie": "OOP (C++)", "enunt": "Ce va afisa la rulare urmatorul program C++?\n\n#include <iostream>\nusing namespace std;\nclass Baza {\npublic:\n   virtual int val() { return 1; }\n   int dublu() { return 2 * val(); }\n};\nclass Derivata : public Baza {\npublic:\n   int val() { return 10; }\n};\nint main() {\n   Baza* p = new Derivata();\n   cout << p->dublu();\n   return 0;\n}", "variante": {"a": "2", "b": "20", "c": "11", "d": "10"}, "raspuns_barem": "b", "raspuns_corect": "b", "status_verificare": "CONFIRMAT", "explicatie": "Metoda dublu() NU este virtual, dar in interiorul ei apeleaza metoda val(), care ESTE virtual. Cand se executa p->dublu() (p indica un obiect Derivata), se apeleaza Baza::dublu() (aceasta nu este redefinita), iar in corpul ei apelul val() se rezolva prin legare dinamica, dupa tipul REAL al obiectului catre care se aplica (Derivata). Astfel val() executa Derivata::val() = 10, iar dublu() returneaza 2 * 10 = 20, varianta b. Aceasta este esenta mecanismului: chiar daca metoda \"invelis\" nu e virtual, ea beneficiaza de polimorfism prin apelul intern al unei metode virtual. a=2 ar rezulta daca val() nu ar fi virtual (s-ar apela Baza::val()=1 -> 2*1=2). c si d nu corespund niciunei desfasurari. Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza 20.", "enunt_html": "<p>Ce va afisa la rulare urmatorul program C++?</p><pre class=\"code\">#include &lt;iostream&gt;\nusing namespace std;\nclass Baza {\npublic:\n    virtual int val() { return 1; }\n    int dublu() { return 2 * val(); }\n};\nclass Derivata : public Baza {\npublic:\n    int val() { return 10; }\n};\nint main() {\n    Baza* p = new Derivata();\n    cout &lt;&lt; p-&gt;dublu();\n    return 0;\n}</pre>"}, {"nr": 28, "categorie": "SQL", "enunt": "Fie tabela:\nANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume\nVARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3))\ncu cel putin 200 de randuri, in care exista departamente ce contin mai multi angajati.\nSe considera comanda SQL-Oracle:\nSELECT a.nume,\n       (SELECT b.nume FROM angajati b\n        WHERE b.id_departament = a.id_departament) AS coleg\nFROM angajati a;\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "genereaza eroare la executie, deoarece subcererea scalara din SELECT poate returna mai multe randuri (pentru un departament cu mai multi angajati), ceea ce nu este permis intr-o subcerere scalara", "b": "afiseaza pentru fiecare angajat numele tuturor colegilor sai de departament, cate unul pe rand", "c": "se executa corect si afiseaza pentru fiecare angajat un coleg ales aleatoriu din departamentul sau", "d": "genereaza eroare de sintaxa, deoarece o subcerere nu poate aparea niciodata in clauza SELECT"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "O subcerere plasata in clauza SELECT trebuie sa fie SCALARA, adica sa returneze cel mult o singura valoare (un singur rand, o singura coloana) pentru fiecare rand al interogarii exterioare. Aici, subcererea (SELECT b.nume FROM angajati b WHERE b.id_departament = a.id_departament) selecteaza numele TUTUROR angajatilor din acelasi departament cu angajatul curent. Cum exista departamente cu mai multi angajati, pentru acele randuri subcererea returneaza mai multe randuri, ceea ce incalca cerinta de subcerere scalara si produce eroarea de executie ORA-01427 (\"single-row subquery returns more than one row\"). Deci a. b este falsa: o subcerere scalara nu poate produce mai multe valori pe un rand - pentru a lista toti colegii ar trebui alta constructie (ex. un JOIN). c este falsa: Oracle nu \"alege aleatoriu\" - arunca eroare cand subcererea scalara returneaza mai multe randuri. d este falsa: o subcerere POATE aparea in SELECT (subcerere scalara) - problema nu este de sintaxa, ci de numarul de randuri returnate la executie.", "enunt_html": "<p>Fie tabela: ANGAJATI (id_angajat NUMBER(5) PRIMARY KEY, nume VARCHAR2(30), prenume VARCHAR2(30), salariul NUMBER(10,2), data_angajare DATE, id_departament NUMBER(3)) cu cel putin 200 de randuri, in care exista departamente ce contin mai multi angajati. Se considera comanda SQL-Oracle:</p><pre class=\"code\">SELECT a.nume,\n(SELECT b.nume FROM angajati b\nWHERE b.id_departament = a.id_departament) AS coleg\nFROM angajati a;</pre><p>Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 29, "categorie": "PL/SQL", "enunt": "Se considera procedura cu doi parametri OUT:\nCREATE OR REPLACE PROCEDURE minmax_dept(\n   p_id  IN  NUMBER,\n   p_min OUT NUMBER,\n   p_max OUT NUMBER) IS\nBEGIN\n   SELECT MIN(salariul), MAX(salariul)\n   INTO p_min, p_max\n   FROM angajati WHERE id_departament = p_id;\nEND;\nSe incearca apelul:\n   minmax_dept(10, 0, v_max);\nunde v_max este o variabila NUMBER declarata in blocul apelant.\nPrecizati care dintre urmatoarele afirmatii este corecta:", "variante": {"a": "apelul este incorect: unui parametru OUT (p_min) nu i se poate transmite o constanta/literal (0), deoarece parametrul OUT trebuie sa fie o variabila (o tinta de atribuire)", "b": "apelul este corect, iar p_min va porni de la valoarea 0", "c": "apelul este corect, iar constanta 0 va fi ignorata fara nicio consecinta", "d": "apelul este incorect deoarece o procedura nu poate avea doi parametri OUT"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Un parametru formal de tip OUT (sau IN OUT) reprezinta o valoare pe care procedura o SCRIE inapoi in argumentul actual la iesire. De aceea, argumentul actual asociat unui parametru OUT trebuie sa fie ceva ce poate primi o valoare, adica o VARIABILA (o tinta de atribuire, \"lvalue\") - nu o constanta, un literal sau o expresie. In apelul minmax_dept(10, 0, v_max), al doilea argument (0) este un literal transmis parametrului OUT p_min, ceea ce provoaca eroare (PLS-00363: \"expression '0' cannot be used as an assignment target\"). Deci a. b si c sunt false: valoarea 0 nu poate fi acceptata pentru un parametru OUT, iar problema nu se rezolva \"ignorand\" constanta - apelul pur si simplu nu compileaza. d este falsa: o procedura poate avea oricati parametri OUT; problema este exclusiv transmiterea unui literal in locul unei variabile pentru p_min.", "enunt_html": "<p>Se considera procedura cu doi parametri OUT:</p><pre class=\"code\">CREATE OR REPLACE PROCEDURE minmax_dept(\np_id  IN  NUMBER,\np_min OUT NUMBER,\np_max OUT NUMBER) IS\n    BEGIN\n        SELECT MIN(salariul), MAX(salariul)\n        INTO p_min, p_max\n        FROM angajati WHERE id_departament = p_id;\n    END;</pre><p>Se incearca apelul:</p><pre class=\"code\">minmax_dept(10, 0, v_max);</pre><p>unde v_max este o variabila NUMBER declarata in blocul apelant. Precizati care dintre urmatoarele afirmatii este corecta:</p>"}, {"nr": 30, "categorie": "OOP (C++)", "enunt": "Ce va afisa la rulare urmatorul program C++?\n\n#include <iostream>\nusing namespace std;\nclass Baza {\npublic:\n   virtual ~Baza() { cout << \"b\"; }\n};\nclass D1 : public Baza {\npublic:\n   ~D1() { cout << \"1\"; }\n};\nclass D2 : public Baza {\npublic:\n   ~D2() { cout << \"2\"; }\n};\nint main() {\n   Baza* v[2];\n   v[0] = new D1();\n   v[1] = new D2();\n   for (int i = 0; i < 2; i++)\n      delete v[i];\n   return 0;\n}", "variante": {"a": "1b2b", "b": "bb", "c": "12", "d": "b1b2"}, "raspuns_barem": "a", "raspuns_corect": "a", "status_verificare": "CONFIRMAT", "explicatie": "Tabloul v contine pointeri Baza* catre obiecte alocate dinamic de tipuri derivate diferite (v[0] un D1, v[1] un D2). In bucla se elibereaza fiecare obiect cu delete v[i]. Deoarece destructorul bazei este virtual, delete printr-un pointer de baza porneste corect de la destructorul clasei REALE si respecta ordinea: intai destructorul derivatei, apoi al bazei. Pentru delete v[0] (D1): ~D1() -> \"1\", apoi ~Baza() -> \"b\", deci \"1b\". Pentru delete v[1] (D2): ~D2() -> \"2\", apoi ~Baza() -> \"b\", deci \"2b\". Rezultat total, in ordinea buclei: \"1b2b\", varianta a. b=bb ar aparea daca destructorul NU ar fi virtual (s-ar apela doar ~Baza() de doua ori - comportament nedefinit, obiectele derivate distruse incomplet). c=12 omite destructorii bazei. d greseste ordinea (baza inaintea derivatei). Verificat prin compilare si rulare (g++ -std=c++11): programul afiseaza 1b2b.", "enunt_html": "<p>Ce va afisa la rulare urmatorul program C++?</p><pre class=\"code\">#include &lt;iostream&gt;\nusing namespace std;\nclass Baza {\npublic:\n    virtual ~Baza() { cout &lt;&lt; \"b\"; }\n};\nclass D1 : public Baza {\npublic:\n    ~D1() { cout &lt;&lt; \"1\"; }\n};\nclass D2 : public Baza {\npublic:\n    ~D2() { cout &lt;&lt; \"2\"; }\n};\nint main() {\n    Baza* v[2];\n    v[0] = new D1();\n    v[1] = new D2();\n    for (int i = 0; i &lt; 2; i++)\n    delete v[i];\n    return 0;\n}</pre>"}]};
+
+/* ---------- theme ---------- */
+(function(){
+  const saved = localStorage.getItem('csie3-theme');
+  if(saved) document.documentElement.setAttribute('data-theme', saved);
+  document.getElementById('themeToggle').addEventListener('click', function(){
+    const cur = document.documentElement.getAttribute('data-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light');
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('csie3-theme', next);
+  });
+})();
+
+/* ---------- helpers ---------- */
+function escapeHtml(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+function letters(str){
+  return str.split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);
+}
+
+/* ---------- state ---------- */
+const SECONDS_PER_QUESTION = 80; // raport 40 min / 30 intrebari, ca la testul real
+const state = {
+  pool: [],
+  shuffleQ: true,
+  shuffleA: true,
+  selectedCats: new Set(DATA.questions.map(q=>q.categorie)),
+  index: 0,
+  score: 0,
+  order: [],
+  results: [],
+  timeLeft: SECONDS_PER_QUESTION * 30,
+  timerId: null
+};
+
+function formatTime(sec){
+  const s = Math.max(0, sec);
+  const m = Math.floor(s/60);
+  const r = s%60;
+  return String(m).padStart(2,'0')+':'+String(r).padStart(2,'0');
+}
+function renderTimer(){
+  const el = document.getElementById('quizTimer');
+  el.textContent = 'Timp: '+formatTime(state.timeLeft);
+  el.classList.toggle('timer-warn', state.timeLeft <= 300);
+}
+function stopTimer(){
+  if(state.timerId){ clearInterval(state.timerId); state.timerId = null; }
+}
+function startTimer(){
+  stopTimer();
+  state.timeLeft = Math.round(SECONDS_PER_QUESTION * state.pool.length);
+  renderTimer();
+  state.timerId = setInterval(()=>{
+    state.timeLeft--;
+    renderTimer();
+    if(state.timeLeft <= 0){ handleTimeUp(); }
+  }, 1000);
+}
+function handleTimeUp(){
+  stopTimer();
+  const optsEl = document.getElementById('quizOptions');
+  const alreadyAnswered = optsEl.dataset.locked === '1';
+  const startFrom = alreadyAnswered ? state.index + 1 : state.index;
+  for(let i = startFrom; i < state.pool.length; i++){
+    const q = state.pool[i];
+    const correctSet = letters(q.raspuns_corect);
+    const baremSet = letters(q.raspuns_barem);
+    state.results.push({
+      nr: q.nr, categorie: q.categorie, sursa_tag: q.sursa_tag, chosen: '—', correctSet, isCorrect:false,
+      variante: q.variante, explicatie: q.explicatie, status_verificare: q.status_verificare,
+      baremSet
+    });
+  }
+  renderResults();
+  showView('results');
+}
+
+const categories = Array.from(new Set(DATA.questions.map(q=>q.categorie)));
+
+function catCount(cat){ return DATA.questions.filter(q=>q.categorie===cat).length; }
+
+function renderChips(){
+  const el = document.getElementById('categoryChips');
+  el.innerHTML = '';
+  categories.forEach(cat=>{
+    const chip = document.createElement('div');
+    chip.className = 'chip active';
+    chip.innerHTML = escapeHtml(cat)+' <span class="count">'+catCount(cat)+'</span>';
+    chip.addEventListener('click', ()=>{
+      if(state.selectedCats.has(cat)){
+        if(state.selectedCats.size>1){ state.selectedCats.delete(cat); chip.classList.remove('active'); }
+      } else {
+        state.selectedCats.add(cat); chip.classList.add('active');
+      }
+      updateStartBtn();
+    });
+    el.appendChild(chip);
+  });
+}
+
+function updateStartBtn(){
+  const n = DATA.questions.filter(q=>state.selectedCats.has(q.categorie)).length;
+  document.getElementById('startBtn').textContent = 'Începe testul ('+n+' întrebări)';
+  document.getElementById('startBtn').disabled = n===0;
+}
+
+document.getElementById('toggleShuffleQ').addEventListener('click', function(){
+  state.shuffleQ = !state.shuffleQ; this.classList.toggle('on', state.shuffleQ);
+});
+document.getElementById('toggleShuffleA').addEventListener('click', function(){
+  state.shuffleA = !state.shuffleA; this.classList.toggle('on', state.shuffleA);
+});
+
+function showView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+}
+
+function bestScoreKey(){ return 'csie3-best-'+DATA.year; }
+function loadBest(){
+  const raw = localStorage.getItem(bestScoreKey());
+  return raw ? JSON.parse(raw) : null;
+}
+function renderBestNote(){
+  const b = loadBest();
+  const el = document.getElementById('bestScoreNote');
+  el.textContent = b ? ('Cel mai bun scor anterior: '+b.score+'/'+b.total+' ('+b.pct+'%)') : '';
+}
+
+document.getElementById('startBtn').addEventListener('click', startQuiz);
+document.getElementById('quitBtn').addEventListener('click', ()=>{ stopTimer(); showView('setup'); renderBestNote(); });
+document.getElementById('restartBtn').addEventListener('click', ()=>{ showView('setup'); renderBestNote(); });
+document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+
+function startQuiz(){
+  let pool = DATA.questions.filter(q=>state.selectedCats.has(q.categorie));
+  if(state.shuffleQ) pool = shuffle(pool);
+  state.pool = pool;
+  state.index = 0;
+  state.score = 0;
+  state.results = [];
+  state.order = pool.map(q=>{
+    const opts = ['a','b','c','d'];
+    return state.shuffleA ? shuffle(opts) : opts;
+  });
+  showView('quiz');
+  renderQuestion();
+  startTimer();
+}
+
+function renderQuestion(){
+  const q = state.pool[state.index];
+  const dispOrder = state.order[state.index];
+  document.getElementById('progressBar').style.width = Math.round(100*state.index/state.pool.length)+'%';
+  document.getElementById('quizPos').textContent = 'Întrebarea '+(state.index+1)+' din '+state.pool.length;
+  document.getElementById('quizCat').textContent = q.sursa_tag ? (q.categorie+' · '+q.sursa_tag) : q.categorie;
+  document.getElementById('quizScore').textContent = 'Scor: '+state.score;
+  document.getElementById('quizEnunt').innerHTML = q.enunt_html;
+  document.getElementById('nextBtn').style.display = 'none';
+  const fb = document.getElementById('quizFeedback');
+  fb.classList.remove('show','ok','ko');
+  document.getElementById('fbBaremWarn').style.display = 'none';
+
+  const optsEl = document.getElementById('quizOptions');
+  optsEl.innerHTML = '';
+  optsEl.dataset.locked = '0';
+  const displayLetters = ['A','B','C','D'];
+  dispOrder.forEach((origLetter, i)=>{
+    const btn = document.createElement('div');
+    btn.className = 'opt';
+    btn.dataset.orig = origLetter;
+    btn.innerHTML = '<span class="letter">'+displayLetters[i]+')</span><span class="txt">'+escapeHtml(q.variante[origLetter])+'</span>';
+    btn.addEventListener('click', ()=>selectOption(origLetter));
+    optsEl.appendChild(btn);
+  });
+}
+
+function selectOption(chosenLetter){
+  const q = state.pool[state.index];
+  const optsEl = document.getElementById('quizOptions');
+  if(optsEl.dataset.locked === '1') return;
+  optsEl.dataset.locked = '1';
+
+  const correctSet = letters(q.raspuns_corect);
+  const baremSet = letters(q.raspuns_barem);
+  const isCorrect = correctSet.includes(chosenLetter);
+  if(isCorrect) state.score++;
+
+  Array.from(optsEl.children).forEach(btn=>{
+    btn.classList.add('locked');
+    const l = btn.dataset.orig;
+    if(correctSet.includes(l)) btn.classList.add('correct');
+    else if(l === chosenLetter) btn.classList.add('incorrect');
+    else btn.classList.add('dim');
+    let tag = 'sursă: '+l.toUpperCase();
+    if(q.status_verificare === 'EROARE_BAREM' && baremSet.includes(l) && !correctSet.includes(l)){
+      tag += ' · alegerea baremului oficial';
+    }
+    const span = document.createElement('span');
+    span.className = 'tag';
+    span.textContent = tag;
+    btn.appendChild(span);
+  });
+
+  const fb = document.getElementById('quizFeedback');
+  fb.classList.add('show', isCorrect ? 'ok':'ko');
+  const title = document.getElementById('fbTitle');
+  title.className = 'fb-title '+(isCorrect?'ok-txt':'ko-txt');
+  title.textContent = isCorrect ? '✓ Corect' : ('✗ Greșit — răspunsul corect: '+correctSet.join(', ').toUpperCase());
+
+  const warnEl = document.getElementById('fbBaremWarn');
+  if(q.status_verificare === 'EROARE_BAREM'){
+    warnEl.style.display = 'block';
+    warnEl.textContent = '⚠ Barem oficial eronat: documentul original indică "'+baremSet.join(', ').toUpperCase()+'", dar răspunsul corect verificat este "'+correctSet.join(', ').toUpperCase()+'". Detalii mai jos.';
+  } else {
+    warnEl.style.display = 'none';
+  }
+  document.getElementById('fbExplic').textContent = q.explicatie;
+  document.getElementById('nextBtn').style.display = 'inline-flex';
+  document.getElementById('quizScore').textContent = 'Scor: '+state.score;
+
+  state.results.push({
+    nr: q.nr, categorie: q.categorie, sursa_tag: q.sursa_tag, chosen: chosenLetter, correctSet, isCorrect,
+    variante: q.variante, explicatie: q.explicatie, status_verificare: q.status_verificare,
+    baremSet
+  });
+}
+
+function nextQuestion(){
+  state.index++;
+  if(state.index >= state.pool.length){ stopTimer(); renderResults(); showView('results'); }
+  else renderQuestion();
+}
+
+function renderResults(){
+  const total = state.results.length;
+  const score = state.results.filter(r=>r.isCorrect).length;
+  const pct = total ? Math.round(100*score/total) : 0;
+  document.getElementById('resScoreN').textContent = score+'/'+total;
+  document.getElementById('resPercent').textContent = pct+'%';
+  document.getElementById('resPunctaj').textContent = 'Punctaj estimat: '+(score*3)+' puncte (din '+(total*3)+')';
+
+  const best = loadBest();
+  if(!best || score/total > best.score/best.total){
+    localStorage.setItem(bestScoreKey(), JSON.stringify({score, total, pct}));
+  }
+
+  const catStats = {};
+  state.results.forEach(r=>{
+    catStats[r.categorie] = catStats[r.categorie] || {ok:0,total:0};
+    catStats[r.categorie].total++;
+    if(r.isCorrect) catStats[r.categorie].ok++;
+  });
+  const catBarsEl = document.getElementById('resCatBars');
+  catBarsEl.innerHTML = '';
+  Object.keys(catStats).forEach(cat=>{
+    const s = catStats[cat];
+    const p = Math.round(100*s.ok/s.total);
+    const row = document.createElement('div');
+    row.className = 'cat-bar-row';
+    row.innerHTML = '<div class="cat-bar-label"><span>'+escapeHtml(cat)+'</span><span>'+s.ok+'/'+s.total+'</span></div>'+
+      '<div class="cat-bar-outer"><div class="cat-bar-inner" style="width:'+p+'%"></div></div>';
+    catBarsEl.appendChild(row);
+  });
+
+  const tbody = document.getElementById('resTableBody');
+  tbody.innerHTML = '';
+  state.results.forEach((r, idx)=>{
+    const tr = document.createElement('tr');
+    tr.className = r.isCorrect ? 'hit':'miss';
+    const catCell = r.sursa_tag ? (r.categorie+' · '+r.sursa_tag) : r.categorie;
+    tr.innerHTML = '<td>'+(r.isCorrect?'✓':'✗')+' '+r.nr+'</td><td>'+escapeHtml(catCell)+'</td><td>'+r.chosen.toUpperCase()+'</td><td>'+r.correctSet.join(',').toUpperCase()+'</td>';
+    const detail = document.createElement('tr');
+    detail.className = 'review-detail';
+    const td = document.createElement('td');
+    td.colSpan = 4;
+    let warnHtml = '';
+    if(r.status_verificare === 'EROARE_BAREM'){
+      warnHtml = '<div class="barem-warn" style="display:block;margin-bottom:8px">⚠ Barem oficial eronat (indica '+r.baremSet.join(',').toUpperCase()+')</div>';
+    }
+    td.innerHTML = warnHtml + escapeHtml(r.explicatie).replace(/\n/g,'<br>');
+    detail.appendChild(td);
+    tr.addEventListener('click', ()=>{ detail.classList.toggle('show'); });
+    tbody.appendChild(tr);
+    tbody.appendChild(detail);
+  });
+}
+
+renderChips();
+updateStartBtn();
+renderBestNote();
+</script>
+</body>
+</html>
