@@ -1,0 +1,604 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Teorie de bază — Admitere Master CSIE3</title>
+<meta name="description" content="Sinteză de teorie C/C++, POO, SQL, PL/SQL și baze de date, extrasă din tiparele celor 510 grile de admitere">
+<style>
+:root{
+  --bg:#f5f6fa; --surface:#ffffff; --surface-2:#eef0f6; --border:#dde1ea;
+  --text:#1a2030; --text-dim:#5c6579; --accent:#4a55d6; --accent-ink:#ffffff;
+  --good:#177a4c; --good-bg:#e2f6ec; --good-bd:#a9e3c3;
+  --bad:#a8271f; --bad-bg:#fbeae8; --bad-bd:#f0b8b2;
+  --warn:#8a6100; --warn-bg:#fff3d6; --warn-bd:#f0d998;
+  --code-bg:#eef0f7; --code-text:#2a3040;
+  --radius:14px; --shadow:0 2px 14px rgba(20,25,45,.07);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#10131c; --surface:#171b28; --surface-2:#1e2332; --border:#2a3042;
+    --text:#e8eaf2; --text-dim:#9aa2b8; --accent:#8b93ff; --accent-ink:#0d0f18;
+    --good:#3ddb92; --good-bg:#123326; --good-bd:#1f5c3f;
+    --bad:#ff8a80; --bad-bg:#3a1614; --bad-bd:#6e2a25;
+    --warn:#ffce6b; --warn-bg:#382b0a; --warn-bd:#6b4f14;
+    --code-bg:#12151f; --code-text:#d7dbe8;
+    --shadow:0 2px 18px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="light"]{
+  --bg:#f5f6fa; --surface:#ffffff; --surface-2:#eef0f6; --border:#dde1ea;
+  --text:#1a2030; --text-dim:#5c6579; --accent:#4a55d6; --accent-ink:#ffffff;
+  --good:#177a4c; --good-bg:#e2f6ec; --good-bd:#a9e3c3;
+  --bad:#a8271f; --bad-bg:#fbeae8; --bad-bd:#f0b8b2;
+  --warn:#8a6100; --warn-bg:#fff3d6; --warn-bd:#f0d998;
+  --code-bg:#eef0f7; --code-text:#2a3040;
+}
+:root[data-theme="dark"]{
+  --bg:#10131c; --surface:#171b28; --surface-2:#1e2332; --border:#2a3042;
+  --text:#e8eaf2; --text-dim:#9aa2b8; --accent:#8b93ff; --accent-ink:#0d0f18;
+  --good:#3ddb92; --good-bg:#123326; --good-bd:#1f5c3f;
+  --bad:#ff8a80; --bad-bg:#3a1614; --bad-bd:#6e2a25;
+  --warn:#ffce6b; --warn-bg:#382b0a; --warn-bd:#6b4f14;
+  --code-bg:#12151f; --code-text:#d7dbe8;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.6;
+}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 16px 80px}
+header.top{
+  display:flex;align-items:center;gap:12px;justify-content:space-between;
+  padding:14px 0;margin-bottom:8px;
+}
+.brand{display:flex;flex-direction:column;gap:2px;min-width:0}
+.brand a{color:var(--text-dim);text-decoration:none;font-size:13px}
+.brand a:hover{color:var(--accent)}
+.brand h1{font-size:20px;margin:0;font-weight:800}
+.brand .sub{font-size:13px;color:var(--text-dim)}
+.iconbtn{
+  border:1px solid var(--border);background:var(--surface);color:var(--text);
+  width:38px;height:38px;border-radius:10px;cursor:pointer;font-size:16px;
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+}
+.iconbtn:hover{border-color:var(--accent)}
+.intro{
+  font-size:14.5px;color:var(--text-dim);background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:14px 18px;margin:10px 0 20px;
+}
+.intro b{color:var(--text)}
+
+.layout{display:grid;grid-template-columns:230px 1fr;gap:28px;align-items:start}
+@media (max-width:860px){ .layout{grid-template-columns:1fr} }
+
+nav.toc{
+  position:sticky; top:16px; background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); padding:16px; font-size:13.5px; max-height:calc(100vh - 32px); overflow:auto;
+}
+@media (max-width:860px){ nav.toc{position:static; max-height:none} }
+nav.toc h2{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--text-dim);margin:0 0 10px}
+nav.toc ul{list-style:none;margin:0 0 14px;padding:0}
+nav.toc li{margin:0}
+nav.toc a{display:block;padding:5px 8px;border-radius:7px;color:var(--text-dim);text-decoration:none}
+nav.toc a:hover{background:var(--surface-2);color:var(--text)}
+nav.toc .grp{font-weight:700;color:var(--text);margin-top:12px;padding:5px 8px 2px;font-size:13.5px}
+nav.toc .grp:first-child{margin-top:0}
+
+main{min-width:0}
+section.topic{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:26px 28px;margin-bottom:22px;scroll-margin-top:16px;
+}
+section.topic > h2{font-size:22px;margin:0 0 4px}
+section.topic > .count{font-size:12.5px;color:var(--text-dim);margin-bottom:18px}
+h3{font-size:16.5px;margin:26px 0 8px;scroll-margin-top:16px}
+h3:first-of-type{margin-top:6px}
+h3 .count{font-size:11.5px;color:var(--text-dim);font-weight:400;margin-left:6px}
+p{margin:0 0 10px;font-size:14.5px}
+ul.notes{margin:0 0 12px;padding-left:20px;font-size:14.5px}
+ul.notes li{margin-bottom:6px}
+ul.notes b{color:var(--text)}
+code.inline{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--code-bg);
+  color:var(--code-text);padding:1px 6px;border-radius:5px;font-size:.92em;
+}
+pre.code{
+  background:var(--code-bg);color:var(--code-text);border:1px solid var(--border);
+  border-radius:10px;padding:12px 14px;overflow-x:auto;font-size:13px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;margin:10px 0 14px;line-height:1.55;
+}
+.trap{
+  background:var(--warn-bg);border:1px solid var(--warn-bd);color:var(--text);
+  border-radius:10px;padding:12px 16px;margin:12px 0;font-size:14px;
+}
+.trap b{color:var(--warn)}
+.good{
+  background:var(--good-bg);border:1px solid var(--good-bd);color:var(--text);
+  border-radius:10px;padding:12px 16px;margin:12px 0;font-size:14px;
+}
+.good b{color:var(--good)}
+table.ref{width:100%;border-collapse:collapse;margin:10px 0 16px;font-size:13.5px}
+table.ref th,table.ref td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--border)}
+table.ref th{color:var(--text-dim);font-weight:600;font-size:12.5px;text-transform:uppercase;letter-spacing:.03em}
+.footer-note{font-size:12px;color:var(--text-dim);text-align:center;margin-top:30px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <a href="index.html">&larr; Toate testele</a>
+      <h1>Teorie de bază &middot; Admitere Master CSIE3</h1>
+      <div class="sub">Sintetizată din tiparele celor 510 grile (7 ani reali + 10 teste de simulare)</div>
+    </div>
+    <button class="iconbtn" id="themeToggle" title="Comută tema">&#9788;</button>
+  </header>
+
+  <p class="intro">
+    Acest rezumat conţine <b>doar</b> teoria care apare efectiv, repetat, în grilele analizate — nu
+    un manual complet de C++/SQL. Frecvenţa aproximativă (din 510 întrebări) e notată la fiecare
+    subiect mare, iar căsuţele galbene <b>„Capcană"</b> marchează exact genul de greşeală pe care
+    examenul o testează intenţionat (deseori acelaşi truc, cu date diferite, an de an).
+  </p>
+
+  <div class="layout">
+    <nav class="toc">
+      <h2>Cuprins</h2>
+      <div class="grp">1. C/C++</div>
+      <ul>
+        <li><a href="#c-pointeri">Pointeri &amp; tablouri</a></li>
+        <li><a href="#c-recursivitate">Recursivitate</a></li>
+        <li><a href="#c-struct">Struct / union</a></li>
+        <li><a href="#c-static">Variabile static</a></li>
+        <li><a href="#c-siruri">Şiruri de caractere</a></li>
+        <li><a href="#c-biti">Operatori pe biţi</a></li>
+        <li><a href="#c-precedenta">Precedenţă &amp; efecte secundare</a></li>
+        <li><a href="#c-fptr">Pointeri la funcţii</a></li>
+      </ul>
+      <div class="grp">2. POO (C++)</div>
+      <ul>
+        <li><a href="#oop-clase">Clase &amp; încapsulare</a></li>
+        <li><a href="#oop-ctor">Constructori/destructori</a></li>
+        <li><a href="#oop-mostenire">Moştenire</a></li>
+        <li><a href="#oop-poli">Polimorfism &amp; virtual</a></li>
+        <li><a href="#oop-abstract">Clase abstracte</a></li>
+        <li><a href="#oop-operator">Supraîncărcare operatori</a></li>
+        <li><a href="#oop-friend">Friend</a></li>
+        <li><a href="#oop-static-template">Membri statici &amp; template</a></li>
+      </ul>
+      <div class="grp">3. SQL</div>
+      <ul>
+        <li><a href="#sql-ldd">LDD (DDL)</a></li>
+        <li><a href="#sql-lmd">LMD (DML)</a></li>
+        <li><a href="#sql-constrangeri">Constrângeri &amp; chei străine</a></li>
+        <li><a href="#sql-join">JOIN-uri</a></li>
+        <li><a href="#sql-subcereri">Subinterogări</a></li>
+        <li><a href="#sql-grup">Funcţii de grup</a></li>
+        <li><a href="#sql-multime">UNION/INTERSECT/MINUS</a></li>
+        <li><a href="#sql-view">Vederi</a></li>
+        <li><a href="#sql-functii">Funcţii utile Oracle</a></li>
+        <li><a href="#sql-lct">LCT (tranzacţii)</a></li>
+      </ul>
+      <div class="grp">4. PL/SQL</div>
+      <ul>
+        <li><a href="#pl-bloc">Structura unui bloc</a></li>
+        <li><a href="#pl-cursor-implicit">Cursor implicit</a></li>
+        <li><a href="#pl-cursor-explicit">Cursor explicit</a></li>
+        <li><a href="#pl-type">%TYPE / %ROWTYPE</a></li>
+        <li><a href="#pl-exceptii">Excepţii</a></li>
+        <li><a href="#pl-proceduri">Proceduri &amp; funcţii</a></li>
+        <li><a href="#pl-trigger">Triggere</a></li>
+        <li><a href="#pl-null">Logica NULL</a></li>
+      </ul>
+      <div class="grp">5. Baze de date (teorie)</div>
+      <ul>
+        <li><a href="#bd-er">Model entitate-relaţie</a></li>
+        <li><a href="#bd-chei">Chei</a></li>
+        <li><a href="#bd-normalizare">Normalizare</a></li>
+        <li><a href="#bd-algebra">Algebra relaţională</a></li>
+        <li><a href="#bd-acid">ACID</a></li>
+      </ul>
+    </nav>
+
+    <main>
+
+    <section class="topic" id="sect-c">
+      <h2>1. C/C++</h2>
+      <div class="count">~137 din 510 întrebări</div>
+
+      <h3 id="c-pointeri">Pointeri &amp; tablouri <span class="count">(cel mai frecvent subiect, ~72 întrebări)</span></h3>
+      <ul class="notes">
+        <li>Un tablou <code class="inline">int v[5]</code> "decade" la un pointer către primul element când e folosit în expresii: <code class="inline">v</code> ≡ <code class="inline">&v[0]</code>.</li>
+        <li><code class="inline">*(p+i)</code> ≡ <code class="inline">p[i]</code> — aritmetica pointerilor avansează cu <code class="inline">sizeof(tip)</code> octeţi, nu cu 1 octet.</li>
+        <li>Pointer la pointer (<code class="inline">int **pp</code>) — folosit des la tablouri de şiruri (<code class="inline">char *v[]</code>, indexare dublă <code class="inline">v[i][j]</code>).</li>
+        <li>Pointer către o structură auto-referenţială e OBLIGATORIU pointer (<code class="inline">struct Nod *urm;</code>), nu instanţă directă (<code class="inline">struct Nod urm;</code> nu compilează — tip incomplet/dimensiune infinită).</li>
+      </ul>
+      <pre class="code">int v[] = {5, 10, 15, 20, 25};
+int *p = v + 1;          // p indica spre v[1] = 10
+printf("%d", *(p + 2) - *p);  // *(p+2)=v[3]=20 ; *p=v[1]=10 -> afiseaza 10</pre>
+      <div class="trap"><b>Capcană:</b> confuzia dintre "avansează cu N poziţii" (aritmetică de pointer, corectă) şi "avansează cu N octeţi" (greşit) — <code class="inline">p+2</code> pe un <code class="inline">int*</code> sare 2 întregi, nu 2 octeţi.</div>
+
+      <h3 id="c-recursivitate">Recursivitate <span class="count">(~30 întrebări)</span></h3>
+      <ul class="notes">
+        <li>Trebuie urmărită "desfăşurarea" apelurilor pas cu pas (stivă), apoi "revenirea" cu valorile calculate.</li>
+        <li>Recursivitate cu acumulator (parametru care duce rezultatul parţial) vs. recursivitate care combină rezultatul DUPĂ apelul recursiv (<code class="inline">return n + f(n-1);</code>).</li>
+        <li>Fără caz de bază corect → stivă infinită → eroare de execuţie ("stack overflow"), una din variantele de răspuns clasice.</li>
+      </ul>
+      <pre class="code">int f(int n, int p) {          // acumulator p
+    if (n == 1) return p;
+    return f(n - 1, p * n);    // f(5,1) = 5! = 120
+}</pre>
+
+      <h3 id="c-struct">Struct / union <span class="count">(~26 întrebări)</span></h3>
+      <ul class="notes">
+        <li><b>struct</b>: fiecare membru are propria zonă de memorie (dimensiunea = suma membrilor, +eventual padding).</li>
+        <li><b>union</b>: toţi membrii <i>suprapun aceeaşi</i> zonă de memorie (dimensiunea = cea a celui mai mare membru). Scrierea unui membru "stropeşte" pe ceilalţi.</li>
+        <li>Parametru struct/union transmis <b>prin valoare</b> la o funcţie → funcţia primeşte o COPIE; modificările nu se văd în funcţia apelantă.</li>
+      </ul>
+      <pre class="code">union test { int x; char arr[4]; };
+union test t; t.x = 0;               // toti cei 4 octeti deveni 0
+t.arr[1]='G'; t.arr[2]='O'; t.arr[3]='L';
+printf("%s", t.arr);   // arr[0] e inca 0 (terminator) -> afiseaza sir gol</pre>
+      <div class="trap"><b>Capcană:</b> un union cu un octet nescris rămas 0 (terminator de şir) face ca <code class="inline">%s</code> să afişeze un şir gol, nu conţinutul "aşteptat".</div>
+
+      <h3 id="c-static">Variabile <code class="inline">static</code> într-o funcţie <span class="count">(~30 întrebări, adesea combinat cu alte teme)</span></h3>
+      <ul class="notes">
+        <li>O variabilă <code class="inline">static</code> locală se iniţializează o singură dată şi îşi PĂSTREAZĂ valoarea între apeluri succesive ale funcţiei (spre deosebire de o variabilă locală obişnuită, care se reiniţializează la fiecare apel).</li>
+      </ul>
+
+      <h3 id="c-siruri">Şiruri de caractere <span class="count">funcţii din &lt;string.h&gt;</span></h3>
+      <ul class="notes">
+        <li><code class="inline">strlen</code> nu numără terminatorul <code class="inline">'\0'</code>; <code class="inline">sizeof</code> pe un tablou de char ÎL include.</li>
+        <li><code class="inline">strcmp(a,b)</code>: 0 dacă egale, negativ dacă <code class="inline">a&lt;b</code> lexicografic, pozitiv dacă <code class="inline">a&gt;b</code> (compară codurile ASCII caracter cu caracter).</li>
+        <li><code class="inline">strcat</code> scrie ÎNCEPÂND de la terminatorul nul al primului şir (deci indexul unde începe concatenarea = <code class="inline">strlen</code> al şirului original, înainte de apel).</li>
+      </ul>
+
+      <h3 id="c-biti">Operatori pe biţi</h3>
+      <table class="ref">
+        <tr><th>Operator</th><th>Efect</th></tr>
+        <tr><td><code class="inline">&lt;&lt;</code> / <code class="inline">&gt;&gt;</code></td><td>shift stânga/dreapta = înmulţire/împărţire cu 2 la puterea N (pt. întregi fără semn)</td></tr>
+        <tr><td><code class="inline">&amp;</code>, <code class="inline">|</code>, <code class="inline">^</code></td><td>AND, OR, XOR pe biţi (nu confunda cu <code class="inline">&amp;&amp;</code>/<code class="inline">||</code> logici)</td></tr>
+      </table>
+      <div class="trap"><b>Capcană:</b> <code class="inline">#define DUBLU(x) x + x</code> fără paranteze — <code class="inline">DUBLU(3) * 2</code> se expandează textual la <code class="inline">3 + 3 * 2</code> = 9, nu 12, din cauza priorităţii operatorilor.</div>
+
+      <h3 id="c-precedenta">Precedenţă &amp; efecte secundare / comportament nedefinit</h3>
+      <ul class="notes">
+        <li><code class="inline">i++</code> (post-incrementare) în cadrul unei expresii returnează valoarea DINAINTE de incrementare; <code class="inline">++i</code> o returnează pe cea de DUPĂ.</li>
+        <li>Ordinea de evaluare a argumentelor unei funcţii (ex. <code class="inline">printf("%d %d", i++, i++)</code>) NU este specificată de standard — grilele "curate" evită acest caz; dacă apare într-un subiect vechi cu ambiguitate reală, poate exista o eroare de barem.</li>
+        <li>Parametri impliciţi C++ (<code class="inline">int f(int a, int b=5)</code>) — valoarea implicită se foloseşte doar dacă parametrul lipseşte la apel.</li>
+      </ul>
+
+      <h3 id="c-fptr">Pointeri la funcţii</h3>
+      <pre class="code">int inc(int x){ return x+1; }
+int dbl(int x){ return x*2; }
+int (*v[2])(int) = { inc, dbl };  // tablou de pointeri la functii
+printf("%d", v[1](v[0](3)));     // dbl(inc(3)) = dbl(4) = 8</pre>
+      <p>Declaraţia corectă a unui pointer la funcţie necesită paranteze în jurul numelui: <code class="inline">int (*p)(int,int)</code>, nu <code class="inline">int *p(int,int)</code> (care declară o funcţie ce returnează <code class="inline">int*</code>).</p>
+    </section>
+
+    <section class="topic" id="sect-oop">
+      <h2>2. Programare orientată pe obiecte (C++)</h2>
+      <div class="count">~118 din 510 întrebări — a doua categorie ca mărime</div>
+
+      <h3 id="oop-clase">Clase &amp; încapsulare</h3>
+      <ul class="notes">
+        <li>Specificatori de acces membri: <code class="inline">private</code> (implicit la <code class="inline">class</code>) / <code class="inline">protected</code> / <code class="inline">public</code>.</li>
+        <li>Metodă declarată <code class="inline">const</code> promite că nu modifică membrii obiectului; un obiect <code class="inline">const</code> poate apela DOAR metode <code class="inline">const</code>.</li>
+        <li>Pointerul <code class="inline">this</code> — pointer implicit către obiectul curent, util când parametrul unei metode are acelaşi nume ca un membru (<code class="inline">this-&gt;x = x;</code>).</li>
+      </ul>
+
+      <h3 id="oop-ctor">Constructori şi destructori <span class="count">(~49 întrebări)</span></h3>
+      <ul class="notes">
+        <li><b>Ordinea la construcţie</b>: mai întâi clasele de bază (în ordinea listată la moştenire), apoi membrii (în ordinea DECLARĂRII lor în clasă — nu ordinea din lista de iniţializare!), apoi corpul constructorului clasei derivate.</li>
+        <li><b>Ordinea la distrugere</b>: exact inversă — întâi derivatul, apoi membrii (ordine inversă declarării), apoi bazele (ordine inversă moştenirii).</li>
+        <li><b>Constructor de copiere</b> implicit face copiere superficială ("shallow" — copiază pointerii ca atare, nu ce indică ei); pentru copiere în profunzime ("deep") trebuie definit explicit.</li>
+        <li>Dacă o clasă are un constructor cu parametru definit explicit, compilatorul NU mai generează automat un constructor implicit fără parametri.</li>
+      </ul>
+      <pre class="code">class Baza { public: Baza(){cout&lt;&lt;"B";} ~Baza(){cout&lt;&lt;"b";} };
+class Derivat : public Baza { public: Derivat(){cout&lt;&lt;"D";} ~Derivat(){cout&lt;&lt;"d";} };
+int main(){ Derivat x; }   // afiseaza: B D  (constructie) apoi d b (distrugere) -> "BDdb"</pre>
+
+      <h3 id="oop-mostenire">Moştenire <span class="count">(~25 întrebări)</span></h3>
+      <ul class="notes">
+        <li><code class="inline">class Derivat : Baza</code> (fără specificator) → moştenire <b>privată</b> implicit (regulă specifică lui <code class="inline">class</code>; la <code class="inline">struct</code> implicitul e <code class="inline">public</code>).</li>
+        <li>Moştenire <code class="inline">public</code>: membrii <code class="inline">public</code>/<code class="inline">protected</code> ai bazei rămân cu acelaşi acces în derivat. Moştenire <code class="inline">private</code>: toţi membrii moşteniţi devin <code class="inline">private</code> în derivat.</li>
+        <li>Moştenire multiplă (<code class="inline">class C : public A, public B</code>) — ambiguitatea unui nume prezent în ambele baze se rezolvă explicit cu <code class="inline">A::membru</code> / <code class="inline">B::membru</code>.</li>
+        <li><b>Object slicing</b>: atribuirea unui obiect derivat către o variabilă (nu pointer/referinţă) de tip bază "taie" partea derivată — rămâne doar partea de bază, iar apelurile ulterioare NU mai sunt polimorfice.</li>
+      </ul>
+
+      <h3 id="oop-poli">Polimorfism &amp; funcţii virtuale <span class="count">(~51 întrebări — cel mai testat subiect din POO)</span></h3>
+      <ul class="notes">
+        <li>Apelul unei metode <code class="inline">virtual</code> printr-un pointer/referinţă de tip bază execută versiunea DIN CLASA REALĂ a obiectului (legare dinamică), indiferent de tipul static al pointerului.</li>
+        <li>O metodă NEvirtuală cu acelaşi nume într-o derivată doar "ascunde" (hiding) metoda bazei — apelul prin pointer de bază execută tot versiunea bazei (legare statică).</li>
+        <li><b>Destructor virtual</b>: dacă un obiect derivat e şters (<code class="inline">delete</code>) printr-un pointer de tip bază şi destructorul bazei NU e <code class="inline">virtual</code>, se apelă DOAR destructorul bazei (scurgere/comportament incomplet). Cu destructor virtual, se apelă corect cel al derivatului, apoi al bazei.</li>
+        <li>Apelarea unei metode virtuale DIN constructorul/destructorul bazei NU e polimorfică acolo — foloseşte versiunea clasei curente în construcţie (obiectul derivat încă nu e complet construit / e deja parţial distrus).</li>
+      </ul>
+
+      <h3 id="oop-abstract">Clase abstracte <span class="count">(~14 întrebări)</span></h3>
+      <ul class="notes">
+        <li>O clasă cu cel puţin o metodă <code class="inline">virtual ... = 0;</code> (virtuală pură) devine abstractă.</li>
+        <li>Nu se pot instanţia obiecte de tip abstract, dar SE POT declara pointeri/referinţe de acel tip.</li>
+        <li>O clasă derivată dintr-o clasă abstractă rămâne ea însăşi abstractă dacă nu suprascrie TOATE metodele virtuale pure moştenite.</li>
+        <li>O clasă abstractă POATE avea date membre, constructori şi metode nevirtuale — restricţia e doar asupra instanţierii directe.</li>
+      </ul>
+
+      <h3 id="oop-operator">Supraîncărcarea operatorilor</h3>
+      <ul class="notes">
+        <li>Ca metodă membru: primul operand e obiectul însuşi (<code class="inline">this</code>); util pt. <code class="inline">operator+</code>, <code class="inline">operator==</code>, <code class="inline">operator[]</code>.</li>
+        <li>Ca funcţie <code class="inline">friend</code>: necesară când primul operand NU e de tipul clasei (ex. <code class="inline">50 + obiect</code>) sau pentru <code class="inline">operator&lt;&lt;</code> de afişare (primul operand e <code class="inline">ostream&amp;</code>).</li>
+        <li>Operatori care NU pot fi supraîncărcaţi: <code class="inline">.</code> , <code class="inline">.*</code> , <code class="inline">::</code> , <code class="inline">?:</code> , <code class="inline">sizeof</code>.</li>
+      </ul>
+
+      <h3 id="oop-friend">Funcţii şi clase <code class="inline">friend</code></h3>
+      <p>O funcţie/clasă <code class="inline">friend</code> are acces la membrii <code class="inline">private</code>/<code class="inline">protected</code> ai clasei care o declară astfel, deşi nu e membră a clasei respective. <code class="inline">friend</code> NU se moşteneşte şi nu e reciprocă.</p>
+
+      <h3 id="oop-static-template">Membri statici &amp; template</h3>
+      <ul class="notes">
+        <li>Un membru <code class="inline">static</code> al unei clase e PARTAJAT de toate instanţele (o singură copie, indiferent câte obiecte se creează).</li>
+        <li><code class="inline">template&lt;typename T&gt;</code> permite scrierea unei funcţii/clase generice, instanţiată de compilator pentru tipul concret folosit la apel.</li>
+      </ul>
+    </section>
+
+    <section class="topic" id="sect-sql">
+      <h2>3. SQL (Oracle)</h2>
+      <div class="count">~114 din 510 întrebări</div>
+
+      <h3 id="sql-ldd">LDD — Limbajul de Definire a Datelor (DDL)</h3>
+      <ul class="notes">
+        <li>Comenzi: <code class="inline">CREATE</code>, <code class="inline">ALTER</code>, <code class="inline">DROP</code>, <code class="inline">TRUNCATE</code>.</li>
+        <li><b>Fiecare comandă LDD face automat COMMIT</b> — atât asupra propriilor modificări, cât şi asupra oricăror modificări LMD nesalvate anterior în aceeaşi sesiune.</li>
+      </ul>
+      <div class="trap"><b>Capcană clasică:</b> un <code class="inline">INSERT</code> urmat de o comandă LDD (ex. <code class="inline">CREATE VIEW</code>, <code class="inline">ALTER TABLE</code>) apoi de <code class="inline">ROLLBACK</code> — ROLLBACK-ul NU mai are ce anula, pentru că LDD-ul a făcut deja commit implicit înaintea sa.</div>
+
+      <h3 id="sql-lmd">LMD — Limbajul de Manipulare a Datelor (DML)</h3>
+      <p><code class="inline">SELECT</code>, <code class="inline">INSERT</code>, <code class="inline">UPDATE</code>, <code class="inline">DELETE</code> — modificările NU sunt permanente până la <code class="inline">COMMIT</code> (pot fi anulate cu <code class="inline">ROLLBACK</code>).</p>
+
+      <h3 id="sql-constrangeri">Constrângeri &amp; chei străine</h3>
+      <table class="ref">
+        <tr><th>Constrângere</th><th>Rol</th></tr>
+        <tr><td><code class="inline">PRIMARY KEY</code></td><td>unicitate + NOT NULL, o singură cheie primară / tabelă</td></tr>
+        <tr><td><code class="inline">FOREIGN KEY ... REFERENCES</code></td><td>valoarea trebuie să existe în tabela părinte (sau să fie NULL)</td></tr>
+        <tr><td><code class="inline">UNIQUE</code></td><td>valori distincte, dar NULL permis (chiar de mai multe ori)</td></tr>
+        <tr><td><code class="inline">CHECK (condiţie)</code></td><td>condiţie booleană pe valorile rândului; NU poate conţine subcereri sau <code class="inline">SYSDATE</code>/pseudo-coloane</td></tr>
+        <tr><td><code class="inline">NOT NULL</code></td><td>interzice valoarea necunoscută</td></tr>
+      </table>
+      <ul class="notes">
+        <li><code class="inline">ON DELETE CASCADE</code>: ştergerea rândului părinte şterge şi rândurile copil.</li>
+        <li><code class="inline">ON DELETE SET NULL</code>: ştergerea părintelui pune <code class="inline">NULL</code> pe cheia străină a copiilor (nu îi şterge).</li>
+        <li>Fără nicio clauză <code class="inline">ON DELETE</code>: ştergerea părintelui cu copii existenţi generează EROARE (încălcare integritate referenţială).</li>
+      </ul>
+
+      <h3 id="sql-join">JOIN-uri <span class="count">(~20 întrebări)</span></h3>
+      <ul class="notes">
+        <li><b>INNER JOIN</b>: doar perechile care se potrivesc pe condiţie.</li>
+        <li><b>LEFT JOIN</b>: toate rândurile din tabela stângă, chiar fără corespondent (coloanele din dreapta devin NULL).</li>
+        <li><b>Self-join</b>: o tabelă joncţionată cu ea însăşi (alias diferit), clasic pentru relaţii angajat&ndash;şef (<code class="inline">id_sef</code> care referă <code class="inline">id_angajat</code> din aceeaşi tabelă).</li>
+        <li><code class="inline">COUNT(coloană)</code> pe un <code class="inline">LEFT JOIN</code> numără doar valorile NEnule ale acelei coloane → util pt. "0 subordonaţi" în loc de a exclude rândul.</li>
+      </ul>
+
+      <h3 id="sql-subcereri">Subinterogări <span class="count">(~24 întrebări)</span></h3>
+      <ul class="notes">
+        <li><code class="inline">= ANY (subcerere)</code> ≡ <code class="inline">IN (subcerere)</code>.</li>
+        <li><code class="inline">&lt;&gt; ALL (subcerere)</code> ≡ <code class="inline">NOT IN (subcerere)</code>.</li>
+        <li><code class="inline">EXISTS</code> întoarce adevărat/fals (nu un număr) — dacă subcererea produce cel puţin un rând.</li>
+      </ul>
+      <div class="trap"><b>Capcana NOT IN + NULL:</b> dacă subcererea din <code class="inline">NOT IN (...)</code> întoarce fie şi o singură valoare <code class="inline">NULL</code>, întreaga condiţie devine NULL pentru TOATE rândurile → interogarea nu întoarce niciun rând (nu eroare, doar rezultat gol). <code class="inline">NOT EXISTS</code> nu are această problemă.</div>
+
+      <h3 id="sql-grup">Funcţii de grup, <code class="inline">GROUP BY</code> / <code class="inline">HAVING</code> <span class="count">(~38 întrebări)</span></h3>
+      <ul class="notes">
+        <li><code class="inline">WHERE</code> filtrează rândurile ÎNAINTE de grupare; <code class="inline">HAVING</code> filtrează grupurile DUPĂ agregare — <code class="inline">HAVING</code> poate folosi funcţii de grup (<code class="inline">COUNT</code>, <code class="inline">SUM</code>...), <code class="inline">WHERE</code> nu.</li>
+        <li>Funcţiile de grup (<code class="inline">COUNT</code>, <code class="inline">AVG</code>, <code class="inline">SUM</code>...) IGNORĂ valorile <code class="inline">NULL</code>, cu excepţia <code class="inline">COUNT(*)</code> care numără toate rândurile.</li>
+        <li>O comandă <code class="inline">SELECT</code> cu funcţii de grup dar FĂRĂ <code class="inline">GROUP BY</code> tratează întreaga tabelă filtrată ca un singur grup (întoarce un singur rând agregat).</li>
+      </ul>
+
+      <h3 id="sql-multime">Operatori mulţime</h3>
+      <table class="ref">
+        <tr><th>Operator</th><th>Efect</th></tr>
+        <tr><td><code class="inline">UNION</code></td><td>reuniune, elimină duplicatele</td></tr>
+        <tr><td><code class="inline">UNION ALL</code></td><td>reuniune, PĂSTREAZĂ duplicatele (mai rapid)</td></tr>
+        <tr><td><code class="inline">INTERSECT</code></td><td>doar rândurile comune ambelor interogări</td></tr>
+        <tr><td><code class="inline">MINUS</code></td><td>rândurile din prima interogare care NU apar în a doua</td></tr>
+      </table>
+
+      <h3 id="sql-view">Vederi (views)</h3>
+      <ul class="notes">
+        <li>O vedere simplă (un singur <code class="inline">SELECT</code> fără <code class="inline">GROUP BY</code>/<code class="inline">DISTINCT</code>/joncţiune complexă) e actualizabilă direct prin <code class="inline">INSERT</code>/<code class="inline">UPDATE</code>/<code class="inline">DELETE</code> — modificarea se propagă în tabela de bază.</li>
+        <li><code class="inline">WITH CHECK OPTION</code>: interzice ca un <code class="inline">UPDATE</code>/<code class="inline">INSERT</code> prin vedere să producă un rând care nu mai satisface condiţia <code class="inline">WHERE</code> a vederii (eroare, nu execuţie silenţioasă).</li>
+        <li>O vedere pe bază de joncţiune/agregare, neactualizabilă direct, poate fi făcută "actualizabilă" printr-un trigger <code class="inline">INSTEAD OF</code>.</li>
+      </ul>
+
+      <h3 id="sql-functii">Funcţii utile Oracle</h3>
+      <table class="ref">
+        <tr><th>Funcţie</th><th>Rol</th></tr>
+        <tr><td><code class="inline">SUBSTR(sir,poz,lung)</code></td><td>subşir; poziţie negativă = pornind de la sfârşit</td></tr>
+        <tr><td><code class="inline">INSTR(sir,caut)</code></td><td>poziţia primei apariţii a şirului căutat</td></tr>
+        <tr><td><code class="inline">TRUNC(dată,'MM'/'YEAR')</code></td><td>rotunjeşte data la începutul lunii/anului</td></tr>
+        <tr><td><code class="inline">EXTRACT(YEAR/MONTH FROM dată)</code></td><td>extrage o componentă numerică din dată</td></tr>
+        <tr><td><code class="inline">MONTHS_BETWEEN(d1,d2)</code></td><td>număr de luni între două date</td></tr>
+        <tr><td><code class="inline">NVL(val,implicit)</code></td><td>înlocuieşte NULL cu o valoare implicită</td></tr>
+        <tr><td><code class="inline">TO_CHAR</code> / <code class="inline">TO_DATE</code></td><td>conversii explicite dată&harr;text</td></tr>
+      </table>
+
+      <h3 id="sql-lct">LCT — Limbajul de Control al Tranzacţiilor</h3>
+      <ul class="notes">
+        <li><code class="inline">COMMIT</code>: face permanente modificările LMD ale sesiunii curente, vizibile altor sesiuni.</li>
+        <li><code class="inline">ROLLBACK</code>: anulează toate modificările LMD nesalvate din tranzacţia curentă.</li>
+        <li><code class="inline">SAVEPOINT nume</code> + <code class="inline">ROLLBACK TO nume</code>: anulează doar modificările făcute DUPĂ acel savepoint, păstrându-le pe cele dinainte.</li>
+      </ul>
+    </section>
+
+    <section class="topic" id="sect-plsql">
+      <h2>4. PL/SQL</h2>
+      <div class="count">~117 din 510 întrebări</div>
+
+      <h3 id="pl-bloc">Structura unui bloc</h3>
+      <pre class="code">DECLARE
+    variabila NUMBER;      -- optional
+BEGIN
+    -- instructiuni executabile
+EXCEPTION
+    WHEN altceva THEN
+        -- tratare erori
+END;
+/</pre>
+      <p><code class="inline">DECLARE</code> e opţional (un bloc poate fi doar <code class="inline">BEGIN...END;</code> dacă nu declară nimic). <code class="inline">/</code> pe o linie separată e comanda SQL*Plus care trimite blocul spre execuţie.</p>
+
+      <h3 id="pl-cursor-implicit">Cursor implicit</h3>
+      <ul class="notes">
+        <li>Orice comandă <code class="inline">SELECT INTO</code> / <code class="inline">UPDATE</code> / <code class="inline">DELETE</code> / <code class="inline">INSERT</code> foloseşte automat un cursor implicit, gestionat de Oracle (deschis şi închis automat).</li>
+        <li>Atribute: <code class="inline">SQL%ROWCOUNT</code> (câte rânduri afectate), <code class="inline">SQL%FOUND</code>/<code class="inline">SQL%NOTFOUND</code>.</li>
+        <li><code class="inline">SELECT ... INTO</code> care nu găseşte niciun rând ridică <code class="inline">NO_DATA_FOUND</code>; care găseşte mai multe rânduri ridică <code class="inline">TOO_MANY_ROWS</code>.</li>
+      </ul>
+
+      <h3 id="pl-cursor-explicit">Cursor explicit <span class="count">(~28 întrebări menţionează "cursor")</span></h3>
+      <pre class="code">CURSOR c IS SELECT nume FROM angajati WHERE id_departament=50;
+v angajati.nume%TYPE;
+BEGIN
+    OPEN c;
+    FETCH c INTO v;          -- primul fetch, INAINTE de verificarea %FOUND
+    WHILE c%FOUND LOOP       -- idiom CORECT: fetch, apoi verifica
+        DBMS_OUTPUT.PUT_LINE(v);
+        FETCH c INTO v;
+    END LOOP;
+    CLOSE c;</pre>
+      <table class="ref">
+        <tr><th>Atribut</th><th>Valoare înainte de primul FETCH</th><th>După</th></tr>
+        <tr><td><code class="inline">%FOUND</code></td><td><b>NULL</b> (necunoscut)</td><td>TRUE/FALSE dacă ultimul fetch a adus un rând</td></tr>
+        <tr><td><code class="inline">%NOTFOUND</code></td><td><b>NULL</b></td><td>opusul lui %FOUND</td></tr>
+        <tr><td><code class="inline">%ISOPEN</code></td><td>FALSE (înainte de OPEN)</td><td>TRUE cât timp e deschis</td></tr>
+        <tr><td><code class="inline">%ROWCOUNT</code></td><td>0</td><td>numărul cumulat de fetch-uri reuşite</td></tr>
+      </table>
+      <div class="trap"><b>Capcana cea mai frecventă din tot setul de grile:</b> o buclă <code class="inline">WHILE cursor%NOTFOUND LOOP ... FETCH ...</code>
+      scrisă ÎNAINTE de orice <code class="inline">FETCH</code> nu execută NICIODATĂ corpul buclei, pentru că <code class="inline">%NOTFOUND</code> e <code class="inline">NULL</code>
+      (tratat ca FALSE într-un <code class="inline">WHILE</code>), nu <code class="inline">FALSE</code> propriu-zis şi nici <code class="inline">TRUE</code>.
+      Idiomul corect e "fetch înaintea buclei" (ca mai sus) sau bucla <code class="inline">FOR ... IN (SELECT...)</code> care gestionează asta automat.</div>
+      <p><b>Cursor FOR loop</b> — cea mai simplă formă, deschide/preia/închide cursorul automat:</p>
+      <pre class="code">FOR rang IN (SELECT * FROM angajati WHERE salariul > 5000) LOOP
+    DBMS_OUTPUT.PUT_LINE(rang.nume);
+END LOOP;   -- nu necesita DECLARE separat pt cursor, nici OPEN/FETCH/CLOSE</pre>
+
+      <h3 id="pl-type">%TYPE / %ROWTYPE</h3>
+      <ul class="notes">
+        <li><code class="inline">variabila tabelă.coloană%TYPE</code> — variabilă cu acelaşi tip ca acea coloană (nu invers: <code class="inline">coloană.tabelă</code> e greşit).</li>
+        <li><code class="inline">variabila tabelă%ROWTYPE</code> — o înregistrare (record) cu câte un câmp pentru FIECARE coloană a tabelei (acces cu <code class="inline">v.nume_coloana</code>).</li>
+      </ul>
+
+      <h3 id="pl-exceptii">Excepţii <span class="count">(~22 întrebări)</span></h3>
+      <table class="ref">
+        <tr><th>Excepţie predefinită</th><th>Cauză</th></tr>
+        <tr><td><code class="inline">NO_DATA_FOUND</code></td><td><code class="inline">SELECT INTO</code> fără niciun rând găsit</td></tr>
+        <tr><td><code class="inline">TOO_MANY_ROWS</code></td><td><code class="inline">SELECT INTO</code> cu mai multe rânduri decât o variabilă simplă</td></tr>
+        <tr><td><code class="inline">ZERO_DIVIDE</code></td><td>împărţire la zero</td></tr>
+        <tr><td><code class="inline">DUP_VAL_ON_INDEX</code></td><td>încălcare unicitate (cheie primară/UNIQUE)</td></tr>
+      </table>
+      <ul class="notes">
+        <li>Excepţie definită de utilizator: se declară (<code class="inline">e_mea EXCEPTION;</code>), se ridică (<code class="inline">RAISE e_mea;</code>), se tratează (<code class="inline">WHEN e_mea THEN</code>).</li>
+        <li><code class="inline">RAISE_APPLICATION_ERROR(-20000..-20999, 'mesaj')</code> — modul standard de a semnala o eroare aplicativă cu cod şi mesaj propriu.</li>
+        <li>O excepţie tratată LOCAL (bloc/procedură cu propriul <code class="inline">EXCEPTION WHEN</code>) NU se propagă mai departe — blocul apelant continuă normal după apel.</li>
+        <li><code class="inline">WHEN OTHERS</code> trebuie să fie ULTIMA ramură dintr-un <code class="inline">EXCEPTION</code> (altfel eroare de compilare).</li>
+      </ul>
+
+      <h3 id="pl-proceduri">Proceduri &amp; funcţii stocate <span class="count">(~17 întrebări despre parametri IN/OUT)</span></h3>
+      <ul class="notes">
+        <li>Parametru <code class="inline">IN</code> (implicit): doar citire — atribuirea unei valori în corpul procedurii e eroare de compilare (PLS-00363).</li>
+        <li><code class="inline">OUT</code>: doar scriere, valoarea iniţială la apel se pierde (parametrul e NULL la intrare).</li>
+        <li><code class="inline">IN OUT</code>: se poate citi ŞI scrie.</li>
+        <li>O funcţie apelabilă dintr-o comandă SQL (<code class="inline">SELECT</code>) NU poate executa DML (INSERT/UPDATE/DELETE) — genera eroare ORA-14551, cu excepţia cazului în care acel DML e cod mort (ex. plasat după un <code class="inline">RETURN</code>).</li>
+        <li>Apelarea cu notaţie numită: <code class="inline">proc(param2 =&gt; val2, param1 =&gt; val1)</code> — ordinea nu mai contează.</li>
+      </ul>
+
+      <h3 id="pl-trigger">Triggere <span class="count">(~14 întrebări)</span></h3>
+      <ul class="notes">
+        <li><code class="inline">BEFORE</code> / <code class="inline">AFTER</code> + <code class="inline">INSERT</code>/<code class="inline">UPDATE</code>/<code class="inline">DELETE</code>, la nivel de instrucţiune (implicit) sau <code class="inline">FOR EACH ROW</code> (nivel de rând).</li>
+        <li><code class="inline">:NEW</code> / <code class="inline">:OLD</code> disponibile DOAR la triggere <code class="inline">FOR EACH ROW</code>; <code class="inline">:OLD</code> nu există la <code class="inline">INSERT</code>, <code class="inline">:NEW</code> nu există la <code class="inline">DELETE</code>.</li>
+        <li><code class="inline">:NEW</code> poate fi MODIFICAT doar într-un trigger <code class="inline">BEFORE</code> (nu <code class="inline">AFTER</code> — rândul e deja scris în tabelă).</li>
+        <li>Trigger <code class="inline">INSTEAD OF</code>: definit pe o VEDERE, înlocuieşte operaţia DML implicită cu cod propriu (util pt. vederi neactualizabile direct).</li>
+      </ul>
+
+      <h3 id="pl-null">Logica NULL în PL/SQL <span class="count">(NULL apare în ~78 de întrebări per total)</span></h3>
+      <div class="trap"><b>Regula de bază, testată constant:</b> orice comparaţie cu NULL (<code class="inline">v &gt; 0</code>, <code class="inline">v = 5</code> etc.) dă NULL (necunoscut), NICIODATĂ TRUE. Într-un <code class="inline">IF</code>/<code class="inline">WHILE</code>, condiţia NULL e tratată ca FALSE — se execută ramura <code class="inline">ELSE</code> (dacă există), FĂRĂ nicio eroare de execuţie.</div>
+      <pre class="code">v_nr NUMBER;              -- neinitializata = NULL
+BEGIN
+  IF v_nr > 0 THEN DBMS_OUTPUT.PUT_LINE('POZITIV');
+  ELSE DBMS_OUTPUT.PUT_LINE('ALTCEVA'); END IF;
+  -- afiseaza 'ALTCEVA', nu eroare, pentru ca (NULL > 0) e NULL -> ramura ELSE</pre>
+    </section>
+
+    <section class="topic" id="sect-bd">
+      <h2>5. Baze de date — teorie generală</h2>
+      <div class="count">~24 din 510 întrebări (categorie separată), plus concepte reluate în SQL</div>
+
+      <h3 id="bd-er">Modelul entitate-relaţie</h3>
+      <ul class="notes">
+        <li>Entitate (obiect din lumea reală), atribut (proprietate), relaţie/asociere (legătură între entităţi).</li>
+        <li>Cardinalitate: 1:1, 1:N, M:N. O relaţie M:N se implementează în modelul relaţional printr-o TABELĂ DE LEGĂTURĂ (asociativă), cu chei străine către ambele entităţi.</li>
+        <li>Asociere recursivă: relaţie a unei entităţi cu ea însăşi (ex. angajat&ndash;şef).</li>
+      </ul>
+
+      <h3 id="bd-chei">Chei <span class="count">(~20 întrebări)</span></h3>
+      <table class="ref">
+        <tr><th>Termen</th><th>Definiţie</th></tr>
+        <tr><td>Supercheie</td><td>orice mulţime de atribute care identifică unic un rând (poate conţine atribute redundante)</td></tr>
+        <tr><td>Cheie candidată (minimă)</td><td>supercheie MINIMĂ — fără niciun atribut care poate fi eliminat păstrând unicitatea</td></tr>
+        <tr><td>Cheie primară</td><td>cheia candidată ALEASĂ pentru a identifica rândurile tabelei; unică per tabelă</td></tr>
+        <tr><td>Cheie alternativă</td><td>orice cheie candidată NEALEASĂ ca primară</td></tr>
+        <tr><td>Cheie străină</td><td>atribut(e) care referă cheia primară a altei tabele (sau a aceleiaşi, la asociere recursivă)</td></tr>
+      </table>
+      <p>Orice cheie candidată e o supercheie, dar nu orice supercheie e cheie candidată (doar cele minime).</p>
+
+      <h3 id="bd-normalizare">Normalizare &amp; anomalii <span class="count">(forme normale + anomalii)</span></h3>
+      <ul class="notes">
+        <li><b>1NF</b>: valori atomice (fără grupuri repetitive/atribute multivaloare).</li>
+        <li><b>2NF</b>: 1NF + fiecare atribut non-cheie depinde de ÎNTREAGA cheie primară (nu doar de o parte, la chei compuse).</li>
+        <li><b>3NF</b>: 2NF + fără dependenţe tranzitive (un atribut non-cheie nu depinde de alt atribut non-cheie).</li>
+        <li>O schemă nenormalizată (date repetate) suferă de: <b>anomalie de inserare</b> (nu poţi adăuga o informaţie fără să ai deja alta asociată), <b>anomalie de actualizare</b> (aceeaşi informaţie trebuie modificată în mai multe rânduri, risc de inconsistenţă) şi <b>anomalie de ştergere</b> (ştergerea unui rând pierde şi altă informaţie, încă necesară).</li>
+      </ul>
+
+      <h3 id="bd-algebra">Algebra relaţională</h3>
+      <table class="ref">
+        <tr><th>Operator</th><th>Corespondent SQL</th></tr>
+        <tr><td>Selecţie (σ)</td><td><code class="inline">WHERE</code> — filtrează RÂNDURI</td></tr>
+        <tr><td>Proiecţie (π)</td><td><code class="inline">SELECT coloane</code> — filtrează COLOANE</td></tr>
+        <tr><td>Reuniune / Diferenţă</td><td><code class="inline">UNION</code> / <code class="inline">MINUS</code></td></tr>
+        <tr><td>Produs cartezian</td><td><code class="inline">FROM a, b</code> fără condiţie de joncţiune</td></tr>
+        <tr><td>Joncţiune (join)</td><td>produs cartezian + selecţie pe condiţia de legătură</td></tr>
+      </table>
+
+      <h3 id="bd-acid">Proprietăţile ACID ale tranzacţiilor</h3>
+      <ul class="notes">
+        <li><b>A</b>tomicitate — o tranzacţie se execută în întregime sau deloc.</li>
+        <li><b>C</b>onsistenţă — trece baza de date dintr-o stare validă în alta validă.</li>
+        <li><b>I</b>zolare — tranzacţiile concurente nu se interferează vizibil una cu alta.</li>
+        <li><b>D</b>urabilitate — odată confirmată (<code class="inline">COMMIT</code>), o modificare rezistă chiar şi la o cădere de sistem.</li>
+      </ul>
+    </section>
+
+    </main>
+  </div>
+
+  <div class="footer-note">
+    Sinteză generată din analiza celor 510 grile aflate în acest proiect (cache/*.txt) — nu înlocuieşte
+    un curs complet, ci punctează exact ce se repetă în subiectele analizate. Pentru exersare, vezi
+    <a href="index.html" style="color:var(--accent)">testele interactive</a>.
+  </div>
+</div>
+
+<script>
+(function(){
+  const saved = localStorage.getItem('csie3-theme');
+  if(saved) document.documentElement.setAttribute('data-theme', saved);
+  document.getElementById('themeToggle').addEventListener('click', function(){
+    const cur = document.documentElement.getAttribute('data-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light');
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('csie3-theme', next);
+  });
+})();
+</script>
+</body>
+</html>

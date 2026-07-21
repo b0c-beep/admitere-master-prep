@@ -55,6 +55,16 @@ header.top{
 }
 .iconbtn:hover{border-color:var(--accent)}
 .intro{font-size:15px;color:var(--text-dim);margin:6px 0 20px;max-width:70ch}
+.theory-link{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  background:var(--surface);border:1px solid var(--accent);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:16px 20px;margin-bottom:22px;text-decoration:none;color:var(--text);
+  transition:transform .12s;
+}
+.theory-link:hover{transform:translateY(-2px)}
+.theory-link-title{font-size:15.5px;font-weight:700;margin-bottom:4px}
+.theory-link-sub{font-size:12.5px;color:var(--text-dim);max-width:60ch}
+.theory-link .go{font-size:13.5px;font-weight:700;color:var(--accent);white-space:nowrap;flex:0 0 auto}
 .stats-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:22px}
 .stat{
   background:var(--surface);border:1px solid var(--border);border-radius:12px;
@@ -119,6 +129,14 @@ h2.section-title{font-size:16px;margin:0 0 14px}
     răspuns, filtra pe categorii (C/C++, SQL, PL/SQL, baze de date, OOP) și primești explicație
     detaliată după fiecare răspuns.
   </p>
+
+  <a href="teorie.html" class="theory-link">
+    <div>
+      <div class="theory-link-title">&#128218; Teorie de bază &mdash; sintetizată din tiparele grilelor</div>
+      <div class="theory-link-sub">C/C++, POO, SQL, PL/SQL (cursori, LDD/LMD, excepţii, triggere) şi baze de date &mdash; doar ce apare efectiv testat, cu capcanele frecvente evidenţiate</div>
+    </div>
+    <div class="go">Deschide &rarr;</div>
+  </a>
 
   <div class="stats-row">
     <div class="stat"><div class="n">210</div><div class="l">întrebări totale</div></div>
