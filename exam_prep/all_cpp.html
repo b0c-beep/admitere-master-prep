@@ -116,6 +116,7 @@ h2.section-title{font-size:16px;margin:0 0 12px;color:var(--text)}
 }
 #quizTimer{font-variant-numeric:tabular-nums;font-weight:700;color:var(--text)}
 #quizTimer.timer-warn{color:var(--bad)}
+#quizTimer.timer-off{display:none}
 .enunt p{margin:0 0 10px;font-size:15.5px}
 .enunt pre.code{
   background:var(--code-bg);color:var(--code-text);border:1px solid var(--border);
@@ -213,6 +214,13 @@ table.review tr:hover td{background:var(--surface-2)}
         </div>
         <div class="switch on" id="toggleShuffleA"></div>
       </div>
+      <div class="toggle-row">
+        <div>
+          <div class="label">Cronometru</div>
+          <div class="desc">Test cronometrat, ca la examenul real (~80 sec/întrebare)</div>
+        </div>
+        <div class="switch on" id="toggleTimer"></div>
+      </div>
 
       <button class="btn btn-primary" id="startBtn">Începe testul (137 întrebări)</button>
       <div class="best-score" id="bestScoreNote"></div>
@@ -308,6 +316,7 @@ const state = {
   pool: [],
   shuffleQ: true,
   shuffleA: true,
+  timerEnabled: true,
   selectedCats: new Set(DATA.questions.map(q=>q.categorie)),
   index: 0,
   score: 0,
@@ -333,6 +342,9 @@ function stopTimer(){
 }
 function startTimer(){
   stopTimer();
+  const el = document.getElementById('quizTimer');
+  if(!state.timerEnabled){ el.classList.add('timer-off'); return; }
+  el.classList.remove('timer-off');
   state.timeLeft = Math.round(SECONDS_PER_QUESTION * state.pool.length);
   renderTimer();
   state.timerId = setInterval(()=>{
@@ -394,6 +406,9 @@ document.getElementById('toggleShuffleQ').addEventListener('click', function(){
 });
 document.getElementById('toggleShuffleA').addEventListener('click', function(){
   state.shuffleA = !state.shuffleA; this.classList.toggle('on', state.shuffleA);
+});
+document.getElementById('toggleTimer').addEventListener('click', function(){
+  state.timerEnabled = !state.timerEnabled; this.classList.toggle('on', state.timerEnabled);
 });
 
 function showView(name){
